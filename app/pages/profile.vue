@@ -339,7 +339,7 @@ const updatePassword = async () => {
       return;
     }
 
-    await $fetch(`https://edumoacademy.uz/users/${userId}`, {
+    await $fetch(`https://edumoacademy.uz/users/change-password`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token.value}`,
