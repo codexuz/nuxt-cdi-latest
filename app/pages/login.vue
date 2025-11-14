@@ -280,7 +280,9 @@ async function login() {
     });
     console.log(res);
     showToast("success", "Login successful!");
-    await navigateTo("/");
+    
+    // Check user setup status and redirect accordingly
+    await checkUserSetupAndRedirect();
   } catch (error) {
     console.error("Login error:", error);
     showToast("error", "Login unsuccessful! Please check your credentials.");
@@ -305,12 +307,39 @@ async function register() {
     const res = await registerUser(payload);
     console.log(res);
     showToast("success", "Account created successfully!");
-    await navigateTo("/");
+    
+    // Redirect to company creation for new users
+    await navigateTo("/auth/companies/create");
   } catch (error) {
     console.error("Registration error:", error);
     showToast("error", error.message || "Registration unsuccessful! Please try again.");
   } finally {
     isRegistering.value = false;
+  }
+}
+
+async function checkUserSetupAndRedirect() {
+  try {
+    // TODO: Check if user has completed setup (company + subscription)
+    // This should be replaced with actual API calls to check user status
+    const { user } = useAuth();
+    
+    // For now, assume setup is incomplete for demo purposes
+    // In real implementation, check user.company_id and user.subscription_status
+    const hasCompany = user.value?.company_id;
+    const hasActiveSubscription = user.value?.subscription_status === 'active';
+    
+    if (!hasCompany) {
+      await navigateTo("/auth/companies/create");
+    } else if (!hasActiveSubscription) {
+      await navigateTo("/subscriptions");
+    } else {
+      await navigateTo("/dashboard");
+    }
+  } catch (error) {
+    console.error("Error checking user setup:", error);
+    // Fallback to dashboard
+    await navigateTo("/dashboard");
   }
 }
 

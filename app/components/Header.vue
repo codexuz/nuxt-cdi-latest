@@ -19,13 +19,12 @@
                         </template>
                     </Button>
 
-                    <Button variant="ghost" v-if="isAuthenticated"  class="dark:text-white cursor-pointer rounded-xl">
-                        <Wallet/>
-                        {{ user?.balance || 0 }} UZS
-                    </Button>
+                    <NuxtLink to="/dashboard" v-if="isAuthenticated"
+                        class="inline-flex [&amp;_svg]:size-4 ml-2 items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white shadow hover:bg-blue-700 h-9 px-4 py-2"
+                        type="button">
+                        Dashboard
+                    </NuxtLink>
 
-                    <!-- Profile/Auth section -->
-                    <ProfileDropdown :first_name="user?.first_name" v-if="isAuthenticated" class="ml-3" />
                     <NuxtLink to="/login" v-else
                         class="inline-flex [&amp;_svg]:size-4 ml-2 items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white shadow hover:bg-blue-700 h-9 px-4 py-2"
                         type="button">

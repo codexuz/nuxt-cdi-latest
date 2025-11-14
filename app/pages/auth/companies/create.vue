@@ -248,8 +248,8 @@ const createCenter = async () => {
     console.log("Center created:", response);
     toast.success("Center created successfully!");
 
-    // Redirect to center dashboard or home
-    await router.push("/");
+    // Redirect to subscription plans
+    await router.push("/subscriptions");
   } catch (error) {
     console.error("Failed to create center:", error);
 

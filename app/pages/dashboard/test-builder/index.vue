@@ -2,26 +2,6 @@
   <div class="max-w-4xl mx-auto px-4 py-8">
     <Toaster position="top-center" richColors theme="system" />
 
-    <Breadcrumb class="mb-6">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink>
-            <NuxtLink to="/">Home</NuxtLink>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink>
-            <NuxtLink to="/test-builder">Test Builder</NuxtLink>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Create Test</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-
     <div class="mb-6">
       <h1
         class="scroll-m-20 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl"
@@ -192,6 +172,7 @@ const createTest = async () => {
 };
 
 definePageMeta({
+  layout: "dashboard",
   middleware: "auth",
 });
 </script>
