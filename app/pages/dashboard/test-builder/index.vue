@@ -78,21 +78,27 @@
             </Button>
           </div>
 
-          <div v-for="(part, index) in listeningData.parts" :key="index" class="mb-4">
-            <Card>
-              <CardHeader>
-                <div class="flex justify-between items-center">
-                  <CardTitle>Part {{ index + 1 }}</CardTitle>
+          <Accordion type="multiple" class="w-full space-y-4">
+            <AccordionItem 
+              v-for="(part, index) in listeningData.parts" 
+              :key="index" 
+              :value="`listening-part-${index}`"
+              class="border rounded-lg px-4"
+            >
+              <AccordionTrigger class="hover:no-underline">
+                <div class="flex items-center justify-between w-full pr-4">
+                  <span class="font-semibold">Part {{ index + 1 }} - {{ part.part }}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    @click="removeListeningPart(index)"
+                    @click.stop="removeListeningPart(index)"
+                    class="h-8 w-8"
                   >
                     <Trash2 class="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent class="space-y-4">
+              </AccordionTrigger>
+              <AccordionContent class="space-y-4 pt-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="space-y-2">
                     <Label>Part Type</Label>
@@ -121,7 +127,6 @@
 
                 <!-- Audio Configuration -->
                 <div>
-                  <h5 class="font-medium mb-2">Audio Configuration</h5>
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="space-y-2">
                       <Label>Audio URL</Label>
@@ -153,81 +158,207 @@
                 <div>
                   <div class="flex justify-between items-center mb-3">
                     <h5 class="font-medium">Question Content</h5>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      @click="addQuestionContent(part.question.content)"
-                    >
-                      <Plus class="mr-1 h-3 w-3" />
-                      Add Section
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <Button size="sm" variant="outline">
+                          <Plus class="mr-1 h-3 w-3" />
+                          Add Question Type
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'completion')">
+                          Completion
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multiple-choice')">
+                          Multiple Choice
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multi-select')">
+                          Multi Select
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'draggable-selection')">
+                          Draggable Selection
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'selection')">
+                          Selection (True/False/Headings)
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   <div
                     v-for="(content, contentIndex) in part.question.content"
                     :key="contentIndex"
-                    class="mb-3"
+                    class="mb-4"
                   >
-                    <Card>
-                      <CardHeader>
-                        <div class="flex justify-between items-center">
-                          <CardTitle class="text-sm">Section {{ contentIndex + 1 }}</CardTitle>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            @click="part.question.content.splice(contentIndex, 1)"
-                          >
-                            <X class="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardHeader>
-                      <CardContent class="space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div class="space-y-2">
-                            <Label>Question Type</Label>
-                            <Select v-model="content.type">
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="completion">Completion</SelectItem>
-                                <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
-                                <SelectItem value="multi-select">Multi Select</SelectItem>
-                                <SelectItem value="selection">Selection (True/False)</SelectItem>
-                                <SelectItem value="matching">Matching</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div class="space-y-2">
-                            <Label>Section ID</Label>
-                            <Input
-                              v-model="content.id"
-                              placeholder="qc_001"
-                            />
-                          </div>
-                        </div>
-                        <div class="space-y-2">
-                          <Label>Title</Label>
-                          <Input
-                            v-model="content.title"
-                            placeholder="e.g., Form Completion"
-                          />
-                        </div>
-                        <div class="space-y-2">
-                          <Label>Instructions</Label>
-                          <Textarea
-                            v-model="content.condition"
-                            placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
-                            rows="2"
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <CompletionQuestion
+                      v-if="content.type === 'completion'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <MultipleChoiceQuestion
+                      v-else-if="content.type === 'multiple-choice'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <MultiSelectQuestion
+                      v-else-if="content.type === 'multi-select'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <DraggableSelectionQuestion
+                      v-else-if="content.type === 'draggable-selection'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <SelectionQuestion
+                      v-else-if="content.type === 'selection'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                <!-- Visual Answer Entry UI -->
+                <div v-if="part.question.content.length > 0" class="space-y-2 mt-6">
+                  <div class="flex justify-between items-center">
+                    <Label class="text-base">Answer Key</Label>
+                  </div>
+                  <Card class="bg-muted/30">
+                    <CardContent class="p-4 space-y-4">
+                      <div v-for="(content, contentIndex) in part.question.content" :key="contentIndex">
+                        <!-- Multiple Choice Answers -->
+                        <div v-if="content.type === 'multiple-choice' && content.questions" class="space-y-4">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Multiple Choice Section' }}
+                          </div>
+                          <div v-for="(question, qIndex) in content.questions" :key="question.id" class="border rounded-lg p-3 space-y-2">
+                            <Label class="text-sm font-semibold">Question {{ getQuestionNumber(part, contentIndex, qIndex) }}:</Label>
+                            <div class="text-xs text-muted-foreground mb-2">{{ question.question }}</div>
+                            <div class="space-y-2">
+                              <div v-for="option in question.options" :key="option.id" class="flex items-center space-x-2">
+                                <Checkbox
+                                  :id="`lq${getQuestionNumber(part, contentIndex, qIndex)}-${option.id}`"
+                                  :checked="part.answers[getQuestionNumber(part, contentIndex, qIndex)] === option.value"
+                                  @update:checked="(checked) => {
+                                    if (checked) {
+                                      part.answers[getQuestionNumber(part, contentIndex, qIndex)] = option.value;
+                                    } else {
+                                      delete part.answers[getQuestionNumber(part, contentIndex, qIndex)];
+                                    }
+                                  }"
+                                />
+                                <Label :for="`lq${getQuestionNumber(part, contentIndex, qIndex)}-${option.id}`" class="cursor-pointer">
+                                  {{ option.value }} - {{ option.label }}
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Multi-Select Answers -->
+                        <div v-if="content.type === 'multi-select'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Multi-Select Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }}-{{ getQuestionNumber(part, contentIndex, (content.limit || 2) - 1) }}:</Label>
+                            <div class="text-xs text-muted-foreground mb-2">Select {{ content.limit || 2 }} correct answers</div>
+                            <div class="space-y-2">
+                              <div v-for="option in content.options" :key="option.id" class="flex items-center space-x-2">
+                                <Checkbox
+                                  :id="`lms-${contentIndex}-${option.id}`"
+                                  :checked="isMultiSelectAnswerSelected(part, contentIndex, option.value)"
+                                  @update:checked="() => toggleMultiSelectAnswer(part, contentIndex, option.value, content.limit || 2)"
+                                />
+                                <Label :for="`lms-${contentIndex}-${option.id}`" class="cursor-pointer">
+                                  {{ option.value }} - {{ option.label }}
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Selection (Dropdown) Answers -->
+                        <div v-if="content.type === 'selection'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Selection Section' }}
+                          </div>
+                          <div class="space-y-3">
+                            <div v-for="(blank, blankIndex) in countBlanks(content.content)" :key="blankIndex" class="space-y-2">
+                              <Label class="text-sm font-semibold">Question {{ getQuestionNumber(part, contentIndex, blankIndex) }}:</Label>
+                              <div class="space-y-2 pl-4">
+                                <div v-for="option in content.options" :key="option.id" class="flex items-center space-x-2">
+                                  <Checkbox
+                                    :id="`lsel-${contentIndex}-${blankIndex}-${option.id}`"
+                                    :checked="part.answers[getQuestionNumber(part, contentIndex, blankIndex)] === option.value"
+                                    @update:checked="(checked) => {
+                                      if (checked) {
+                                        part.answers[getQuestionNumber(part, contentIndex, blankIndex)] = option.value;
+                                      } else {
+                                        delete part.answers[getQuestionNumber(part, contentIndex, blankIndex)];
+                                      }
+                                    }"
+                                  />
+                                  <Label :for="`lsel-${contentIndex}-${blankIndex}-${option.id}`" class="cursor-pointer">
+                                    {{ option.value }}{{ option.label ? ' - ' + option.label : '' }}
+                                  </Label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Completion Type Answers -->
+                        <div v-if="content.type === 'completion'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Completion Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }} - {{ getQuestionNumber(part, contentIndex, countBlanks(content.content).length - 1) }}</Label>
+                            <Textarea
+                              :value="getCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length)"
+                              @input="(e) => setCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length, e.target.value)"
+                              placeholder="Enter answers separated by commas (e.g., answer1, answer2, answer3)"
+                              rows="3"
+                              class="font-mono text-sm"
+                            />
+                            <p class="text-xs text-muted-foreground">
+                              Enter {{ countBlanks(content.content).length }} answers separated by commas
+                            </p>
+                          </div>
+                        </div>
+
+                        <!-- Draggable Selection Answers -->
+                        <div v-if="content.type === 'draggable-selection'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Draggable Selection Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }} - {{ getQuestionNumber(part, contentIndex, countBlanks(content.content).length - 1) }}</Label>
+                            <Textarea
+                              :value="getCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length)"
+                              @input="(e) => setCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length, e.target.value)"
+                              placeholder="Enter answers separated by commas (e.g., answer1, answer2, answer3)"
+                              rows="3"
+                              class="font-mono text-sm"
+                            />
+                            <p class="text-xs text-muted-foreground">
+                              Enter {{ countBlanks(content.content).length }} answers separated by commas
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </TabsContent>
 
         <!-- Reading Section -->
@@ -240,21 +371,27 @@
             </Button>
           </div>
 
-          <div v-for="(part, index) in readingData.parts" :key="index" class="mb-4">
-            <Card>
-              <CardHeader>
-                <div class="flex justify-between items-center">
-                  <CardTitle>Part {{ index + 1 }}</CardTitle>
+          <Accordion type="multiple" class="w-full space-y-4">
+            <AccordionItem 
+              v-for="(part, index) in readingData.parts" 
+              :key="index" 
+              :value="`reading-part-${index}`"
+              class="border rounded-lg px-4"
+            >
+              <AccordionTrigger class="hover:no-underline">
+                <div class="flex items-center justify-between w-full pr-4">
+                  <span class="font-semibold">Part {{ index + 1 }} - {{ part.part }}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    @click="removeReadingPart(index)"
+                    @click.stop="removeReadingPart(index)"
+                    class="h-8 w-8"
                   >
                     <Trash2 class="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent class="space-y-4">
+              </AccordionTrigger>
+              <AccordionContent class="space-y-4 pt-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="space-y-2">
                     <Label>Part Type</Label>
@@ -282,7 +419,7 @@
 
                 <!-- Reading Passage -->
                 <div class="space-y-2">
-                  <Label>Reading Passage</Label>
+                  <Label>Reading Passage (HTML supported)</Label>
                   <Textarea
                     v-model="part.passage"
                     placeholder="Enter the reading passage text here..."
@@ -294,81 +431,207 @@
                 <div>
                   <div class="flex justify-between items-center mb-3">
                     <h5 class="font-medium">Question Content</h5>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      @click="addQuestionContent(part.question.content)"
-                    >
-                      <Plus class="mr-1 h-3 w-3" />
-                      Add Section
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <Button size="sm" variant="outline">
+                          <Plus class="mr-1 h-3 w-3" />
+                          Add Question Type
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'completion')">
+                          Completion
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multiple-choice')">
+                          Multiple Choice
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multi-select')">
+                          Multi Select
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'draggable-selection')">
+                          Draggable Selection
+                        </DropdownMenuItem>
+                        <DropdownMenuItem @click="addQuestionByType(part.question.content, 'selection')">
+                          Selection (True/False/Headings)
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   <div
                     v-for="(content, contentIndex) in part.question.content"
                     :key="contentIndex"
-                    class="mb-3"
+                    class="mb-4"
                   >
-                    <Card>
-                      <CardHeader>
-                        <div class="flex justify-between items-center">
-                          <CardTitle class="text-sm">Section {{ contentIndex + 1 }}</CardTitle>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            @click="part.question.content.splice(contentIndex, 1)"
-                          >
-                            <X class="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardHeader>
-                      <CardContent class="space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div class="space-y-2">
-                            <Label>Question Type</Label>
-                            <Select v-model="content.type">
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="completion">Completion</SelectItem>
-                                <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
-                                <SelectItem value="multi-select">Multi Select</SelectItem>
-                                <SelectItem value="selection">Selection (True/False)</SelectItem>
-                                <SelectItem value="matching">Matching</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div class="space-y-2">
-                            <Label>Section ID</Label>
-                            <Input
-                              v-model="content.id"
-                              placeholder="qc_001"
-                            />
-                          </div>
-                        </div>
-                        <div class="space-y-2">
-                          <Label>Title</Label>
-                          <Input
-                            v-model="content.title"
-                            placeholder="e.g., Multiple Choice Questions"
-                          />
-                        </div>
-                        <div class="space-y-2">
-                          <Label>Instructions</Label>
-                          <Textarea
-                            v-model="content.condition"
-                            placeholder="e.g., Choose the correct letter, A, B, C or D."
-                            rows="2"
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <CompletionQuestion
+                      v-if="content.type === 'completion'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <MultipleChoiceQuestion
+                      v-else-if="content.type === 'multiple-choice'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <MultiSelectQuestion
+                      v-else-if="content.type === 'multi-select'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <DraggableSelectionQuestion
+                      v-else-if="content.type === 'draggable-selection'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
+                    <SelectionQuestion
+                      v-else-if="content.type === 'selection'"
+                      v-model="part.question.content[contentIndex]"
+                      @remove="part.question.content.splice(contentIndex, 1)"
+                    />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+
+                <!-- Visual Answer Entry UI -->
+                <div v-if="part.question.content.length > 0" class="space-y-2 mt-6">
+                  <div class="flex justify-between items-center">
+                    <Label class="text-base">Answer Key</Label>
+                  </div>
+                  <Card class="bg-muted/30">
+                    <CardContent class="p-4 space-y-4">
+                      <div v-for="(content, contentIndex) in part.question.content" :key="contentIndex">
+                        <!-- Multiple Choice Answers -->
+                        <div v-if="content.type === 'multiple-choice' && content.questions" class="space-y-4">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Multiple Choice Section' }}
+                          </div>
+                          <div v-for="(question, qIndex) in content.questions" :key="question.id" class="border rounded-lg p-3 space-y-2">
+                            <Label class="text-sm font-semibold">Question {{ getQuestionNumber(part, contentIndex, qIndex) }}:</Label>
+                            <div class="text-xs text-muted-foreground mb-2">{{ question.question }}</div>
+                            <div class="space-y-2">
+                              <div v-for="option in question.options" :key="option.id" class="flex items-center space-x-2">
+                                <Checkbox
+                                  :id="`rq${getQuestionNumber(part, contentIndex, qIndex)}-${option.id}`"
+                                  :checked="part.answers[getQuestionNumber(part, contentIndex, qIndex)] === option.value"
+                                  @update:checked="(checked) => {
+                                    if (checked) {
+                                      part.answers[getQuestionNumber(part, contentIndex, qIndex)] = option.value;
+                                    } else {
+                                      delete part.answers[getQuestionNumber(part, contentIndex, qIndex)];
+                                    }
+                                  }"
+                                />
+                                <Label :for="`rq${getQuestionNumber(part, contentIndex, qIndex)}-${option.id}`" class="cursor-pointer">
+                                  {{ option.value }} - {{ option.label }}
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Multi-Select Answers -->
+                        <div v-if="content.type === 'multi-select'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Multi-Select Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }}-{{ getQuestionNumber(part, contentIndex, (content.limit || 2) - 1) }}:</Label>
+                            <div class="text-xs text-muted-foreground mb-2">Select {{ content.limit || 2 }} correct answers</div>
+                            <div class="space-y-2">
+                              <div v-for="option in content.options" :key="option.id" class="flex items-center space-x-2">
+                                <Checkbox
+                                  :id="`rms-${contentIndex}-${option.id}`"
+                                  :checked="isMultiSelectAnswerSelected(part, contentIndex, option.value)"
+                                  @update:checked="() => toggleMultiSelectAnswer(part, contentIndex, option.value, content.limit || 2)"
+                                />
+                                <Label :for="`rms-${contentIndex}-${option.id}`" class="cursor-pointer">
+                                  {{ option.value }} - {{ option.label }}
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Selection (Dropdown) Answers -->
+                        <div v-if="content.type === 'selection'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Selection Section' }}
+                          </div>
+                          <div class="space-y-3">
+                            <div v-for="(blank, blankIndex) in countBlanks(content.content)" :key="blankIndex" class="space-y-2">
+                              <Label class="text-sm font-semibold">Question {{ getQuestionNumber(part, contentIndex, blankIndex) }}:</Label>
+                              <div class="space-y-2 pl-4">
+                                <div v-for="option in content.options" :key="option.id" class="flex items-center space-x-2">
+                                  <Checkbox
+                                    :id="`rsel-${contentIndex}-${blankIndex}-${option.id}`"
+                                    :checked="part.answers[getQuestionNumber(part, contentIndex, blankIndex)] === option.value"
+                                    @update:checked="(checked) => {
+                                      if (checked) {
+                                        part.answers[getQuestionNumber(part, contentIndex, blankIndex)] = option.value;
+                                      } else {
+                                        delete part.answers[getQuestionNumber(part, contentIndex, blankIndex)];
+                                      }
+                                    }"
+                                  />
+                                  <Label :for="`rsel-${contentIndex}-${blankIndex}-${option.id}`" class="cursor-pointer">
+                                    {{ option.value }}{{ option.label ? ' - ' + option.label : '' }}
+                                  </Label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Completion Type Answers -->
+                        <div v-if="content.type === 'completion'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Completion Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }} - {{ getQuestionNumber(part, contentIndex, countBlanks(content.content).length - 1) }}</Label>
+                            <Textarea
+                              :value="getCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length)"
+                              @input="(e) => setCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length, e.target.value)"
+                              placeholder="Enter answers separated by commas (e.g., answer1, answer2, answer3)"
+                              rows="3"
+                              class="font-mono text-sm"
+                            />
+                            <p class="text-xs text-muted-foreground">
+                              Enter {{ countBlanks(content.content).length }} answers separated by commas
+                            </p>
+                          </div>
+                        </div>
+
+                        <!-- Draggable Selection Answers -->
+                        <div v-if="content.type === 'draggable-selection'" class="space-y-3 border rounded-lg p-3">
+                          <div class="font-medium text-sm flex items-center gap-2">
+                            <Badge variant="outline">{{ content.type }}</Badge>
+                            {{ content.title || 'Draggable Selection Section' }}
+                          </div>
+                          <div class="space-y-2">
+                            <Label class="text-sm">Questions {{ getQuestionNumber(part, contentIndex, 0) }} - {{ getQuestionNumber(part, contentIndex, countBlanks(content.content).length - 1) }}</Label>
+                            <Textarea
+                              :value="getCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length)"
+                              @input="(e) => setCommaSeparatedAnswers(part, contentIndex, countBlanks(content.content).length, e.target.value)"
+                              placeholder="Enter answers separated by commas (e.g., answer1, answer2, answer3)"
+                              rows="3"
+                              class="font-mono text-sm"
+                            />
+                            <p class="text-xs text-muted-foreground">
+                              Enter {{ countBlanks(content.content).length }} answers separated by commas
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </TabsContent>
 
         <!-- Preview Section -->
@@ -450,6 +713,29 @@ import {
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
+// Import question builder components
+import CompletionQuestion from '@/components/questions/CompletionQuestion.vue';
+import MultipleChoiceQuestion from '@/components/questions/MultipleChoiceQuestion.vue';
+import MultiSelectQuestion from '@/components/questions/MultiSelectQuestion.vue';
+import DraggableSelectionQuestion from '@/components/questions/DraggableSelectionQuestion.vue';
+import SelectionQuestion from '@/components/questions/SelectionQuestion.vue';
+
+// Import dropdown menu components
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+// Import accordion components
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+
 useHead({
   title: "IELTS Test Builder - Testify",
 });
@@ -478,7 +764,7 @@ const readingData = ref({
 
 // Add listening part
 const addListeningPart = () => {
-  listeningData.value.parts.push({
+  const newPart = {
     part: "PART_1",
     question: {
       content: [],
@@ -491,7 +777,9 @@ const addListeningPart = () => {
       file_size: null,
     },
     answers: {},
-  });
+    answersJson: "{}",
+  };
+  listeningData.value.parts.push(newPart);
 };
 
 // Remove listening part
@@ -509,7 +797,109 @@ const addReadingPart = () => {
     },
     passage: "",
     answers: {},
+    answersJson: "{}",
   });
+};
+
+// Helper function to count blanks (@@) in content
+const countBlanks = (content) => {
+  if (!content) return [];
+  const matches = content.match(/@@/g);
+  return matches ? matches : [];
+};
+
+// Helper function to get question number based on previous content
+const getQuestionNumber = (part, contentIndex, itemIndex) => {
+  let questionNumber = 1;
+  
+  // Count questions from previous content blocks
+  for (let i = 0; i < contentIndex; i++) {
+    const content = part.question.content[i];
+    if (content.type === 'completion' || content.type === 'selection' || content.type === 'draggable-selection') {
+      questionNumber += countBlanks(content.content).length;
+    } else if (content.type === 'multiple-choice') {
+      questionNumber += content.questions?.length || 0;
+    } else if (content.type === 'multi-select') {
+      questionNumber += content.limit || 2;
+    }
+  }
+  
+  return String(questionNumber + itemIndex);
+};
+
+// Helper function to check if multi-select answer is selected
+const isMultiSelectAnswerSelected = (part, contentIndex, value) => {
+  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
+  const content = part.question.content[contentIndex];
+  const limit = content.limit || 2;
+  
+  for (let i = 0; i < limit; i++) {
+    if (part.answers[String(startQuestion + i)] === value) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// Helper function to toggle multi-select answer
+const toggleMultiSelectAnswer = (part, contentIndex, value, limit) => {
+  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
+  
+  // Check if value is already selected
+  let selectedIndex = -1;
+  for (let i = 0; i < limit; i++) {
+    if (part.answers[String(startQuestion + i)] === value) {
+      selectedIndex = i;
+      break;
+    }
+  }
+  
+  if (selectedIndex !== -1) {
+    // Remove the value
+    delete part.answers[String(startQuestion + selectedIndex)];
+    // Shift remaining values
+    for (let i = selectedIndex; i < limit - 1; i++) {
+      const nextValue = part.answers[String(startQuestion + i + 1)];
+      if (nextValue) {
+        part.answers[String(startQuestion + i)] = nextValue;
+        delete part.answers[String(startQuestion + i + 1)];
+      }
+    }
+  } else {
+    // Add the value to the first empty slot
+    for (let i = 0; i < limit; i++) {
+      if (!part.answers[String(startQuestion + i)]) {
+        part.answers[String(startQuestion + i)] = value;
+        break;
+      }
+    }
+  }
+};
+
+// Helper function to get comma-separated answers
+const getCommaSeparatedAnswers = (part, contentIndex, count) => {
+  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
+  const answers = [];
+  for (let i = 0; i < count; i++) {
+    const answer = part.answers[String(startQuestion + i)];
+    answers.push(answer || '');
+  }
+  return answers.join(', ');
+};
+
+// Helper function to set comma-separated answers
+const setCommaSeparatedAnswers = (part, contentIndex, count, value) => {
+  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
+  const answers = value.split(',').map(a => a.trim());
+  
+  for (let i = 0; i < count; i++) {
+    const answer = answers[i];
+    if (answer) {
+      part.answers[String(startQuestion + i)] = answer;
+    } else {
+      delete part.answers[String(startQuestion + i)];
+    }
+  }
 };
 
 // Remove reading part
@@ -517,20 +907,60 @@ const removeReadingPart = (index) => {
   readingData.value.parts.splice(index, 1);
 };
 
-// Add question content
-const addQuestionContent = (contentArray) => {
-  contentArray.push({
+// Add question by type
+const addQuestionByType = (contentArray, type) => {
+  const baseQuestion = {
     id: `qc_${Date.now()}`,
-    type: "multiple-choice",
+    type: type,
     title: "",
     condition: "",
-    content: "",
-    questions: [],
-    options: [],
-    limit: null,
-    showOptions: true,
-    optionsTitle: "",
-  });
+  };
+
+  switch (type) {
+    case 'completion':
+      contentArray.push({
+        ...baseQuestion,
+        content: "",
+      });
+      break;
+    case 'multiple-choice':
+      contentArray.push({
+        ...baseQuestion,
+        questions: [],
+      });
+      break;
+    case 'multi-select':
+      contentArray.push({
+        ...baseQuestion,
+        options: [],
+        limit: 2,
+      });
+      break;
+    case 'draggable-selection':
+      contentArray.push({
+        ...baseQuestion,
+        content: "",
+        options: [],
+        optionsTitle: "",
+      });
+      break;
+    case 'selection':
+      contentArray.push({
+        ...baseQuestion,
+        content: "",
+        options: [],
+        showOptions: true,
+        optionsTitle: "OPTIONS",
+      });
+      break;
+    default:
+      contentArray.push(baseQuestion);
+  }
+};
+
+// Add question content (deprecated - kept for compatibility)
+const addQuestionContent = (contentArray) => {
+  addQuestionByType(contentArray, 'completion');
 };
 
 // Calculate total questions
