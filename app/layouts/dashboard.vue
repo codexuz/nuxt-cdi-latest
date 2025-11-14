@@ -9,8 +9,8 @@
                 <GraduationCap class="size-4" />
               </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">Testify</span>
-                <span class="truncate text-xs">Learning Center CRM</span>
+                <span class="truncate font-semibold">Mockmee</span>
+                <span class="truncate text-xs">Learning Management System</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -214,7 +214,7 @@
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 class="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
+                side="right"
                 align="end"
                 :side-offset="4"
               >
@@ -233,7 +233,7 @@
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem @click="navigateTo('/profile')">
+                <DropdownMenuItem @click="navigateTo('/subscriptions')">
                   <Sparkles />
                   Upgrade to Pro
                 </DropdownMenuItem>
