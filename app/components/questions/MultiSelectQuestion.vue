@@ -1,13 +1,20 @@
 <template>
-  <Card>
-    <CardHeader>
-      <div class="flex justify-between items-center">
-        <CardTitle class="text-sm">Multi-Select Question</CardTitle>
-        <Button variant="ghost" size="icon" @click="$emit('remove')">
-          <X class="h-4 w-4" />
-        </Button>
-      </div>
-    </CardHeader>
+  <Collapsible v-model:open="isOpen">
+    <Card>
+      <CollapsibleTrigger as-child>
+        <CardHeader class="cursor-pointer hover:bg-muted/50 transition-colors">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <ChevronRight class="h-4 w-4 transition-transform" :class="isOpen ? 'rotate-90' : ''" />
+              <CardTitle class="text-sm">Multi-Select Question</CardTitle>
+            </div>
+            <Button variant="ghost" size="icon" @click.stop="confirmDelete" class="hover:bg-destructive/10">
+              <Trash2 class="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        </CardHeader>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
     <CardContent class="space-y-4">
       <div class="space-y-2">
         <Label>Section ID</Label>
@@ -72,17 +79,22 @@
         </div>
       </div>
     </CardContent>
-  </Card>
+      </CollapsibleContent>
+    </Card>
+  </Collapsible>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Plus, X, Trash2 } from 'lucide-vue-next';
+import { Plus, X, Trash2, ChevronRight } from 'lucide-vue-next';
+
+const isOpen = ref(true);
 
 const props = defineProps({
   modelValue: {
@@ -92,6 +104,12 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'remove']);
+
+const confirmDelete = () => {
+  if (confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+    emit('remove');
+  }
+};
 
 const localData = computed({
   get: () => props.modelValue,

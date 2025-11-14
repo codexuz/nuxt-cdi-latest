@@ -1,14 +1,21 @@
 <template>
   <Card>
-    <CardHeader>
-      <div class="flex justify-between items-center">
-        <CardTitle class="text-sm">Draggable Selection Question</CardTitle>
-        <Button variant="ghost" size="icon" @click="$emit('remove')">
-          <X class="h-4 w-4" />
-        </Button>
-      </div>
-    </CardHeader>
-    <CardContent class="space-y-4">
+    <Collapsible v-model:open="isOpen">
+      <CollapsibleTrigger class="w-full">
+        <CardHeader class="cursor-pointer hover:bg-muted/50 transition-colors">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <ChevronRight class="h-4 w-4 transition-transform" :class="{ 'rotate-90': isOpen }" />
+              <CardTitle class="text-sm">Draggable Selection Question</CardTitle>
+            </div>
+            <Button variant="ghost" size="icon" @click.stop="confirmDelete" class="hover:bg-destructive/10 hover:text-destructive">
+              <Trash2 class="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <CardContent class="space-y-4 pt-0">
       <div class="space-y-2">
         <Label>Section ID</Label>
         <Input v-model="localData.id" placeholder="qc_001" />
@@ -61,14 +68,11 @@
 
       <div class="space-y-2">
         <Label>
-          Question Content (HTML supported, use @@ for drop zones)
+          Question Content (use @@ for drop zones)
         </Label>
-        <Textarea
-          v-model="localData.content"
-          placeholder="e.g., <p>Choose a reforestation area with plenty of @@</p><p>Take a lot of suitable @@</p>"
-          rows="8"
-          class="font-mono text-sm"
-        />
+        <QuillEditor style="min-height: 300px;"           
+         placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
+         contentType="html"  theme="snow" v-model:content="localData.content" />
         <p class="text-xs text-muted-foreground">
           Tip: Use @@ where students should drag and drop answers. Each @@ becomes a drop zone.
         </p>
@@ -76,8 +80,20 @@
 
       <!-- Preview -->
       <div class="space-y-2">
-        <Label>Preview</Label>
-        <Card class="bg-muted/50">
+        <div class="flex items-center justify-between">
+          <Label>Preview</Label>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            @click="showPreview = !showPreview"
+            class="text-xs border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-950"
+          >
+            <Eye v-if="!showPreview" class="h-3 w-3 mr-1" />
+            <EyeOff v-else class="h-3 w-3 mr-1" />
+            {{ showPreview ? 'Hide' : 'Show' }}
+          </Button>
+        </div>
+        <Card v-if="showPreview" class="bg-muted/50">
           <CardContent class="p-4">
             <div v-if="localData.title" class="font-semibold mb-2">{{ localData.title }}</div>
             <div v-if="localData.condition" class="text-sm text-muted-foreground mb-3 whitespace-pre-line">
@@ -95,19 +111,22 @@
           </CardContent>
         </Card>
       </div>
-    </CardContent>
+        </CardContent>
+      </CollapsibleContent>
+    </Collapsible>
   </Card>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X, Trash2 } from 'lucide-vue-next';
+import { Plus, Trash2, Eye, EyeOff, ChevronRight } from 'lucide-vue-next';
 
 const props = defineProps({
   modelValue: {
@@ -117,6 +136,15 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'remove']);
+
+const showPreview = ref(false);
+const isOpen = ref(true);
+
+const confirmDelete = () => {
+  if (confirm('Are you sure you want to delete this question? This action cannot be undone.')) {
+    emit('remove');
+  }
+};
 
 const localData = computed({
   get: () => props.modelValue,

@@ -18,6 +18,7 @@
     "@unovis/ts": "^1.6.0",
     "@unovis/vue": "^1.6.0",
     "@vee-validate/zod": "^4.15.1",
+    "@vueup/vue-quill": "^1.2.0",
     "@vueuse/core": "^13.8.0",
     "@vueuse/nuxt": "^13.9.0",
     "class-variance-authority": "^0.7.1",
