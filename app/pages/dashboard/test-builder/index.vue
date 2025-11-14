@@ -137,14 +137,6 @@
                       />
                     </div>
                     <div class="space-y-2">
-                      <Label>Duration (seconds)</Label>
-                      <Input
-                        type="number"
-                        v-model.number="part.audio.duration"
-                        placeholder="180"
-                      />
-                    </div>
-                    <div class="space-y-2">
                       <Label>File Name</Label>
                       <Input
                         v-model="part.audio.file_name"
@@ -773,11 +765,10 @@ const addListeningPart = () => {
     audio: {
       url: "",
       file_name: "",
-      duration: null,
-      file_size: null,
+      duration: 180,
+      file_size: "1mb",
     },
     answers: {},
-    answersJson: "{}",
   };
   listeningData.value.parts.push(newPart);
 };
@@ -797,7 +788,6 @@ const addReadingPart = () => {
     },
     passage: "",
     answers: {},
-    answersJson: "{}",
   });
 };
 
