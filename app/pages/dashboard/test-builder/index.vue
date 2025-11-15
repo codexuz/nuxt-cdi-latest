@@ -20,7 +20,8 @@
         <DialogHeader>
           <DialogTitle>Create New Test</DialogTitle>
           <DialogDescription>
-            Enter basic test information. You can add listening and reading sections after creation.
+            Enter basic test information. You can add listening and reading
+            sections after creation.
           </DialogDescription>
         </DialogHeader>
         <div class="space-y-4">
@@ -33,50 +34,64 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="for_cdi">For CDI</Label>
-            <Select v-model="newTest.for_cdi">
-              <SelectTrigger id="for_cdi">
-                <SelectValue placeholder="Select option" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Yes</SelectItem>
-                <SelectItem value="false">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div class="space-y-2">
             <Label for="description">Description</Label>
             <Textarea
               id="description"
               v-model="newTest.description"
-              placeholder="Describe the test content and objectives..."
+              placeholder="This is a comprehensive IELTS Academic test designed for intermediate to advanced students..."
               rows="3"
             />
           </div>
+          <div class="space-y-2">
+            <Label for="test_type">Test Type</Label>
+            <Select v-model="newTest.test_type">
+              <SelectTrigger id="test_type">
+                <SelectValue placeholder="Select test type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="practice">Practice</SelectItem>
+                <SelectItem value="mock">Mock</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" @click="showCreateDialog = false">Cancel</Button>
-          <Button @click="createTest" :disabled="!newTest.title">Create Test</Button>
+          <Button variant="outline" @click="showCreateDialog = false"
+            >Cancel</Button
+          >
+          <Button @click="createTest" :disabled="!newTest.title"
+            >Create Test</Button
+          >
         </DialogFooter>
       </DialogContent>
     </Dialog>
 
     <!-- Tests List -->
     <div class="grid grid-cols-1 gap-4">
-      <Card v-for="test in tests" :key="test.id" class="hover:shadow-lg transition-shadow">
+      <Card
+        v-for="test in tests"
+        :key="test.id"
+        class="hover:shadow-lg transition-shadow"
+      >
         <CardHeader>
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <CardTitle>{{ test.title }}</CardTitle>
-              <CardDescription class="mt-2">{{ test.description }}</CardDescription>
+              <CardDescription class="mt-2">{{
+                test.description
+              }}</CardDescription>
             </div>
-            <Badge :variant="test.for_cdi ? 'default' : 'outline'">
-              {{ test.for_cdi ? 'CDI' : 'Public' }}
+            <Badge
+              :variant="test.test_type === 'mock' ? 'default' : 'secondary'"
+            >
+              {{ test.test_type === "practice" ? "Practice" : "Mock" }}
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <div class="flex items-center gap-6 text-sm text-muted-foreground mb-4">
+          <div
+            class="flex items-center gap-6 text-sm text-muted-foreground mb-4"
+          >
             <div class="flex items-center gap-2">
               <Headphones class="h-4 w-4" />
               <span>{{ test.listening_count || 0 }} Listening Parts</span>
@@ -95,11 +110,25 @@
               <Edit class="mr-2 h-3 w-3" />
               Edit Test Info
             </Button>
-            <Button size="sm" variant="outline" @click="navigateTo(`/dashboard/test-builder/listening?test_id=${test.id}`)">
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(
+                  `/dashboard/test-builder/listening?test_id=${test.id}`
+                )
+              "
+            >
               <Headphones class="mr-2 h-3 w-3" />
               Add Listening
             </Button>
-            <Button size="sm" variant="outline" @click="navigateTo(`/dashboard/test-builder/reading?test_id=${test.id}`)">
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(`/dashboard/test-builder/reading?test_id=${test.id}`)
+              "
+            >
               <BookOpen class="mr-2 h-3 w-3" />
               Add Reading
             </Button>
@@ -142,29 +171,31 @@
             />
           </div>
           <div class="space-y-2">
-            <Label for="edit-for_cdi">For CDI</Label>
-            <Select v-model="editingTest.for_cdi">
-              <SelectTrigger id="edit-for_cdi">
-                <SelectValue placeholder="Select option" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Yes</SelectItem>
-                <SelectItem value="false">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div class="space-y-2">
             <Label for="edit-description">Description</Label>
             <Textarea
               id="edit-description"
               v-model="editingTest.description"
-              placeholder="Describe the test content and objectives..."
+              placeholder="This is a comprehensive IELTS Academic test designed for intermediate to advanced students..."
               rows="3"
             />
           </div>
+          <div class="space-y-2">
+            <Label for="edit-test_type">Test Type</Label>
+            <Select v-model="editingTest.test_type">
+              <SelectTrigger id="edit-test_type">
+                <SelectValue placeholder="Select test type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="practice">Practice</SelectItem>
+                <SelectItem value="mock">Mock</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" @click="showEditDialog = false">Cancel</Button>
+          <Button variant="outline" @click="showEditDialog = false"
+            >Cancel</Button
+          >
           <Button @click="updateTest">Save Changes</Button>
         </DialogFooter>
       </DialogContent>
@@ -194,17 +225,17 @@ const showEditDialog = ref(false);
 const newTest = ref({
   title: "",
   description: "",
-  for_cdi: "false",
+  test_type: "practice",
 });
 
 const editingTest = ref({
   id: "",
   title: "",
   description: "",
-  for_cdi: "false",
+  test_type: "practice",
 });
 
-const testsStorageKey = 'ielts-tests-list';
+const testsStorageKey = "ielts-tests-list";
 
 // Load tests from localStorage or use mock data
 const loadTests = () => {
@@ -223,17 +254,19 @@ const loadTests = () => {
     {
       id: "1",
       title: "IELTS Academic Test - Practice Set 1",
-      description: "A comprehensive IELTS Academic test for intermediate to advanced students",
-      for_cdi: true,
+      description:
+        "This is a comprehensive IELTS Academic test designed for intermediate to advanced students preparing for their IELTS examination.",
+      test_type: "practice",
       listening_count: 4,
       reading_count: 3,
       total_questions: 40,
     },
     {
       id: "2",
-      title: "IELTS General Training Test",
-      description: "Practice test for General Training module",
-      for_cdi: false,
+      title: "IELTS General Training Mock Test",
+      description:
+        "Full-length mock test for General Training module to simulate exam conditions.",
+      test_type: "mock",
       listening_count: 4,
       reading_count: 3,
       total_questions: 40,
@@ -244,22 +277,25 @@ const loadTests = () => {
 const tests = ref(loadTests());
 
 // Auto-save tests to localStorage whenever they change
-watch(tests, (newTests) => {
-  if (process.client) {
-    localStorage.setItem(testsStorageKey, JSON.stringify(newTests));
-  }
-}, { deep: true });
+watch(
+  tests,
+  (newTests) => {
+    if (process.client) {
+      localStorage.setItem(testsStorageKey, JSON.stringify(newTests));
+    }
+  },
+  { deep: true }
+);
 
 const createTest = async () => {
   try {
     const payload = {
       ...newTest.value,
-      for_cdi: newTest.value.for_cdi === "true",
     };
-    
+
     // TODO: Replace with actual API call
     console.log("Creating test:", payload);
-    
+
     // Mock response
     const mockTest = {
       id: `test-${Date.now()}`,
@@ -268,18 +304,18 @@ const createTest = async () => {
       reading_count: 0,
       total_questions: 0,
     };
-    
+
     tests.value.unshift(mockTest);
     // Note: localStorage auto-save happens via watcher
-    
+
     toast.success("Test created successfully!");
     showCreateDialog.value = false;
-    
+
     // Reset form
     newTest.value = {
       title: "",
       description: "",
-      for_cdi: "false",
+      test_type: "practice",
     };
   } catch (error) {
     console.error("Failed to create test:", error);
@@ -292,7 +328,7 @@ const editTest = (test) => {
     id: test.id,
     title: test.title,
     description: test.description,
-    for_cdi: test.for_cdi ? "true" : "false",
+    test_type: test.test_type || "practice",
   };
   showEditDialog.value = true;
 };
@@ -301,14 +337,13 @@ const updateTest = async () => {
   try {
     const payload = {
       ...editingTest.value,
-      for_cdi: editingTest.value.for_cdi === "true",
     };
-    
+
     // TODO: Replace with actual API call
     console.log("Updating test:", payload);
-    
+
     // Update in list
-    const index = tests.value.findIndex(t => t.id === editingTest.value.id);
+    const index = tests.value.findIndex((t) => t.id === editingTest.value.id);
     if (index !== -1) {
       tests.value[index] = {
         ...tests.value[index],
@@ -316,7 +351,7 @@ const updateTest = async () => {
       };
     }
     // Note: localStorage auto-save happens via watcher
-    
+
     toast.success("Test updated successfully!");
     showEditDialog.value = false;
   } catch (error) {
@@ -326,17 +361,21 @@ const updateTest = async () => {
 };
 
 const deleteTest = async (testId) => {
-  if (!confirm("Are you sure you want to delete this test? This action cannot be undone.")) {
+  if (
+    !confirm(
+      "Are you sure you want to delete this test? This action cannot be undone."
+    )
+  ) {
     return;
   }
-  
+
   try {
     // TODO: Replace with actual API call
     console.log("Deleting test:", testId);
-    
-    tests.value = tests.value.filter(t => t.id !== testId);
+
+    tests.value = tests.value.filter((t) => t.id !== testId);
     // Note: localStorage auto-save happens via watcher
-    
+
     toast.success("Test deleted successfully!");
   } catch (error) {
     console.error("Failed to delete test:", error);
