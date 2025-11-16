@@ -384,7 +384,6 @@ const breadcrumbs = computed(() => {
 const handleLogout = async () => {
   try {
     await logout();
-    await navigateTo('/login');
   } catch (error) {
     console.error('Logout error:', error);
   }
