@@ -102,7 +102,7 @@ import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
 useHead({
-  title: "Login - Testify",
+  title: "Login - Mockmee LM",
 });
 
 const { login: loginUser } = useAuth();
@@ -118,23 +118,34 @@ const loginForm = ref({
 async function login() {
   try {
     isLoggingIn.value = true;
-    const res = await loginUser({
-      email: loginForm.value.email,
-      password: loginForm.value.password,
+    
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+    
+    // Send login credentials
+    await $fetch(`${baseURL}/auth/login`, {
+      method: "POST",
+      body: {
+        email: loginForm.value.email,
+        password: loginForm.value.password,
+      },
     });
-    console.log(res);
-    toast.success("Login successful!");
-
-    // Check user setup status and redirect accordingly
-    await checkUserSetupAndRedirect();
+    
+    toast.success("OTP sent to your email!");
+    
+    // Redirect to OTP verification page
+    await navigateTo({
+      path: "/auth/verify-login-otp",
+      query: { email: loginForm.value.email }
+    });
   } catch (error) {
     console.error("Login error:", error);
     
     // Check if it's an email verification error
-    if (error.statusCode === 401 && error.statusMessage?.includes("Email not verified")) {
+    if (error.statusCode === 401 && error.data?.message?.includes("Email not verified")) {
       toast.error("Email not verified. Please verify your email first.");
     } else {
-      toast.error(error.statusMessage || "Login unsuccessful! Please check your credentials.");
+      toast.error(error.data?.message || "Login unsuccessful! Please check your credentials.");
     }
   } finally {
     isLoggingIn.value = false;
