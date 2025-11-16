@@ -5,6 +5,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
   
   // If token exists, redirect to home (user is already authenticated)
   if (tokenCookie.value) {
-    return navigateTo('/')
+    return navigateTo('/dashboard')
   }
 })
