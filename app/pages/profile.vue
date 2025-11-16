@@ -284,7 +284,7 @@ const updateProfile = async () => {
 
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
-    const token = useCookie("access_token");
+    const authStore = useAuthStore();
     const userId = profileData.value?.id;
 
     if (!userId) {
@@ -295,7 +295,7 @@ const updateProfile = async () => {
     const response = await $fetch(`${baseURL}/users/${userId}`, {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${authStore.token}`,
         "Content-Type": "application/json",
       },
       body: {
@@ -335,7 +335,7 @@ const updatePassword = async () => {
 
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
-    const token = useCookie("access_token");
+    const authStore = useAuthStore();
     const userId = profileData.value?.id;
 
     if (!userId) {
@@ -346,7 +346,7 @@ const updatePassword = async () => {
     await $fetch(`${baseURL}/users/change-password`, {
       method: "PATCH",
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${authStore.token}`,
         "Content-Type": "application/json",
       },
       body: {

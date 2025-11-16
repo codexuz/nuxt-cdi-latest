@@ -1,5 +1,4 @@
 // composables/useCenters.ts
-import { useCookie } from "#app";
 import { createError } from "h3";
 
 export interface Center {
@@ -23,11 +22,9 @@ export async function getMyCenters(): Promise<Center[]> {
   const nuxtApp = useNuxtApp();
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
-  const tokenCookie = useCookie<string | null>("access_token", {
-    default: () => null,
-  });
+  const authStore = useAuthStore();
 
-  if (!tokenCookie.value) {
+  if (!authStore.token) {
     throw createError({
       statusCode: 401,
       statusMessage: "Not authenticated",
@@ -38,7 +35,7 @@ export async function getMyCenters(): Promise<Center[]> {
     const data = await $fetch<Center[]>(`${API_BASE_URL}/centers/my-centers`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${tokenCookie.value}`,
+        Authorization: `Bearer ${authStore.token}`,
       },
     });
 

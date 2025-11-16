@@ -92,8 +92,8 @@ async function verifyOtp() {
     });
 
     // Store access token
-    const tokenCookie = useCookie("access_token");
-    tokenCookie.value = response.access_token;
+    const authStore = useAuthStore();
+    authStore.setToken(response.access_token);
 
     // Update auth state
     const { getProfile } = useAuth();

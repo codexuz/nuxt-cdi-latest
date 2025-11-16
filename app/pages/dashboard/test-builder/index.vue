@@ -250,7 +250,7 @@ const fetchTests = async () => {
   console.log("Fetching tests...");
   try {
     isLoading.value = true;
-    const token = useCookie("access_token");
+    const authStore = useAuthStore();
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
@@ -267,7 +267,7 @@ const fetchTests = async () => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       }
     );
@@ -288,7 +288,7 @@ onMounted(() => {
 
 const createTest = async () => {
   try {
-    const token = useCookie("access_token");
+    const authStore = useAuthStore();
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
@@ -311,7 +311,7 @@ const createTest = async () => {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Authorization: `Bearer ${authStore.token}`,
           "Content-Type": "application/json",
         },
         body: payload,

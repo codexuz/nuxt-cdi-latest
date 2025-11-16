@@ -1,26 +1,32 @@
 import { useAuth } from "~/composables/useAuth";
+import { useAuthStore } from "~/stores/auth";
 
 // middleware/center.ts
 export default defineNuxtRouteMiddleware(async (to, from) => {
+  // Skip on server-side as localStorage is not available
+  if (process.server) {
+    return;
+  }
+  
   // Skip this middleware if already on the create center page
   if (to.path === "/auth/companies/create") {
     return;
   }
 
-  // Check for authentication token
-  const tokenCookie = useCookie<string | null>("access_token", {
-    default: () => null,
-  });
-
-  if (!tokenCookie.value) {
+  // Check for authentication token from store
+  const authStore = useAuthStore();
+  
+  // Initialize auth from localStorage if not already done
+  if (!authStore.token) {
+    authStore.initializeAuth();
+  }
+  
+  if (!authStore.token) {
     return navigateTo("/login");
   }
 
-  // Get user state
-  const userState = useState<any>("auth.user");
-
   // If user data is not loaded yet, try to fetch it
-  if (!userState.value) {
+  if (!authStore.user) {
     try {
       const { getProfile } = useAuth();
       await getProfile();
@@ -38,7 +44,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const centers = await $fetch<any[]>(`${API_BASE_URL}/centers/my-centers`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${tokenCookie.value}`,
+        Authorization: `Bearer ${authStore.token}`,
       },
     });
 

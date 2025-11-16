@@ -1,6 +1,6 @@
 // composables/useAuth.ts
-import { useCookie } from "#app";
 import { createError } from "h3";
+import { useAuthStore } from "~/stores/auth";
 
 interface LoginResponse {
   access_token: string;
@@ -32,47 +32,11 @@ interface User {
   balance?: number;
 }
 
-// Global authentication state
-export const useAuthState = () => {
-  // SSR-safe global authentication state
-  const isAuthenticated = useState<boolean>(
-    "auth.isAuthenticated",
-    () => false
-  );
-  const user = useState<User | null>("auth.user", () => null);
-
-  return {
-    isAuthenticated: readonly(isAuthenticated),
-    user: readonly(user),
-  };
-};
-
-// Internal state setters (not exposed)
-const setAuthState = () => {
-  const isAuthenticated = useState<boolean>("auth.isAuthenticated");
-  const user = useState<User | null>("auth.user");
-
-  return {
-    setAuthenticated: (value: boolean) => {
-      isAuthenticated.value = value;
-    },
-    setUser: (userData: User | null) => {
-      user.value = userData;
-    },
-  };
-};
-
-// Initialize authentication state from cookie
+// Initialize authentication state from localStorage
 export const initializeAuth = () => {
-  // Only run on client side to avoid SSR issues
   if (process.client) {
-    const tokenCookie = useCookie<string | null>("access_token", {
-      default: () => null,
-    });
-    const { setAuthenticated } = setAuthState();
-
-    // Set initial authentication state based on token presence
-    setAuthenticated(!!tokenCookie.value);
+    const authStore = useAuthStore();
+    authStore.initializeAuth();
   }
 };
 
@@ -99,6 +63,8 @@ export async function registerUser(registerData: RegisterData) {
 export async function verifyOtp(otpData: { email: string; otp: string }) {
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
+  const authStore = useAuthStore();
+  
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/verify-otp`,
     {
@@ -117,18 +83,11 @@ export async function verifyOtp(otpData: { email: string; otp: string }) {
   // Auto-login after successful OTP verification
   const accessToken = data.value?.access_token;
   if (accessToken) {
-    const tokenCookie = useCookie<string | null>("access_token", {
-      default: () => null,
-    });
-    tokenCookie.value = accessToken;
-
-    // Update global authentication state
-    const { setAuthenticated, setUser } = setAuthState();
-    setAuthenticated(true);
+    authStore.setToken(accessToken);
 
     // Set user data if available
     if (data.value?.user) {
-      setUser(data.value.user);
+      authStore.setUser(data.value.user);
     }
   }
 
@@ -156,6 +115,8 @@ export async function resendOtp(email: string) {
 export async function loginUser(loginData: LoginData) {
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
+  const authStore = useAuthStore();
+  
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/login`,
     {
@@ -179,18 +140,11 @@ export async function loginUser(loginData: LoginData) {
 
   const accessToken = data.value?.access_token;
   if (accessToken) {
-    const tokenCookie = useCookie<string | null>("access_token", {
-      default: () => null,
-    });
-    tokenCookie.value = accessToken;
-
-    // Update global authentication state
-    const { setAuthenticated, setUser } = setAuthState();
-    setAuthenticated(true);
+    authStore.setToken(accessToken);
 
     // Set user data if available
     if (data.value?.user) {
-      setUser(data.value.user);
+      authStore.setUser(data.value.user);
     }
   }
 
@@ -198,19 +152,18 @@ export async function loginUser(loginData: LoginData) {
 }
 
 export async function logout() {
-  const tokenCookie = useCookie<string | null>("access_token", {
-    default: () => null,
-  });
+  const authStore = useAuthStore();
+  const token = authStore.token;
 
   // Call backend logout endpoint if token exists
-  if (tokenCookie.value) {
+  if (token) {
     try {
       const config = useRuntimeConfig();
       const API_BASE_URL = config.public.baseURL as string;
       await $fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${tokenCookie.value}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     } catch (error) {
@@ -219,13 +172,8 @@ export async function logout() {
     }
   }
 
-  // Clear the token cookie
-  tokenCookie.value = null;
-
-  // Clear global authentication state
-  const { setAuthenticated, setUser } = setAuthState();
-  setAuthenticated(false);
-  setUser(null);
+  // Clear auth state
+  authStore.clearAuth();
 
   // Navigate to login page
   await navigateTo("/login");
@@ -236,11 +184,10 @@ export const userData = () => {
 };
 
 export async function getProfile() {
-  const token = useCookie<string | null>("access_token", {
-    default: () => null,
-  });
+  const authStore = useAuthStore();
+  const token = authStore.token;
 
-  if (!token.value) {
+  if (!token) {
     return await logout();
   }
 
@@ -250,14 +197,12 @@ export async function getProfile() {
     const data = await $fetch<User>(`${API_BASE_URL}/users/profile`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    // Update global user state
-    const { setAuthenticated, setUser } = setAuthState();
-    setAuthenticated(true);
-    setUser(data);
+    // Update user state
+    authStore.setUser(data);
 
     return data;
   } catch (error) {
@@ -269,11 +214,12 @@ export async function getProfile() {
 
 // Convenience function to check if user is authenticated
 export const useAuth = () => {
-  const { isAuthenticated, user } = useAuthState();
+  const authStore = useAuthStore();
 
   return {
-    isAuthenticated,
-    user,
+    isAuthenticated: computed(() => authStore.isAuthenticated),
+    user: computed(() => authStore.user),
+    token: computed(() => authStore.token),
     register: registerUser,
     login: loginUser,
     logout,
