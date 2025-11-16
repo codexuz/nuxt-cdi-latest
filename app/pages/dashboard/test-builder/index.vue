@@ -247,6 +247,7 @@ const isLoading = ref(false);
 
 // Fetch tests from API
 const fetchTests = async () => {
+  console.log("Fetching tests...");
   try {
     isLoading.value = true;
     const token = useCookie("access_token");

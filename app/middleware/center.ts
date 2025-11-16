@@ -1,3 +1,5 @@
+import { useAuth } from "~/composables/useAuth";
+
 // middleware/center.ts
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Skip this middleware if already on the create center page
@@ -30,8 +32,18 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Check if user has any centers
   try {
-    const { getActiveCenter } = useCenters();
-    const center = await getActiveCenter();
+    const config = useRuntimeConfig();
+    const API_BASE_URL = config.public.baseURL as string;
+
+    const centers = await $fetch<any[]>(`${API_BASE_URL}/centers/my-centers`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokenCookie.value}`,
+      },
+    });
+
+    // Find active center or use first one
+    const center = centers.find((c) => c.is_active) || centers[0] || null;
 
     // If no center found, redirect to create page
     if (!center) {
