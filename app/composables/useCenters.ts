@@ -20,6 +20,7 @@ export interface Center {
  * Fetch centers owned by the authenticated user
  */
 export async function getMyCenters(): Promise<Center[]> {
+  const nuxtApp = useNuxtApp();
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
   const tokenCookie = useCookie<string | null>("access_token", {
