@@ -1,5 +1,7 @@
 <template>
   <div class="space-y-6">
+    <Toaster position="top-center" richColors theme="system" />
+    
     <!-- Header -->
     <div>
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
@@ -39,12 +41,23 @@
             </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
+            <!-- Loading State -->
+            <div v-if="isLoadingCenter" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div v-for="i in 4" :key="i" class="space-y-2">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 animate-pulse"></div>
+                  <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div v-else class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <Label for="center-name">Center Name</Label>
                 <Input 
                   id="center-name" 
-                  v-model="settings.general.centerName"
+                  v-model="settings.general.name"
                   placeholder="Your Learning Center Name"
                 />
               </div>
@@ -54,7 +67,7 @@
                 <Input 
                   id="center-email" 
                   type="email"
-                  v-model="settings.general.contactEmail"
+                  v-model="settings.general.email"
                   placeholder="contact@example.com"
                 />
               </div>
@@ -68,21 +81,6 @@
                 />
               </div>
               
-              <div class="space-y-2">
-                <Label for="timezone">Timezone</Label>
-                <Select v-model="settings.general.timezone">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select timezone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
             
             <div class="space-y-2">
@@ -95,152 +93,10 @@
               />
             </div>
             
-            <Button @click="saveGeneralSettings">Save General Settings</Button>
-          </CardContent>
-        </Card>
-
-        <!-- Test Settings -->
-        <Card v-if="activeSection === 'tests'">
-          <CardHeader>
-            <CardTitle>Test Settings</CardTitle>
-            <CardDescription>
-              Configure default test behavior and scoring
-            </CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Auto-submit tests</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Automatically submit tests when time expires
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.tests.autoSubmit"
-                  :checked="settings.tests.autoSubmit"
-                />
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Show answers after completion</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Display correct answers to students after test completion
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.tests.showAnswers"
-                  :checked="settings.tests.showAnswers"
-                />
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Allow test retakes</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Allow students to retake tests multiple times
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.tests.allowRetakes"
-                  :checked="settings.tests.allowRetakes"
-                />
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
-                  <Label for="default-duration">Default Test Duration (minutes)</Label>
-                  <Input 
-                    id="default-duration" 
-                    type="number"
-                    v-model="settings.tests.defaultDuration"
-                    min="1"
-                    max="300"
-                  />
-                </div>
-                
-                <div class="space-y-2">
-                  <Label for="passing-score">Passing Score (%)</Label>
-                  <Input 
-                    id="passing-score" 
-                    type="number"
-                    v-model="settings.tests.passingScore"
-                    min="0"
-                    max="100"
-                  />
-                </div>
-              </div>
+            <Button @click="saveGeneralSettings" :disabled="isLoadingCenter || !activeCenter || isSavingSettings">
+              {{ isSavingSettings ? 'Saving...' : 'Save General Settings' }}
+            </Button>
             </div>
-            
-            <Button @click="saveTestSettings">Save Test Settings</Button>
-          </CardContent>
-        </Card>
-
-        <!-- Notification Settings -->
-        <Card v-if="activeSection === 'notifications'">
-          <CardHeader>
-            <CardTitle>Notification Settings</CardTitle>
-            <CardDescription>
-              Manage email and in-app notification preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent class="space-y-6">
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Email notifications</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Receive important updates via email
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.notifications.email"
-                  :checked="settings.notifications.email"
-                />
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Student registration alerts</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Get notified when new students register
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.notifications.studentRegistration"
-                  :checked="settings.notifications.studentRegistration"
-                />
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Test completion alerts</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Get notified when students complete tests
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.notifications.testCompletion"
-                  :checked="settings.notifications.testCompletion"
-                />
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Weekly reports</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Receive weekly performance summaries
-                  </p>
-                </div>
-                <Switch 
-                  v-model="settings.notifications.weeklyReports"
-                  :checked="settings.notifications.weeklyReports"
-                />
-              </div>
-            </div>
-            
-            <Button @click="saveNotificationSettings">Save Notification Settings</Button>
           </CardContent>
         </Card>
 
@@ -284,7 +140,9 @@
                 />
               </div>
               
-              <Button @click="changePassword">Change Password</Button>
+              <Button @click="changePassword" :disabled="isChangingPassword">
+                {{ isChangingPassword ? 'Changing...' : 'Change Password' }}
+              </Button>
             </div>
             
             <Separator />
@@ -332,25 +190,66 @@
             </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
-            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <!-- Loading State -->
+            <div v-if="isLoadingSubscription" class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg animate-pulse">
+              <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+            </div>
+            
+            <!-- Subscription Data -->
+            <div v-else-if="subscription" class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <div class="flex items-center justify-between">
                 <div>
-                  <h4 class="font-medium text-blue-900 dark:text-blue-100">Professional Plan</h4>
-                  <p class="text-sm text-blue-700 dark:text-blue-300">$79/month • Renews on Dec 15, 2025</p>
+                  <h4 class="font-medium text-blue-900 dark:text-blue-100">{{ subscription.plan?.name || 'N/A' }}</h4>
+                  <p class="text-sm text-blue-700 dark:text-blue-300">
+                    {{ formatSubscriptionPrice() }} • 
+                    <span v-if="subscription.trial_ends_at && new Date(subscription.trial_ends_at) > new Date()">
+                      Trial ends {{ formatDate(subscription.trial_ends_at) }}
+                    </span>
+                    <span v-else>
+                      Renews {{ formatDate(subscription.renews_at) }}
+                    </span>
+                  </p>
+                  <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                    Active from {{ formatDate(subscription.start_date) }} to {{ formatDate(subscription.end_date) }}
+                  </p>
                 </div>
-                <Badge>Active</Badge>
+                <Badge :variant="subscription.status === 'active' ? 'default' : 'secondary'">
+                  {{ subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1) }}
+                </Badge>
+              </div>
+              
+              <!-- Plan Features -->
+              <div v-if="subscription.plan?.features" class="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                <p class="text-xs font-medium text-blue-900 dark:text-blue-100 mb-2">Plan Features:</p>
+                <div class="grid grid-cols-2 gap-2 text-xs text-blue-700 dark:text-blue-300">
+                  <div v-if="subscription.plan.features.max_students">
+                    👥 {{ subscription.plan.features.max_students >= 10000 ? 'Unlimited' : subscription.plan.features.max_students }} students
+                  </div>
+                  <div v-if="subscription.plan.features.max_users">
+                    👤 {{ subscription.plan.features.max_users >= 10000 ? 'Unlimited' : subscription.plan.features.max_users }} users
+                  </div>
+                  <div v-if="subscription.plan.features.ielts">✅ IELTS Builder</div>
+                  <div v-if="subscription.plan.features.groups">✅ Groups</div>
+                  <div v-if="subscription.plan.features.attendance">✅ Attendance</div>
+                  <div v-if="subscription.plan.features.payments">✅ Payments</div>
+                  <div v-if="subscription.plan.features.salary">✅ Salary</div>
+                  <div v-if="subscription.plan.features.leads">✅ Leads</div>
+                </div>
               </div>
             </div>
             
+            <!-- No Subscription -->
+            <div v-else class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg text-center">
+              <p class="text-gray-600 dark:text-gray-400">No active subscription found</p>
+              <Button variant="default" class="mt-4" @click="navigateTo('/dashboard/subscriptions')">
+                Subscribe Now
+              </Button>
+            </div>
+            
             <div class="space-y-4">
-              <Button variant="outline" @click="navigateTo('/subscriptions')">
+              <Button variant="outline" @click="navigateTo('/dashboard/subscriptions')" :disabled="isLoadingSubscription">
                 Change Plan
-              </Button>
-              <Button variant="outline">
-                Update Payment Method
-              </Button>
-              <Button variant="outline">
-                Download Invoices
               </Button>
             </div>
           </CardContent>
@@ -363,48 +262,42 @@
 <script setup>
 import {
   Settings as SettingsIcon,
-  FileText,
-  Bell,
   Shield,
   CreditCard
 } from "lucide-vue-next";
 
-import { toast } from "vue-sonner";
+import { toast, Toaster } from "vue-sonner";
+import "vue-sonner/style.css";
+import { useAuthStore } from "~/stores/auth";
+import { useCenters } from "~/composables/useCenters";
 
 useHead({
   title: "Settings - Testify",
 });
 
+const config = useRuntimeConfig();
+const authStore = useAuthStore();
+const { activeCenter } = useCenters();
+
 const activeSection = ref('general');
+const isLoadingSubscription = ref(false);
+const isLoadingCenter = ref(true);
+const isSavingSettings = ref(false);
+const isChangingPassword = ref(false);
+const subscription = ref(null);
 
 const settingsSections = [
   { id: 'general', name: 'General', icon: SettingsIcon },
-  { id: 'tests', name: 'Tests', icon: FileText },
-  { id: 'notifications', name: 'Notifications', icon: Bell },
   { id: 'security', name: 'Security', icon: Shield },
   { id: 'billing', name: 'Billing', icon: CreditCard }
 ];
 
 const settings = ref({
   general: {
-    centerName: 'IELTS Excellence Center',
-    contactEmail: 'contact@ieltsexcellence.com',
-    phone: '+1 (555) 123-4567',
-    address: '123 Education Street\nNew York, NY 10001',
-    timezone: 'America/New_York'
-  },
-  tests: {
-    autoSubmit: true,
-    showAnswers: true,
-    allowRetakes: false,
-    defaultDuration: 60,
-    passingScore: 70
-  },
-  notifications: {
-    email: true,
-    studentRegistration: true,
-    testCompletion: true,
-    weeklyReports: false
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
   },
   security: {
     sessionTimeout: '60'
@@ -417,36 +310,197 @@ const passwordForm = ref({
   confirmPassword: ''
 });
 
-const saveGeneralSettings = () => {
-  // TODO: Implement API call
-  toast.success('General settings saved successfully!');
+// Fetch active subscription
+async function fetchSubscription() {
+  if (!activeCenter.value) {
+    console.log('No active center found');
+    return;
+  }
+
+  try {
+    isLoadingSubscription.value = true;
+    const response = await fetch(
+      `${config.public.baseURL}/subscriptions/center/${activeCenter.value.id}/active`,
+      {
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    if (response.ok) {
+      subscription.value = await response.json();
+    } else if (response.status === 404) {
+      subscription.value = null;
+      console.log('No active subscription found');
+    } else {
+      throw new Error('Failed to fetch subscription');
+    }
+  } catch (error) {
+    console.error('Error fetching subscription:', error);
+    toast.error('Failed to load subscription data');
+    subscription.value = null;
+  } finally {
+    isLoadingSubscription.value = false;
+  }
+}
+
+// Format date helper
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// Format subscription price
+function formatSubscriptionPrice() {
+  if (!subscription.value?.plan) return 'N/A';
+  
+  const plan = subscription.value.plan;
+  const price = plan.price_month || 0;
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+  const formattedPrice = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(numPrice);
+  
+  return `${formattedPrice} ${plan.currency || 'UZS'}/month`;
+}
+
+// Watch for billing section to fetch subscription
+watch(activeSection, (newSection) => {
+  if (newSection === 'billing' && !subscription.value && !isLoadingSubscription.value) {
+    fetchSubscription();
+  }
+});
+
+// Populate settings from activeCenter
+function populateSettingsFromCenter() {
+  if (activeCenter.value) {
+    settings.value.general = {
+      name: activeCenter.value.name || '',
+      email: activeCenter.value.email || '',
+      phone: activeCenter.value.phone || '',
+      address: activeCenter.value.address || '',
+    };
+    isLoadingCenter.value = false;
+  }
+}
+
+// Watch for activeCenter changes
+watch(() => activeCenter.value, (newCenter) => {
+  if (newCenter) {
+    populateSettingsFromCenter();
+  }
+}, { immediate: true });
+
+// Fetch on mount if billing section is active
+onMounted(() => {
+  if (activeSection.value === 'billing') {
+    fetchSubscription();
+  }
+  if (activeCenter.value) {
+    populateSettingsFromCenter();
+  }
+});
+
+const saveGeneralSettings = async () => {
+  if (!activeCenter.value) {
+    toast.error('No active center found');
+    return;
+  }
+
+  try {
+    isSavingSettings.value = true;
+    const response = await fetch(
+      `${config.public.baseURL}/centers/${activeCenter.value.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(settings.value.general)
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'Failed to update center');
+    }
+
+    const updatedCenter = await response.json();
+    toast.success('Center settings saved successfully!');
+    
+    // Update activeCenter with new data
+    populateSettingsFromCenter();
+  } catch (error) {
+    console.error('Error updating center:', error);
+    toast.error(error.message || 'Failed to save settings');
+  } finally {
+    isSavingSettings.value = false;
+  }
 };
 
-const saveTestSettings = () => {
-  // TODO: Implement API call
-  toast.success('Test settings saved successfully!');
-};
-
-const saveNotificationSettings = () => {
-  // TODO: Implement API call
-  toast.success('Notification settings saved successfully!');
-};
-
-const changePassword = () => {
+const changePassword = async () => {
+  if (!passwordForm.value.currentPassword) {
+    toast.error('Please enter your current password');
+    return;
+  }
+  
+  if (!passwordForm.value.newPassword) {
+    toast.error('Please enter a new password');
+    return;
+  }
+  
   if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
     toast.error('Passwords do not match!');
     return;
   }
   
-  // TODO: Implement password change API call
-  toast.success('Password changed successfully!');
-  
-  // Clear form
-  passwordForm.value = {
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  };
+  if (passwordForm.value.newPassword.length < 6) {
+    toast.error('New password must be at least 6 characters long');
+    return;
+  }
+
+  try {
+    isChangingPassword.value = true;
+    
+    const response = await fetch(
+      `${config.public.baseURL}/users/change-password`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${authStore.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          currentPassword: passwordForm.value.currentPassword,
+          newPassword: passwordForm.value.newPassword
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'Failed to change password');
+    }
+
+    toast.success('Password changed successfully!');
+    
+    // Clear form
+    passwordForm.value = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    };
+  } catch (error) {
+    console.error('Error changing password:', error);
+    toast.error(error.message || 'Failed to change password. Please check your current password.');
+  } finally {
+    isChangingPassword.value = false;
+  }
 };
 
 definePageMeta({

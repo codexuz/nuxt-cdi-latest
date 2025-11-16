@@ -353,6 +353,6 @@ async function selectPlan(planId, planName) {
 }
 
 definePageMeta({
-  layout: false,
+  layout: "dashboard",
 });
 </script>

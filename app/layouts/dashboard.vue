@@ -305,16 +305,16 @@
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem @click="navigateTo('/subscriptions')">
+                <DropdownMenuItem @click="navigateTo('/dashboard/subscriptions')">
                   <Sparkles />
                   Upgrade to Pro
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem @click="navigateTo('/profile')">
+                <DropdownMenuItem @click="navigateTo('/settings')">
                   <User />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem @click="navigateTo('/dashboard/billing')">
+                <DropdownMenuItem @click="navigateTo('/dashboard/settings')">
                   <CreditCard />
                   Billing
                 </DropdownMenuItem>
