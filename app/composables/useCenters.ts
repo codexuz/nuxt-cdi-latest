@@ -2,11 +2,6 @@
 import { useCookie } from "#app";
 import { createError } from "h3";
 
-const useApiBaseUrl = () => {
-  const config = useRuntimeConfig();
-  return config.public.baseURL as string;
-};
-
 export interface Center {
   id: string;
   name: string;
@@ -25,7 +20,8 @@ export interface Center {
  * Fetch centers owned by the authenticated user
  */
 export async function getMyCenters(): Promise<Center[]> {
-  const API_BASE_URL = useApiBaseUrl();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.baseURL as string;
   const tokenCookie = useCookie<string | null>("access_token", {
     default: () => null,
   });

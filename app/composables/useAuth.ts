@@ -2,11 +2,6 @@
 import { useCookie } from "#app";
 import { createError } from "h3";
 
-const useApiBaseUrl = () => {
-  const config = useRuntimeConfig();
-  return config.public.baseURL as string;
-};
-
 interface LoginResponse {
   access_token: string;
   user?: User;
@@ -82,7 +77,8 @@ export const initializeAuth = () => {
 };
 
 export async function registerUser(registerData: RegisterData) {
-  const API_BASE_URL = useApiBaseUrl();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.baseURL as string;
   const { data, error } = await useFetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     body: registerData,
@@ -101,7 +97,8 @@ export async function registerUser(registerData: RegisterData) {
 }
 
 export async function verifyOtp(otpData: { email: string; otp: string }) {
-  const API_BASE_URL = useApiBaseUrl();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.baseURL as string;
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/verify-otp`,
     {
@@ -139,7 +136,8 @@ export async function verifyOtp(otpData: { email: string; otp: string }) {
 }
 
 export async function resendOtp(email: string) {
-  const API_BASE_URL = useApiBaseUrl();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.baseURL as string;
   const { data, error } = await useFetch(`${API_BASE_URL}/auth/resend-otp`, {
     method: "POST",
     body: { email },
@@ -156,7 +154,8 @@ export async function resendOtp(email: string) {
 }
 
 export async function loginUser(loginData: LoginData) {
-  const API_BASE_URL = useApiBaseUrl();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.baseURL as string;
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/login`,
     {
@@ -170,7 +169,10 @@ export async function loginUser(loginData: LoginData) {
     const errorData = error.value.data as any;
     throw createError({
       statusCode: error.value.statusCode || 401,
-      statusMessage: errorData?.message || error.value.message || "Invalid login credentials",
+      statusMessage:
+        errorData?.message ||
+        error.value.message ||
+        "Invalid login credentials",
       data: errorData,
     });
   }
@@ -195,7 +197,6 @@ export async function loginUser(loginData: LoginData) {
   return data.value;
 }
 
-
 export async function logout() {
   const tokenCookie = useCookie<string | null>("access_token", {
     default: () => null,
@@ -204,7 +205,8 @@ export async function logout() {
   // Call backend logout endpoint if token exists
   if (tokenCookie.value) {
     try {
-      const API_BASE_URL = useApiBaseUrl();
+      const config = useRuntimeConfig();
+      const API_BASE_URL = config.public.baseURL as string;
       await $fetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
         headers: {
@@ -243,7 +245,8 @@ export async function getProfile() {
   }
 
   try {
-    const API_BASE_URL = useApiBaseUrl();
+    const config = useRuntimeConfig();
+    const API_BASE_URL = config.public.baseURL as string;
     const data = await $fetch<User>(`${API_BASE_URL}/users/profile`, {
       method: "GET",
       headers: {
