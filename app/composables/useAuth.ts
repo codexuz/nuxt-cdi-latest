@@ -2,7 +2,10 @@
 import { useCookie } from "#app";
 import { createError } from "h3";
 
-const API_BASE_URL = "https://edumoacademy.uz";
+const useApiBaseUrl = () => {
+  const config = useRuntimeConfig();
+  return config.public.baseURL as string;
+};
 
 interface LoginResponse {
   access_token: string;
@@ -79,6 +82,7 @@ export const initializeAuth = () => {
 };
 
 export async function registerUser(registerData: RegisterData) {
+  const API_BASE_URL = useApiBaseUrl();
   const { data, error } = await useFetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     body: registerData,
@@ -97,6 +101,7 @@ export async function registerUser(registerData: RegisterData) {
 }
 
 export async function verifyOtp(otpData: { email: string; otp: string }) {
+  const API_BASE_URL = useApiBaseUrl();
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/verify-otp`,
     {
@@ -134,6 +139,7 @@ export async function verifyOtp(otpData: { email: string; otp: string }) {
 }
 
 export async function resendOtp(email: string) {
+  const API_BASE_URL = useApiBaseUrl();
   const { data, error } = await useFetch(`${API_BASE_URL}/auth/resend-otp`, {
     method: "POST",
     body: { email },
@@ -150,6 +156,7 @@ export async function resendOtp(email: string) {
 }
 
 export async function loginUser(loginData: LoginData) {
+  const API_BASE_URL = useApiBaseUrl();
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/login`,
     {
@@ -185,12 +192,6 @@ export async function loginUser(loginData: LoginData) {
   return data.value;
 }
 
-export function loginWithGoogle() {
-  // Redirect to Google OAuth endpoint
-  if (process.client) {
-    window.location.href = `${API_BASE_URL}/auth/google/owner`;
-  }
-}
 
 export async function logout() {
   const tokenCookie = useCookie<string | null>("access_token", {
@@ -223,6 +224,7 @@ export async function getProfile() {
   }
 
   try {
+    const API_BASE_URL = useApiBaseUrl();
     const data = await $fetch<User>(`${API_BASE_URL}/users/profile`, {
       method: "GET",
       headers: {
@@ -252,7 +254,6 @@ export const useAuth = () => {
     user,
     register: registerUser,
     login: loginUser,
-    loginWithGoogle,
     logout,
     getProfile,
     initializeAuth,

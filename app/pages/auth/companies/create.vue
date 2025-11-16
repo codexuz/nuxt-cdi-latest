@@ -226,6 +226,8 @@ const createCenter = async () => {
     isCreating.value = true;
 
     const token = useCookie("access_token");
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
 
     const payload = {
       name: formData.value.name,
@@ -236,7 +238,7 @@ const createCenter = async () => {
       description: formData.value.description || undefined,
     };
 
-    const response = await $fetch("https://edumoacademy.uz/auth/register-center", {
+    const response = await $fetch(`${baseURL}/auth/register-center`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token.value}`,

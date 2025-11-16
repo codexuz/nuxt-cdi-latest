@@ -282,6 +282,8 @@ const updateProfile = async () => {
   try {
     isSaving.value = true;
 
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
     const token = useCookie("access_token");
     const userId = profileData.value?.id;
 
@@ -290,7 +292,7 @@ const updateProfile = async () => {
       return;
     }
 
-    const response = await $fetch(`https://edumoacademy.uz/users/${userId}`, {
+    const response = await $fetch(`${baseURL}/users/${userId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token.value}`,
@@ -331,6 +333,8 @@ const updatePassword = async () => {
   try {
     isUpdatingPassword.value = true;
 
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
     const token = useCookie("access_token");
     const userId = profileData.value?.id;
 
@@ -339,7 +343,7 @@ const updatePassword = async () => {
       return;
     }
 
-    await $fetch(`https://edumoacademy.uz/users/change-password`, {
+    await $fetch(`${baseURL}/users/change-password`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token.value}`,
