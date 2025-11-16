@@ -24,9 +24,6 @@
               class="text-center text-2xl tracking-widest"
               @input="handleOtpInput"
             />
-            <p class="text-xs text-muted-foreground text-center">
-              Enter the 6-digit verification code
-            </p>
           </div>
 
           <Button
@@ -38,13 +35,13 @@
             <span v-else>Verify & Continue</span>
           </Button>
 
-          <div class="text-center text-sm space-y-2">
+          <div class="text-center text-sm flex items-center justify-center gap-x-2">
             <p class="text-muted-foreground">Didn't receive the code?</p>
             <Button
               variant="link"
               :disabled="isResending || countdown > 0"
               @click="resendOtp"
-              class="p-0 h-auto font-medium"
+              class="p-0 h-auto font-medium cursor-pointer"
             >
               <span v-if="countdown > 0">Resend in {{ countdown }}s</span>
               <span v-else-if="isResending">Resending...</span>
@@ -115,7 +112,7 @@ async function verifyOtp() {
     await navigateTo("/auth/companies/create");
   } catch (error) {
     console.error("OTP verification error:", error);
-    toast.error(error.message || "Invalid OTP code. Please try again.");
+    toast.error("Invalid OTP code. Please try again.");
     otp.value = ""; // Clear OTP on error
   } finally {
     isVerifying.value = false;

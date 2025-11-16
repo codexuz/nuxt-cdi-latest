@@ -166,9 +166,12 @@ export async function loginUser(loginData: LoginData) {
   );
 
   if (error.value) {
+    // Extract error details from response
+    const errorData = error.value.data as any;
     throw createError({
       statusCode: error.value.statusCode || 401,
-      statusMessage: error.value.message || "Invalid login credentials",
+      statusMessage: errorData?.message || error.value.message || "Invalid login credentials",
+      data: errorData,
     });
   }
 

@@ -129,7 +129,13 @@ async function login() {
     await checkUserSetupAndRedirect();
   } catch (error) {
     console.error("Login error:", error);
-    toast.error("Login unsuccessful! Please check your credentials.");
+    
+    // Check if it's an email verification error
+    if (error.statusCode === 401 && error.statusMessage?.includes("Email not verified")) {
+      toast.error("Email not verified. Please verify your email first.");
+    } else {
+      toast.error(error.statusMessage || "Login unsuccessful! Please check your credentials.");
+    }
   } finally {
     isLoggingIn.value = false;
   }
