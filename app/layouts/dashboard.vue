@@ -375,18 +375,14 @@
         </div>
 
         <div class="ml-auto flex items-center gap-2 px-4">
-          <!-- Search -->
-          <div class="relative hidden md:block">
-            <Search
-              class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
-            />
-            <Input
-              type="search"
-              placeholder="Search..."
-              class="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
-              v-model="searchQuery"
-            />
-          </div>
+          <!-- Dark Mode Toggle -->
+          <ClientOnly>
+            <Button variant="outline" size="icon" class="h-8 w-8" @click="toggleTheme">
+              <Sun v-if="colorMode.preference === 'light'" class="h-4 w-4" />
+              <Moon v-else class="h-4 w-4" />
+              <span class="sr-only">Toggle theme</span>
+            </Button>
+          </ClientOnly>
 
           <!-- Notifications -->
           <Button variant="outline" size="icon" class="h-8 w-8">
@@ -424,11 +420,12 @@ import {
   Settings,
   User,
   LogOut,
-  Search,
   Bell,
   ChevronsUpDown,
   Sparkles,
   Building2,
+  Sun,
+  Moon,
 } from "lucide-vue-next";
 
 import {
@@ -449,9 +446,12 @@ import {
 
 const { user, logout } = useAuth();
 const route = useRoute();
+const colorMode = useColorMode();
 
-// Search and notifications
-const searchQuery = ref("");
+// Toggle theme function
+const toggleTheme = () => {
+  colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light';
+};
 
 // Breadcrumbs
 const breadcrumbs = computed(() => {

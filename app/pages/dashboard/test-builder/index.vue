@@ -357,12 +357,37 @@ const editTest = (test) => {
 
 const updateTest = async () => {
   try {
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
     const payload = {
-      ...editingTest.value,
+      title: editingTest.value.title,
+      description: editingTest.value.description,
+      test_type: editingTest.value.test_type,
     };
 
-    // TODO: Replace with actual API call
-    console.log("Updating test:", payload);
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${editingTest.value.id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+          "Content-Type": "application/json",
+        },
+        body: payload,
+      }
+    );
+
+    console.log("Test updated:", response);
 
     // Update in list
     const index = tests.value.findIndex((t) => t.id === editingTest.value.id);
@@ -372,13 +397,12 @@ const updateTest = async () => {
         ...payload,
       };
     }
-    // Note: localStorage auto-save happens via watcher
 
     toast.success("Test updated successfully!");
     showEditDialog.value = false;
   } catch (error) {
     console.error("Failed to update test:", error);
-    toast.error("Failed to update test");
+    toast.error(error.data?.message || "Failed to update test");
   }
 };
 
@@ -392,16 +416,36 @@ const deleteTest = async (testId) => {
   }
 
   try {
-    // TODO: Replace with actual API call
-    console.log("Deleting test:", testId);
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
+    await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+
+    console.log("Test deleted:", testId);
 
     tests.value = tests.value.filter((t) => t.id !== testId);
-    // Note: localStorage auto-save happens via watcher
 
     toast.success("Test deleted successfully!");
   } catch (error) {
     console.error("Failed to delete test:", error);
-    toast.error("Failed to delete test");
+    toast.error(error.data?.message || "Failed to delete test");
   }
 };
 

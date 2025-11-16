@@ -337,6 +337,7 @@ const storageKey = `listening-draft-${testId}`;
 
 const deleteDialogOpen = ref(false);
 const partToDelete = ref(null);
+const isLoading = ref(false);
 
 // Load from localStorage or use defaults
 const loadFromStorage = () => {
@@ -368,6 +369,67 @@ const loadFromStorage = () => {
 };
 
 const listeningData = ref(loadFromStorage());
+
+// Fetch listening test from API
+const fetchListeningTest = async () => {
+  if (!testId) return;
+  
+  try {
+    isLoading.value = true;
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}/listening`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+
+    if (response) {
+      // Make answers objects reactive
+      if (response.parts) {
+        response.parts = response.parts.map(part => ({
+          ...part,
+          answers: reactive(part.answers || {})
+        }));
+      }
+      
+      listeningData.value = {
+        ...response,
+        for_cdi: String(response.for_cdi || false),
+        test_id: testId,
+      };
+      
+      console.log("Listening test loaded:", response);
+    }
+  } catch (error) {
+    console.error("Failed to fetch listening test:", error);
+    // Don't show error toast if it's a 404 (no listening test yet)
+    if (error.status !== 404) {
+      toast.error("Failed to load listening test");
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Load test on mount
+onMounted(() => {
+  fetchListeningTest();
+});
 
 // Auto-save to localStorage whenever data changes
 watch(listeningData, (newData) => {
@@ -488,30 +550,7 @@ const toggleMultiSelectAnswer = (part, contentIndex, value, limit) => {
   Object.assign(part.answers, {});
 };
 
-const getCommaSeparatedAnswers = (part, contentIndex, count) => {
-  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
-  const answers = [];
-  for (let i = 0; i < count; i++) {
-    const answer = part.answers[String(startQuestion + i)];
-    answers.push(answer || '');
-  }
-  return answers.join(', ');
-};
 
-const setCommaSeparatedAnswers = (part, contentIndex, count, value) => {
-  const startQuestion = parseInt(getQuestionNumber(part, contentIndex, 0));
-  const answers = value.split(',').map(a => a.trim());
-  for (let i = 0; i < count; i++) {
-    const answer = answers[i];
-    if (answer) {
-      part.answers[String(startQuestion + i)] = answer;
-    } else {
-      delete part.answers[String(startQuestion + i)];
-    }
-  }
-  // Trigger reactivity
-  Object.assign(part.answers, {});
-};
 
 const addQuestionByType = (contentArray, type) => {
   const baseQuestion = {
@@ -554,13 +593,36 @@ const addQuestionByType = (contentArray, type) => {
 
 const saveListeningTest = async () => {
   try {
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
     const payload = {
       ...listeningData.value,
       for_cdi: listeningData.value.for_cdi === "true",
     };
     
-    // TODO: Replace with actual API endpoint
-    console.log("Saving listening test:", payload);
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/listening`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+          "Content-Type": "application/json",
+        },
+        body: payload,
+      }
+    );
+
+    console.log("Listening test saved:", response);
     
     // Clear localStorage after successful save
     if (process.client && testId) {
@@ -575,7 +637,7 @@ const saveListeningTest = async () => {
     }, 1000);
   } catch (error) {
     console.error("Failed to save:", error);
-    toast.error("Failed to save listening test");
+    toast.error(error.data?.message || "Failed to save listening test");
   }
 };
 

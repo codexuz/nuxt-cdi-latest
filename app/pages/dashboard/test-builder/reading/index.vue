@@ -317,6 +317,7 @@ const storageKey = `reading-draft-${testId}`;
 
 const deleteDialogOpen = ref(false);
 const partToDelete = ref(null);
+const isLoading = ref(false);
 
 // Load from localStorage or use defaults
 const loadFromStorage = () => {
@@ -348,6 +349,67 @@ const loadFromStorage = () => {
 };
 
 const readingData = ref(loadFromStorage());
+
+// Fetch reading test from API
+const fetchReadingTest = async () => {
+  if (!testId) return;
+  
+  try {
+    isLoading.value = true;
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}/reading`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+
+    if (response) {
+      // Make answers objects reactive
+      if (response.parts) {
+        response.parts = response.parts.map(part => ({
+          ...part,
+          answers: reactive(part.answers || {})
+        }));
+      }
+      
+      readingData.value = {
+        ...response,
+        for_cdi: String(response.for_cdi || false),
+        test_id: testId,
+      };
+      
+      console.log("Reading test loaded:", response);
+    }
+  } catch (error) {
+    console.error("Failed to fetch reading test:", error);
+    // Don't show error toast if it's a 404 (no reading test yet)
+    if (error.status !== 404) {
+      toast.error("Failed to load reading test");
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Load test on mount
+onMounted(() => {
+  fetchReadingTest();
+});
 
 // Auto-save to localStorage whenever data changes
 watch(readingData, (newData) => {
@@ -530,13 +592,36 @@ const addQuestionByType = (contentArray, type) => {
 
 const saveReadingTest = async () => {
   try {
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
     const payload = {
       ...readingData.value,
       for_cdi: readingData.value.for_cdi === "true",
     };
     
-    // TODO: Replace with actual API endpoint
-    console.log("Saving reading test:", payload);
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/reading`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+          "Content-Type": "application/json",
+        },
+        body: payload,
+      }
+    );
+
+    console.log("Reading test saved:", response);
     
     // Clear localStorage after successful save
     if (process.client && testId) {
@@ -551,7 +636,7 @@ const saveReadingTest = async () => {
     }, 1000);
   } catch (error) {
     console.error("Failed to save:", error);
-    toast.error("Failed to save reading test");
+    toast.error(error.data?.message || "Failed to save reading test");
   }
 };
 
