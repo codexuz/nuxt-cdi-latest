@@ -250,6 +250,14 @@ const createCenter = async () => {
     console.log("Center created:", response);
     toast.success("Center created successfully!");
 
+    // Fetch the user's centers to update state
+    try {
+      const { fetchMyCenters } = useCenters();
+      await fetchMyCenters();
+    } catch (err) {
+      console.error("Failed to fetch centers after creation:", err);
+    }
+
     // Redirect to subscription plans
     await router.push("/subscriptions");
   } catch (error) {
