@@ -140,12 +140,8 @@ async function checkUserSetupAndRedirect() {
   try {
     const { user } = useAuth();
 
-    const hasCompany = user.value?.center_id;
-    if (!hasCompany) {
-      await navigateTo("/auth/companies/create");
-    } else {
-      await navigateTo("/dashboard");
-    }
+    navigateTo("/dashboard");
+    
   } catch (error) {
     console.error("Error checking user setup:", error);
     await navigateTo("/dashboard");
