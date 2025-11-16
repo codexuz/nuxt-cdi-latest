@@ -111,7 +111,7 @@ import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
 useHead({
-  title: "My Centers - Testify",
+  title: "My Centers - Mockmee LMS",
 });
 
 const { centers, activeCenter, fetchMyCenters, setActiveCenter } = useCenters();

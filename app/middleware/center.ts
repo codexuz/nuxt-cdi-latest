@@ -24,7 +24,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       await getProfile();
     } catch (error) {
       console.error("Failed to get profile:", error);
-      return navigateTo("/login");
+      return navigateTo("/dashboard");
     }
   }
 
