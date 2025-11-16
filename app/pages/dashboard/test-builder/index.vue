@@ -66,8 +66,15 @@
       </DialogContent>
     </Dialog>
 
+    <!-- Loading State -->
+    <div v-if="isLoading" class="flex justify-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"
+      ></div>
+    </div>
+
     <!-- Tests List -->
-    <div class="grid grid-cols-1 gap-4">
+    <div v-else class="grid grid-cols-1 gap-4">
       <Card
         v-for="test in tests"
         :key="test.id"
@@ -235,78 +242,92 @@ const editingTest = ref({
   test_type: "practice",
 });
 
-const testsStorageKey = "ielts-tests-list";
+const tests = ref([]);
+const isLoading = ref(false);
 
-// Load tests from localStorage or use mock data
-const loadTests = () => {
-  if (process.client) {
-    const saved = localStorage.getItem(testsStorageKey);
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved tests:", e);
-      }
+// Fetch tests from API
+const fetchTests = async () => {
+  try {
+    isLoading.value = true;
+    const token = useCookie("access_token");
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
     }
+
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      }
+    );
+
+    tests.value = response;
+  } catch (error) {
+    console.error("Failed to fetch tests:", error);
+    toast.error("Failed to load tests");
+  } finally {
+    isLoading.value = false;
   }
-  // Default mock data
-  return [
-    {
-      id: "1",
-      title: "IELTS Academic Test - Practice Set 1",
-      description:
-        "This is a comprehensive IELTS Academic test designed for intermediate to advanced students preparing for their IELTS examination.",
-      test_type: "practice",
-      listening_count: 4,
-      reading_count: 3,
-      total_questions: 40,
-    },
-    {
-      id: "2",
-      title: "IELTS General Training Mock Test",
-      description:
-        "Full-length mock test for General Training module to simulate exam conditions.",
-      test_type: "mock",
-      listening_count: 4,
-      reading_count: 3,
-      total_questions: 40,
-    },
-  ];
 };
 
-const tests = ref(loadTests());
-
-// Auto-save tests to localStorage whenever they change
-watch(
-  tests,
-  (newTests) => {
-    if (process.client) {
-      localStorage.setItem(testsStorageKey, JSON.stringify(newTests));
-    }
-  },
-  { deep: true }
-);
+// Load tests on mount
+onMounted(() => {
+  fetchTests();
+});
 
 const createTest = async () => {
   try {
+    const token = useCookie("access_token");
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    // Get active center
+    const { activeCenter } = useCenters();
+
+    if (!activeCenter.value?.id) {
+      toast.error("No active center found");
+      return;
+    }
+
     const payload = {
-      ...newTest.value,
+      title: newTest.value.title,
+      description: newTest.value.description,
+      test_type: newTest.value.test_type,
     };
 
-    // TODO: Replace with actual API call
-    console.log("Creating test:", payload);
+    const response = await $fetch(
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+          "Content-Type": "application/json",
+        },
+        body: payload,
+      }
+    );
 
-    // Mock response
-    const mockTest = {
-      id: `test-${Date.now()}`,
+    console.log("Test created:", response);
+
+    // Add the new test to the list with the response data
+    tests.value.unshift({
+      id: response.id || `test-${Date.now()}`,
       ...payload,
       listening_count: 0,
       reading_count: 0,
       total_questions: 0,
-    };
-
-    tests.value.unshift(mockTest);
-    // Note: localStorage auto-save happens via watcher
+      ...response,
+    });
 
     toast.success("Test created successfully!");
     showCreateDialog.value = false;
@@ -319,7 +340,7 @@ const createTest = async () => {
     };
   } catch (error) {
     console.error("Failed to create test:", error);
-    toast.error("Failed to create test");
+    toast.error(error.data?.message || "Failed to create test");
   }
 };
 
