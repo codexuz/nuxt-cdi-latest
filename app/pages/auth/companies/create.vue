@@ -55,7 +55,7 @@
                 class="flex-1"
               />
               <span class="text-sm text-muted-foreground whitespace-nowrap">
-                .edumoacademy.uz
+                .mockmee.uz
               </span>
             </div>
             <p class="text-xs text-muted-foreground">

@@ -198,6 +198,22 @@ export async function logout() {
     default: () => null,
   });
 
+  // Call backend logout endpoint if token exists
+  if (tokenCookie.value) {
+    try {
+      const API_BASE_URL = useApiBaseUrl();
+      await $fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${tokenCookie.value}`,
+        },
+      });
+    } catch (error) {
+      console.error("Logout API call failed:", error);
+      // Continue with client-side logout even if API call fails
+    }
+  }
+
   // Clear the token cookie
   tokenCookie.value = null;
 
