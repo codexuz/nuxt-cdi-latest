@@ -144,6 +144,7 @@ import {
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
+import { motion } from "motion-v";
 
 useHead({
   title: "Writing Tests - Testify",

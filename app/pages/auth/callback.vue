@@ -15,6 +15,8 @@
 </template>
 
 <script setup>
+import { motion } from "motion-v";
+
 const route = useRoute();
 const router = useRouter();
 

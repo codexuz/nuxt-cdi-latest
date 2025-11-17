@@ -2,6 +2,9 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+  app: {
+    pageTransition: { name: "page", mode: "out-in" },
+  },
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["~/assets/css/tailwind.css"],
@@ -19,9 +22,9 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "shadcn-nuxt",
     "@nuxtjs/color-mode",
-    '@pinia/nuxt',
+    "@pinia/nuxt",
     "@vueuse/nuxt",
-    "motion-v/nuxt"
+    "motion-v/nuxt",
   ],
   colorMode: {
     classSuffix: "",

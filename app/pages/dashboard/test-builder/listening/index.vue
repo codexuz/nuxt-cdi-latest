@@ -296,6 +296,7 @@
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
+import { motion } from "motion-v";
 
 import CompletionQuestion from '@/components/questions/CompletionQuestion.vue';
 import MultipleChoiceQuestion from '@/components/questions/MultipleChoiceQuestion.vue';
