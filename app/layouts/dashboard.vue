@@ -545,36 +545,7 @@
   color: white !important;
 }
 
-/* Smooth animation for collapsible menu items */
-:deep([data-state="open"]) {
-  animation: slideDown 200ms ease-out;
-}
 
-:deep([data-state="closed"]) {
-  animation: slideUp 200ms ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    height: 0;
-    opacity: 0;
-  }
-  to {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
-  to {
-    height: 0;
-    opacity: 0;
-  }
-}
 </style>
 
 <script setup>
