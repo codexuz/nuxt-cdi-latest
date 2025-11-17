@@ -170,22 +170,6 @@
         </Card>
       </div>
 
-      <!-- CTA Section -->
-      <div class="mt-20 bg-primary text-primary-foreground rounded-2xl px-8 py-16 text-center">
-        <h2 class="text-3xl font-bold">Ready to get started?</h2>
-        <p class="mt-4 text-lg opacity-90">
-          Join thousands of learning centers already using our platform
-        </p>
-        <Button 
-          @click="selectPlan(plans[1]?.id || plans[0]?.id, 'Professional')" 
-          size="lg" 
-          variant="secondary" 
-          class="mt-8"
-          :disabled="isProcessing || isLoading || plans.length === 0"
-        >
-          Start 30 Days Free Trial
-        </Button>
-      </div>
     </div>
   </div>
 </template>
