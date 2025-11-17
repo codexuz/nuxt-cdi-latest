@@ -371,7 +371,7 @@ import {
 import { motion } from "motion-v";
 
 useHead({
-  title: "Dashboard - Testify",
+  title: "Dashboard - Mockmee LMS",
 });
 
 // Mock data - replace with actual API calls

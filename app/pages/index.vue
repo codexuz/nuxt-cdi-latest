@@ -339,7 +339,7 @@
 
 <script setup>
 useHead({
-  title: "Impulse CD IELTS - Master Your IELTS Journey",
+  title: "Mockmee LMS - Master Your IELTS Journey",
   meta: [
     {
       name: "description",
