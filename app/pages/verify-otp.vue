@@ -3,11 +3,7 @@
     class="flex bg-[#f3f4f6] dark:bg-linear-to-t dark:from-slate-900 dark:to-gray-800 flex-col items-center justify-center min-h-screen py-2"
   >
     <Toaster position="top-center" richColors theme="system" />
-    <motion.div
-      :initial="{ opacity: 0, scale: 0.95, y: 20 }"
-      :animate="{ opacity: 1, scale: 1, y: 0 }"
-      :transition="{ duration: 0.4 }"
-    >
+    <div>
       <Card class="w-[420px] sm:max-w-md">
         <CardHeader>
           <CardTitle class="text-2xl">Verify OTP</CardTitle>
@@ -67,14 +63,13 @@
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
-import { motion } from "motion-v";
 
 useHead({
   title: "Verify OTP - Mockmee",
@@ -165,7 +160,7 @@ watch(otp, (newValue) => {
 });
 
 definePageMeta({
-  layout: false,
+  layout: "default",
   middleware: "guest",
 });
 </script>

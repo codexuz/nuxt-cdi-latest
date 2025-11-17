@@ -3,24 +3,15 @@
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Header -->
-    <motion.div
-      :initial="{ opacity: 0, y: -20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.3 }"
-    >
+    <div>
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Settings</h1>
       <p class="text-gray-600 dark:text-gray-400 mt-2">
         Manage your learning center preferences and configuration
       </p>
-    </motion.div>
+    </div>
 
     <!-- Settings Navigation -->
-    <motion.div
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.4, delay: 0.1 }"
-      class="grid grid-cols-1 lg:grid-cols-4 gap-6"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <!-- Sidebar Navigation -->
       <Card class="lg:col-span-1">
         <CardContent class="p-4">
@@ -299,7 +290,7 @@
           </CardContent>
         </Card>
       </div>
-    </motion.div>
+    </div>
   </div>
 </template>
 
@@ -308,7 +299,6 @@ import { Settings as SettingsIcon, Shield, CreditCard } from "lucide-vue-next";
 
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
-import { motion } from "motion-v";
 import { useAuthStore } from "~/stores/auth";
 import { useCenters } from "~/composables/useCenters";
 

@@ -1,12 +1,7 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 animate__animated animate__fadeInUp">
     <!-- Dashboard Header -->
-    <motion.div
-      :initial="{ opacity: 0, y: -20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.3 }"
-      class="flex items-center justify-between"
-    >
+    <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Dashboard
@@ -32,15 +27,10 @@
           <span>Add Student</span>
         </Button>
       </div>
-    </motion.div>
+    </div>
 
     <!-- Stats Cards -->
-    <motion.div
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.4, delay: 0.1 }"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-    >
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- Total Students -->
       <Card>
         <CardContent class="p-6">
@@ -142,14 +132,9 @@
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
 
-    <motion.div
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.4, delay: 0.2 }"
-      class="grid grid-cols-1 lg:grid-cols-3 gap-6"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Recent Activity -->
       <Card class="lg:col-span-2">
         <CardHeader>
@@ -257,15 +242,10 @@
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
 
     <!-- Recent Tests and Students -->
-    <motion.div
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.4, delay: 0.3 }"
-      class="grid grid-cols-1 lg:grid-cols-2 gap-6"
-    >
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Recent Tests -->
       <Card>
         <CardHeader>
@@ -352,7 +332,7 @@
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   </div>
 </template>
 
@@ -368,7 +348,6 @@ import {
   FileEdit,
   Calendar,
 } from "lucide-vue-next";
-import { motion } from "motion-v";
 
 useHead({
   title: "Dashboard - Mockmee LMS",

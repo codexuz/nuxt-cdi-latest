@@ -255,7 +255,6 @@
 import { Check } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
-import { motion } from "motion-v";
 import { useAuthStore } from "~/stores/auth";
 import { useCenters } from "~/composables/useCenters";
 
@@ -427,6 +426,6 @@ async function selectPlan(planId, planName) {
 }
 
 definePageMeta({
-  layout: false,
+  layout: "default",
 });
 </script>

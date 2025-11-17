@@ -3,12 +3,7 @@
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Header -->
-    <motion.div
-      :initial="{ opacity: 0, y: -20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.3 }"
-      class="flex items-center justify-between mb-8"
-    >
+    <div class="flex items-center justify-between mb-8">
       <div>
         <h1 class="text-3xl font-bold">IELTS Test Builder</h1>
         <p class="text-muted-foreground">Create and manage IELTS tests</p>
@@ -17,7 +12,7 @@
         <Plus class="mr-2 h-4 w-4" />
         Create New Test
       </Button>
-    </motion.div>
+    </div>
 
     <!-- Create Test Dialog -->
     <Dialog v-model:open="showCreateDialog">
@@ -79,11 +74,8 @@
     </div>
 
     <!-- Tests List -->
-    <motion.div
+    <div
       v-else
-      :initial="{ opacity: 0 }"
-      :animate="{ opacity: 1 }"
-      :transition="{ duration: 0.4, delay: 0.1 }"
       class="grid grid-cols-1 gap-4"
     >
       <Card
@@ -206,7 +198,7 @@
           </Button>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
 
     <!-- Edit Test Dialog -->
     <Dialog v-model:open="showEditDialog">
@@ -268,7 +260,6 @@ import {
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
-import { motion } from "motion-v";
 
 useHead({
   title: "IELTS Test Builder - Testify",
