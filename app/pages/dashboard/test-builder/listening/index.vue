@@ -5,18 +5,36 @@
 
       <!-- Header -->
       <div class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
           <div class="flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" size="icon" @click="$router.back()" class="shrink-0 hover:bg-muted">
+            <Button
+              variant="ghost"
+              size="icon"
+              @click="$router.back()"
+              class="shrink-0 hover:bg-muted"
+            >
               <ArrowLeft class="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
             <div>
-              <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Listening Test Builder</h1>
-              <p class="text-xs sm:text-sm text-muted-foreground mt-1">Design and configure listening test sections</p>
+              <h1
+                class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight"
+              >
+                Listening Test Builder
+              </h1>
+              <p class="text-xs sm:text-sm text-muted-foreground mt-1">
+                Design and configure listening test sections
+              </p>
             </div>
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
-            <Button @click="saveListeningTest" :disabled="!isValid" class="flex-1 sm:flex-none" size="default">
+            <Button
+              @click="saveListeningTest"
+              :disabled="!isValid"
+              class="flex-1 sm:flex-none"
+              size="default"
+            >
               <Save class="mr-2 h-4 w-4" />
               <span class="hidden sm:inline">Save Test</span>
               <span class="sm:hidden">Save</span>
@@ -62,39 +80,62 @@
 
       <!-- Parts Section -->
       <div class="mb-4 sm:mb-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4"
+        >
           <div>
-            <h3 class="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <h3
+              class="text-base sm:text-lg font-semibold flex items-center gap-2"
+            >
               <div class="h-2 w-2 rounded-full bg-primary"></div>
               Test Parts
-              <span class="text-xs sm:text-sm font-normal text-muted-foreground ml-2">
-                ({{ listeningData.parts.length }} {{ listeningData.parts.length === 1 ? 'part' : 'parts' }})
+              <span
+                class="text-xs sm:text-sm font-normal text-muted-foreground ml-2"
+              >
+                ({{ listeningData.parts.length }}
+                {{ listeningData.parts.length === 1 ? "part" : "parts" }})
               </span>
             </h3>
-            <p class="text-xs sm:text-sm text-muted-foreground mt-1">Configure audio and questions for each section</p>
+            <p class="text-xs sm:text-sm text-muted-foreground mt-1">
+              Configure audio and questions for each section
+            </p>
           </div>
-          <Button @click="addListeningPart" size="default" class="w-full sm:w-auto shadow-sm">
+          <Button
+            @click="addListeningPart"
+            size="default"
+            class="w-full sm:w-auto shadow-sm"
+          >
             <Plus class="mr-2 h-4 w-4" />
             Add New Part
           </Button>
         </div>
 
         <Accordion type="multiple" class="w-full space-y-3 sm:space-y-4">
-          <AccordionItem 
-            v-for="(part, index) in listeningData.parts" 
-            :key="index" 
+          <AccordionItem
+            v-for="(part, index) in listeningData.parts"
+            :key="index"
             :value="`listening-part-${index}`"
             class="border-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden bg-card"
           >
-            <AccordionTrigger class="hover:no-underline py-4 sm:py-5 px-4 sm:px-6 hover:bg-muted/50 transition-colors">
-              <div class="flex items-center justify-between w-full pr-2 sm:pr-4">
+            <AccordionTrigger
+              class="hover:no-underline py-4 sm:py-5 px-4 sm:px-6 hover:bg-muted/50 transition-colors"
+            >
+              <div
+                class="flex items-center justify-between w-full pr-2 sm:pr-4"
+              >
                 <div class="flex items-center gap-3">
-                  <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-semibold text-sm">
+                  <div
+                    class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary font-semibold text-sm"
+                  >
                     {{ index + 1 }}
                   </div>
                   <div class="text-left">
-                    <span class="text-sm sm:text-base font-semibold block">{{ part.part.replace('_', ' ') }}</span>
-                    <span class="text-xs text-muted-foreground">{{ part.question.content.length }} question types</span>
+                    <span class="text-sm sm:text-base font-semibold block">{{
+                      part.part.replace("_", " ")
+                    }}</span>
+                    <span class="text-xs text-muted-foreground"
+                      >{{ part.question.content.length }} question types</span
+                    >
                   </div>
                 </div>
                 <Button
@@ -109,39 +150,43 @@
             </AccordionTrigger>
             <AccordionContent class="px-4 sm:px-6 pb-6 pt-2">
               <div class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <Label>Part Type</Label>
-              <Select v-model="part.part">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PART_1">Part 1</SelectItem>
-                  <SelectItem value="PART_2">Part 2</SelectItem>
-                  <SelectItem value="PART_3">Part 3</SelectItem>
-                  <SelectItem value="PART_4">Part 4</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div class="space-y-2">
-              <Label>Number of Questions</Label>
-              <Input
-                type="number"
-                v-model.number="part.question.number_of_questions"
-                min="1"
-                max="14"
-              />
-            </div>
-          </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <Label>Part Type</Label>
+                    <Select v-model="part.part">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PART_1">Part 1</SelectItem>
+                        <SelectItem value="PART_2">Part 2</SelectItem>
+                        <SelectItem value="PART_3">Part 3</SelectItem>
+                        <SelectItem value="PART_4">Part 4</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div class="space-y-2">
+                    <Label>Number of Questions</Label>
+                    <Input
+                      type="number"
+                      v-model.number="part.question.number_of_questions"
+                      min="1"
+                      max="14"
+                    />
+                  </div>
+                </div>
 
                 <!-- Audio Configuration -->
                 <Card class="border-dashed">
                   <CardHeader class="pb-3">
-                    <CardTitle class="text-sm font-medium text-muted-foreground">Audio Configuration</CardTitle>
+                    <CardTitle class="text-sm font-medium text-muted-foreground"
+                      >Audio Configuration</CardTitle
+                    >
                   </CardHeader>
                   <CardContent>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div
+                      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                    >
                       <div class="space-y-2">
                         <Label class="text-sm font-medium">Audio URL</Label>
                         <Input
@@ -160,7 +205,9 @@
                         />
                       </div>
                       <div class="space-y-2">
-                        <Label class="text-sm font-medium">Duration (seconds)</Label>
+                        <Label class="text-sm font-medium"
+                          >Duration (seconds)</Label
+                        >
                         <Input
                           type="number"
                           v-model.number="part.audio.duration"
@@ -175,8 +222,13 @@
                 <!-- Question Content -->
                 <Card class="border-dashed">
                   <CardHeader class="pb-3">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                      <CardTitle class="text-sm font-medium text-muted-foreground">Question Content</CardTitle>
+                    <div
+                      class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+                    >
+                      <CardTitle
+                        class="text-sm font-medium text-muted-foreground"
+                        >Question Content</CardTitle
+                      >
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -184,26 +236,66 @@
                     <div class="sticky top-4 z-10 mb-4 flex justify-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger as-child>
-                          <Button size="default" class="shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
+                          <Button
+                            size="default"
+                            class="shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
+                          >
                             <Plus class="mr-2 h-4 w-4" />
                             <span>Add Question Type</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" class="w-56">
-                          <DropdownMenuItem @click="addQuestionByType(part.question.content, 'completion')">
+                          <DropdownMenuItem
+                            @click="
+                              addQuestionByType(
+                                part.question.content,
+                                'completion'
+                              )
+                            "
+                          >
                             <span class="font-medium">Completion</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multiple-choice')">
+                          <DropdownMenuItem
+                            @click="
+                              addQuestionByType(
+                                part.question.content,
+                                'multiple-choice'
+                              )
+                            "
+                          >
                             <span class="font-medium">Multiple Choice</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem @click="addQuestionByType(part.question.content, 'multi-select')">
+                          <DropdownMenuItem
+                            @click="
+                              addQuestionByType(
+                                part.question.content,
+                                'multi-select'
+                              )
+                            "
+                          >
                             <span class="font-medium">Multi Select</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem @click="addQuestionByType(part.question.content, 'draggable-selection')">
+                          <DropdownMenuItem
+                            @click="
+                              addQuestionByType(
+                                part.question.content,
+                                'draggable-selection'
+                              )
+                            "
+                          >
                             <span class="font-medium">Draggable Selection</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem @click="addQuestionByType(part.question.content, 'selection')">
-                            <span class="font-medium">Selection (True/False/Headings)</span>
+                          <DropdownMenuItem
+                            @click="
+                              addQuestionByType(
+                                part.question.content,
+                                'selection'
+                              )
+                            "
+                          >
+                            <span class="font-medium"
+                              >Selection (True/False/Headings)</span
+                            >
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -213,26 +305,26 @@
                       :key="contentIndex"
                       class="mb-4 last:mb-0"
                     >
-              <CompletionQuestion
-                v-if="content.type === 'completion'"
-                v-model="part.question.content[contentIndex]"
-                @remove="part.question.content.splice(contentIndex, 1)"
-              />
-              <MultipleChoiceQuestion
-                v-else-if="content.type === 'multiple-choice'"
-                v-model="part.question.content[contentIndex]"
-                @remove="part.question.content.splice(contentIndex, 1)"
-              />
-              <MultiSelectQuestion
-                v-else-if="content.type === 'multi-select'"
-                v-model="part.question.content[contentIndex]"
-                @remove="part.question.content.splice(contentIndex, 1)"
-              />
-              <DraggableSelectionQuestion
-                v-else-if="content.type === 'draggable-selection'"
-                v-model="part.question.content[contentIndex]"
-                @remove="part.question.content.splice(contentIndex, 1)"
-              />
+                      <CompletionQuestion
+                        v-if="content.type === 'completion'"
+                        v-model="part.question.content[contentIndex]"
+                        @remove="part.question.content.splice(contentIndex, 1)"
+                      />
+                      <MultipleChoiceQuestion
+                        v-else-if="content.type === 'multiple-choice'"
+                        v-model="part.question.content[contentIndex]"
+                        @remove="part.question.content.splice(contentIndex, 1)"
+                      />
+                      <MultiSelectQuestion
+                        v-else-if="content.type === 'multi-select'"
+                        v-model="part.question.content[contentIndex]"
+                        @remove="part.question.content.splice(contentIndex, 1)"
+                      />
+                      <DraggableSelectionQuestion
+                        v-else-if="content.type === 'draggable-selection'"
+                        v-model="part.question.content[contentIndex]"
+                        @remove="part.question.content.splice(contentIndex, 1)"
+                      />
                       <SelectionQuestion
                         v-else-if="content.type === 'selection'"
                         v-model="part.question.content[contentIndex]"
@@ -243,18 +335,28 @@
                 </Card>
 
                 <!-- Answer Key Input -->
-                <Card v-if="part.question.content.length > 0" class="border-dashed bg-primary/5">
+                <Card
+                  v-if="part.question.content.length > 0"
+                  class="border-dashed bg-primary/5"
+                >
                   <CardHeader class="pb-3">
-                    <CardTitle class="text-sm font-medium text-muted-foreground">Answer Key</CardTitle>
+                    <CardTitle class="text-sm font-medium text-muted-foreground"
+                      >Answer Key</CardTitle
+                    >
                   </CardHeader>
                   <CardContent>
                     <p class="text-xs text-slate-900 font-bold">
-                      Enter answers separated by commas (e.g., A, go, TRUE, C, walking)<br>
-                      <strong class="text-primary">Note:</strong> For multiple correct answers, use slash (e.g., book/books, cinema/cinemas)
+                      Enter answers separated by commas (e.g., A, go, TRUE, C,
+                      walking)<br />
+                      <strong class="text-primary">Note:</strong> For multiple
+                      correct answers, use slash (e.g., book/books,
+                      cinema/cinemas)
                     </p>
                     <Textarea
                       :model-value="getAnswersAsText(part)"
-                      @update:model-value="(value) => setAnswersFromText(part, value)"
+                      @update:model-value="
+                        (value) => setAnswersFromText(part, value)
+                      "
                       placeholder="A, go, TRUE, book/books, cinema/cinemas"
                       rows="3"
                       class="font-mono text-xs sm:text-sm mt-3 resize-none"
@@ -275,15 +377,27 @@
           <AlertDialogTitle>Delete Part?</AlertDialogTitle>
           <AlertDialogDescription>
             <template v-if="partToDelete !== null">
-              Are you sure you want to delete <strong>{{ listeningData.parts[partToDelete]?.part.replace('_', ' ') }}</strong> with <strong>{{ listeningData.parts[partToDelete]?.question.content.length }} question type(s)</strong>?
-              <br><br>
+              Are you sure you want to delete
+              <strong>{{
+                listeningData.parts[partToDelete]?.part.replace("_", " ")
+              }}</strong>
+              with
+              <strong
+                >{{
+                  listeningData.parts[partToDelete]?.question.content.length
+                }}
+                question type(s)</strong
+              >? <br /><br />
               This action cannot be undone.
             </template>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction @click="confirmDeletePart" class="bg-destructive text-white  hover:bg-destructive/90">
+          <AlertDialogAction
+            @click="confirmDeletePart"
+            class="bg-destructive text-white hover:bg-destructive/90"
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -298,18 +412,18 @@ import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 import { motion } from "motion-v";
 
-import CompletionQuestion from '@/components/questions/CompletionQuestion.vue';
-import MultipleChoiceQuestion from '@/components/questions/MultipleChoiceQuestion.vue';
-import MultiSelectQuestion from '@/components/questions/MultiSelectQuestion.vue';
-import DraggableSelectionQuestion from '@/components/questions/DraggableSelectionQuestion.vue';
-import SelectionQuestion from '@/components/questions/SelectionQuestion.vue';
+import CompletionQuestion from "@/components/questions/CompletionQuestion.vue";
+import MultipleChoiceQuestion from "@/components/questions/MultipleChoiceQuestion.vue";
+import MultiSelectQuestion from "@/components/questions/MultiSelectQuestion.vue";
+import DraggableSelectionQuestion from "@/components/questions/DraggableSelectionQuestion.vue";
+import SelectionQuestion from "@/components/questions/SelectionQuestion.vue";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -319,14 +433,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
+} from "@/components/ui/accordion";
 
 useHead({
   title: "Listening Test Builder - Testify",
@@ -349,9 +463,9 @@ const loadFromStorage = () => {
         const data = JSON.parse(saved);
         // Make answers objects reactive
         if (data.parts) {
-          data.parts = data.parts.map(part => ({
+          data.parts = data.parts.map((part) => ({
             ...part,
-            answers: reactive(part.answers || {})
+            answers: reactive(part.answers || {}),
           }));
         }
         return data;
@@ -362,7 +476,8 @@ const loadFromStorage = () => {
   }
   return {
     title: "IELTS Listening Test - Academic Module",
-    description: "A comprehensive listening test with 4 parts covering everyday conversations and academic lectures.",
+    description:
+      "A comprehensive listening test with 4 parts covering everyday conversations and academic lectures.",
     for_cdi: "true",
     test_id: testId,
     parts: [],
@@ -374,7 +489,7 @@ const listeningData = ref(loadFromStorage());
 // Fetch listening test from API
 const fetchListeningTest = async () => {
   if (!testId) return;
-  
+
   try {
     isLoading.value = true;
     const authStore = useAuthStore();
@@ -402,18 +517,18 @@ const fetchListeningTest = async () => {
     if (response) {
       // Make answers objects reactive
       if (response.parts) {
-        response.parts = response.parts.map(part => ({
+        response.parts = response.parts.map((part) => ({
           ...part,
-          answers: reactive(part.answers || {})
+          answers: reactive(part.answers || {}),
         }));
       }
-      
+
       listeningData.value = {
         ...response,
         for_cdi: String(response.for_cdi || false),
         test_id: testId,
       };
-      
+
       console.log("Listening test loaded:", response);
     }
   } catch (error) {
@@ -433,16 +548,22 @@ onMounted(() => {
 });
 
 // Auto-save to localStorage whenever data changes
-watch(listeningData, (newData) => {
-  if (process.client && testId) {
-    localStorage.setItem(storageKey, JSON.stringify(newData));
-  }
-}, { deep: true });
+watch(
+  listeningData,
+  (newData) => {
+    if (process.client && testId) {
+      localStorage.setItem(storageKey, JSON.stringify(newData));
+    }
+  },
+  { deep: true }
+);
 
 const isValid = computed(() => {
-  return listeningData.value.title && 
-         listeningData.value.test_id && 
-         listeningData.value.parts.length > 0;
+  return (
+    listeningData.value.title &&
+    listeningData.value.test_id &&
+    listeningData.value.parts.length > 0
+  );
 });
 
 const addListeningPart = () => {
@@ -475,12 +596,17 @@ const confirmDeletePart = () => {
 };
 
 const getAnswersAsText = (part) => {
-  const keys = Object.keys(part.answers).sort((a, b) => parseInt(a) - parseInt(b));
-  return keys.map(key => part.answers[key]).join(', ');
+  const keys = Object.keys(part.answers).sort(
+    (a, b) => parseInt(a) - parseInt(b)
+  );
+  return keys.map((key) => part.answers[key]).join(", ");
 };
 
 const setAnswersFromText = (part, value) => {
-  const answers = value.split(',').map(a => a.trim()).filter(a => a);
+  const answers = value
+    .split(",")
+    .map((a) => a.trim())
+    .filter((a) => a);
   part.answers = reactive({});
   answers.forEach((answer, index) => {
     part.answers[String(index + 1)] = answer;
@@ -498,11 +624,15 @@ const getQuestionNumber = (part, contentIndex, itemIndex) => {
   let questionNumber = 1;
   for (let i = 0; i < contentIndex; i++) {
     const content = part.question.content[i];
-    if (content.type === 'completion' || content.type === 'selection' || content.type === 'draggable-selection') {
+    if (
+      content.type === "completion" ||
+      content.type === "selection" ||
+      content.type === "draggable-selection"
+    ) {
       questionNumber += countBlanks(content.content).length;
-    } else if (content.type === 'multiple-choice') {
+    } else if (content.type === "multiple-choice") {
       questionNumber += content.questions?.length || 0;
-    } else if (content.type === 'multi-select') {
+    } else if (content.type === "multi-select") {
       questionNumber += content.limit || 2;
     }
   }
@@ -551,8 +681,6 @@ const toggleMultiSelectAnswer = (part, contentIndex, value, limit) => {
   Object.assign(part.answers, {});
 };
 
-
-
 const addQuestionByType = (contentArray, type) => {
   const baseQuestion = {
     id: `qc_${Date.now()}`,
@@ -562,30 +690,41 @@ const addQuestionByType = (contentArray, type) => {
   };
 
   switch (type) {
-    case 'completion':
+    case "completion":
       contentArray.push({ ...baseQuestion, content: "" });
       break;
-    case 'multiple-choice':
+    case "multiple-choice":
       contentArray.push({ ...baseQuestion, questions: [] });
       break;
-    case 'multi-select':
+    case "multi-select":
       contentArray.push({ ...baseQuestion, options: [], limit: 2 });
       break;
-    case 'draggable-selection':
-      contentArray.push({ ...baseQuestion, content: "", options: [], optionsTitle: "" });
+    case "draggable-selection":
+      contentArray.push({
+        ...baseQuestion,
+        content: "",
+        options: [],
+        optionsTitle: "",
+      });
       break;
-    case 'selection':
+    case "selection":
       const defaultOptions = [
-        { id: `opt_${Date.now()}_1`, value: 'A', label: '' },
-        { id: `opt_${Date.now()}_2`, value: 'B', label: '' },
-        { id: `opt_${Date.now()}_3`, value: 'C', label: '' },
-        { id: `opt_${Date.now()}_4`, value: 'D', label: '' },
-        { id: `opt_${Date.now()}_5`, value: 'E', label: '' },
-        { id: `opt_${Date.now()}_6`, value: 'F', label: '' },
-        { id: `opt_${Date.now()}_7`, value: 'G', label: '' },
-        { id: `opt_${Date.now()}_8`, value: 'H', label: '' },
+        { id: `opt_${Date.now()}_1`, value: "A", label: "" },
+        { id: `opt_${Date.now()}_2`, value: "B", label: "" },
+        { id: `opt_${Date.now()}_3`, value: "C", label: "" },
+        { id: `opt_${Date.now()}_4`, value: "D", label: "" },
+        { id: `opt_${Date.now()}_5`, value: "E", label: "" },
+        { id: `opt_${Date.now()}_6`, value: "F", label: "" },
+        { id: `opt_${Date.now()}_7`, value: "G", label: "" },
+        { id: `opt_${Date.now()}_8`, value: "H", label: "" },
       ];
-      contentArray.push({ ...baseQuestion, content: "", options: defaultOptions, showOptions: true, optionsTitle: "OPTIONS" });
+      contentArray.push({
+        ...baseQuestion,
+        content: "",
+        options: defaultOptions,
+        showOptions: true,
+        optionsTitle: "OPTIONS",
+      });
       break;
     default:
       contentArray.push(baseQuestion);
@@ -610,7 +749,7 @@ const saveListeningTest = async () => {
       ...listeningData.value,
       for_cdi: listeningData.value.for_cdi === "true",
     };
-    
+
     const response = await $fetch(
       `${baseURL}/ielts/centers/${activeCenter.value.id}/listening`,
       {
@@ -624,17 +763,17 @@ const saveListeningTest = async () => {
     );
 
     console.log("Listening test saved:", response);
-    
+
     // Clear localStorage after successful save
     if (process.client && testId) {
       localStorage.removeItem(storageKey);
     }
-    
+
     toast.success("Listening test saved successfully!");
-    
+
     // Navigate back after save
     setTimeout(() => {
-      navigateTo('/dashboard/test-builder');
+      navigateTo("/dashboard/test-builder");
     }, 1000);
   } catch (error) {
     console.error("Failed to save:", error);
