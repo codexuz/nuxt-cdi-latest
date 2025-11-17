@@ -1,5 +1,5 @@
 <template>
-  <SidebarProvider>
+  <SidebarProvider @update:open="handleSidebarChange">
     <Sidebar variant="inset">
       <SidebarHeader>
         <SidebarMenu>
@@ -100,10 +100,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/reading')
+                            $route.path.includes('/dashboard/reading/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/reading">
+                          <NuxtLink to="/dashboard/reading/tests">
                             <BookOpen />
                             <span>Reading</span>
                           </NuxtLink>
@@ -113,10 +113,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/listening')
+                            $route.path.includes('/dashboard/listening/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/listening">
+                          <NuxtLink to="/dashboard/listening/tests">
                             <Headphones />
                             <span>Listening</span>
                           </NuxtLink>
@@ -126,10 +126,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/writing')
+                            $route.path.includes('/dashboard/writing/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/writing">
+                          <NuxtLink to="/dashboard/writing/tests">
                             <PenTool />
                             <span>Writing</span>
                           </NuxtLink>
@@ -415,6 +415,21 @@ const colorMode = useColorMode();
 
 // Collapsible menu state
 const isTestsOpen = ref(true);
+const sidebarOpen = ref(true);
+
+// Handle sidebar state change
+const handleSidebarChange = (open) => {
+  sidebarOpen.value = open;
+};
+
+// Close sidebar on mobile when route changes
+watch(
+  () => route.path,
+  () => {
+    // On mobile, the sidebar auto-closes on navigation
+    // This is handled by the SidebarProvider's default behavior
+  }
+);
 
 // Toggle theme function
 const toggleTheme = () => {
