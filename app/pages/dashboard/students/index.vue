@@ -35,7 +35,10 @@
     </div>
 
     <!-- Students Table -->
-    <div
+    <motion.div
+      :initial="{ opacity: 0, y: 20 }"
+      :animate="{ opacity: 1, y: 0 }"
+      :transition="{ duration: 0.4, delay: 0.1 }"
       class="bg-white dark:bg-gray-950 rounded-lg border border-gray-200 dark:border-gray-800"
     >
       <!-- Loading State -->
@@ -222,7 +225,7 @@
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
 
     <!-- Add Student Modal -->
     <Dialog v-model:open="isAddStudentModalOpen">
@@ -319,6 +322,7 @@ import {
   Users,
 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
+import { motion } from "motion-v";
 
 useHead({
   title: "Students - Mockmee",

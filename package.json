@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-vue": "^8.6.0",
     "lucide-vue-next": "^0.542.0",
+    "motion-v": "^1.7.4",
     "nuxt": "^4.0.3",
     "nuxt-storage": "^1.2.2",
     "pinia": "^3.0.3",

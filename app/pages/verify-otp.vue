@@ -3,69 +3,78 @@
     class="flex bg-[#f3f4f6] dark:bg-linear-to-t dark:from-slate-900 dark:to-gray-800 flex-col items-center justify-center min-h-screen py-2"
   >
     <Toaster position="top-center" richColors theme="system" />
-    <Card class="w-[420px] sm:max-w-md">
-      <CardHeader>
-        <CardTitle class="text-2xl">Verify OTP</CardTitle>
-        <CardDescription>
-          Enter the 6-digit code sent to {{ email }}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div class="space-y-4">
-          <div class="grid gap-2">
-            <Label for="otp">OTP Code</Label>
-            <Input
-              id="otp"
-              type="text"
-              v-model="otp"
-              placeholder="123456"
-              maxlength="6"
-              required
-              class="text-center text-2xl tracking-widest"
-              @input="handleOtpInput"
-            />
-          </div>
+    <motion.div
+      :initial="{ opacity: 0, scale: 0.95, y: 20 }"
+      :animate="{ opacity: 1, scale: 1, y: 0 }"
+      :transition="{ duration: 0.4 }"
+    >
+      <Card class="w-[420px] sm:max-w-md">
+        <CardHeader>
+          <CardTitle class="text-2xl">Verify OTP</CardTitle>
+          <CardDescription>
+            Enter the 6-digit code sent to {{ email }}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-4">
+            <div class="grid gap-2">
+              <Label for="otp">OTP Code</Label>
+              <Input
+                id="otp"
+                type="text"
+                v-model="otp"
+                placeholder="123456"
+                maxlength="6"
+                required
+                class="text-center text-2xl tracking-widest"
+                @input="handleOtpInput"
+              />
+            </div>
 
-          <Button
-            :disabled="!isOtpValid || isVerifying"
-            @click="verifyOtp"
-            class="w-full"
-          >
-            <span v-if="isVerifying">Verifying...</span>
-            <span v-else>Verify & Continue</span>
-          </Button>
-
-          <div class="text-center text-sm flex items-center justify-center gap-x-2">
-            <p class="text-muted-foreground">Didn't receive the code?</p>
             <Button
-              variant="link"
-              :disabled="isResending || countdown > 0"
-              @click="resendOtp"
-              class="p-0 h-auto font-medium cursor-pointer"
+              :disabled="!isOtpValid || isVerifying"
+              @click="verifyOtp"
+              class="w-full"
             >
-              <span v-if="countdown > 0">Resend in {{ countdown }}s</span>
-              <span v-else-if="isResending">Resending...</span>
-              <span v-else>Resend OTP</span>
+              <span v-if="isVerifying">Verifying...</span>
+              <span v-else>Verify & Continue</span>
             </Button>
-          </div>
 
-          <div class="text-center text-sm">
-            <NuxtLink
-              to="/login"
-              class="text-primary hover:underline font-medium"
+            <div
+              class="text-center text-sm flex items-center justify-center gap-x-2"
             >
-              Back to Login
-            </NuxtLink>
+              <p class="text-muted-foreground">Didn't receive the code?</p>
+              <Button
+                variant="link"
+                :disabled="isResending || countdown > 0"
+                @click="resendOtp"
+                class="p-0 h-auto font-medium cursor-pointer"
+              >
+                <span v-if="countdown > 0">Resend in {{ countdown }}s</span>
+                <span v-else-if="isResending">Resending...</span>
+                <span v-else>Resend OTP</span>
+              </Button>
+            </div>
+
+            <div class="text-center text-sm">
+              <NuxtLink
+                to="/login"
+                class="text-primary hover:underline font-medium"
+              >
+                Back to Login
+              </NuxtLink>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   </div>
 </template>
 
 <script setup>
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
+import { motion } from "motion-v";
 
 useHead({
   title: "Verify OTP - Mockmee",
