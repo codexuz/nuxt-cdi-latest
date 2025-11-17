@@ -1,9 +1,17 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <motion.div 
+    class="container mx-auto px-4 py-8"
+    :initial="{ opacity: 0, y: 20 }"
+    :transition="{ duration: 0.6, ease: 'easeOut' }"
+    :animate="{ opacity: 1, y: 0 }">
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
+    <motion.div 
+      class="flex items-center justify-between mb-8"
+      :initial="{ opacity: 0, y: -10 }"
+      :transition="{ duration: 0.5, delay: 0.1 }"
+      :animate="{ opacity: 1, y: 0 }">
       <div>
         <h1 class="text-3xl font-bold">IELTS Test Builder</h1>
         <p class="text-muted-foreground">Create and manage IELTS tests</p>
@@ -12,7 +20,7 @@
         <Plus class="mr-2 h-4 w-4" />
         Create New Test
       </Button>
-    </div>
+    </motion.div>
 
     <!-- Create Test Dialog -->
     <Dialog v-model:open="showCreateDialog">
@@ -74,15 +82,19 @@
     </div>
 
     <!-- Tests List -->
-    <div
+    <motion.div
       v-else
       class="grid grid-cols-1 gap-4"
-    >
-      <Card
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.5, delay: 0.2 }"
+      :animate="{ opacity: 1, y: 0 }">
+      <motion.div
         v-for="(test, index) in tests"
         :key="test.id"
-        class="hover:shadow-lg transition-shadow"
-      >
+        :initial="{ opacity: 0, y: 10 }"
+        :transition="{ duration: 0.4, delay: 0.3 + index * 0.05 }"
+        :animate="{ opacity: 1, y: 0 }">
+        <Card class="hover:shadow-lg transition-shadow">
         <CardHeader>
           <div class="flex items-center justify-between">
             <div class="flex-1">
@@ -182,7 +194,8 @@
             </Button>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </motion.div>
 
       <!-- Empty State -->
       <Card v-if="tests.length === 0" class="text-center py-12">
@@ -198,7 +211,7 @@
           </Button>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
 
     <!-- Edit Test Dialog -->
     <Dialog v-model:open="showEditDialog">
@@ -245,10 +258,11 @@
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  </div>
+  </motion.div>
 </template>
 
 <script setup>
+import { motion } from "motion-v";
 import {
   Plus,
   Trash2,

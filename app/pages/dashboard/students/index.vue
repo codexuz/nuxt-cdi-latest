@@ -1,7 +1,15 @@
 <template>
-  <div class="space-y-4">
+  <motion.div 
+    class="space-y-4"
+    :initial="{ opacity: 0, y: 20 }"
+    :transition="{ duration: 0.6, ease: 'easeOut' }"
+    :animate="{ opacity: 1, y: 0 }">
     <!-- Filters and Search -->
-    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+    <motion.div 
+      class="flex flex-col sm:flex-row gap-4 items-center justify-between"
+      :initial="{ opacity: 0, y: -10 }"
+      :transition="{ duration: 0.5, delay: 0.1 }"
+      :animate="{ opacity: 1, y: 0 }">
       <div class="relative w-full sm:w-80">
         <Search
           class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4"
@@ -32,10 +40,14 @@
           Add student
         </Button>
       </div>
-    </div>
+    </motion.div>
 
     <!-- Students Table -->
-    <div class="bg-white dark:bg-gray-950 rounded-lg border border-gray-200 dark:border-gray-800">
+    <motion.div 
+      class="bg-white dark:bg-gray-950 rounded-lg border border-gray-200 dark:border-gray-800"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.5, delay: 0.2 }"
+      :animate="{ opacity: 1, y: 0 }">
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-12">
         <div
@@ -220,7 +232,7 @@
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
 
     <!-- Add Student Modal -->
     <Dialog v-model:open="isAddStudentModalOpen">
@@ -299,10 +311,11 @@
         </form>
       </DialogContent>
     </Dialog>
-  </div>
+  </motion.div>
 </template>
 
 <script setup>
+import { motion } from "motion-v";
 import {
   Plus,
   Search,

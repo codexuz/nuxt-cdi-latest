@@ -1,10 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-    <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
+    <motion.div 
+      class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.6, ease: 'easeOut' }"
+      :animate="{ opacity: 1, y: 0 }">
       <Toaster position="top-center" richColors theme="system" />
 
       <!-- Header -->
-      <div class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
+      <motion.div 
+        class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm"
+        :initial="{ opacity: 0, y: -10 }"
+        :transition="{ duration: 0.5, delay: 0.1 }"
+        :animate="{ opacity: 1, y: 0 }">
         <div
           class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
@@ -49,9 +57,13 @@
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <!-- Writing Test Form -->
+      <motion.div
+        :initial="{ opacity: 0, y: 20 }"
+        :transition="{ duration: 0.5, delay: 0.2 }"
+        :animate="{ opacity: 1, y: 0 }">
       <Card class="mb-6 sm:mb-8 shadow-sm border-2">
         <CardHeader class="bg-muted/50">
           <CardTitle class="text-lg flex items-center gap-2">
@@ -184,11 +196,13 @@
           </div>
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   </div>
 </template>
 
 <script setup>
+import { motion } from "motion-v";
 import { Save, ArrowLeft } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";

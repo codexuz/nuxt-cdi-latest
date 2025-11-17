@@ -1,7 +1,14 @@
 <template>
-  <div class="space-y-6 animate__animated animate__fadeInUp">
+  <motion.div class="space-y-6" 
+  :initial="{ opacity: 0, y: 20 }"
+  :transition="{ duration: 0.6, ease: 'easeOut' }"
+  :animate="{ opacity: 1, y: 0 }">
     <!-- Dashboard Header -->
-    <div class="flex items-center justify-between">
+    <motion.div 
+      class="flex items-center justify-between"
+      :initial="{ opacity: 0, y: -10 }"
+      :transition="{ duration: 0.5, delay: 0.1 }"
+      :animate="{ opacity: 1, y: 0 }">
       <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
           Dashboard
@@ -27,10 +34,14 @@
           <span>Add Student</span>
         </Button>
       </div>
-    </div>
+    </motion.div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <motion.div 
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.5, delay: 0.2 }"
+      :animate="{ opacity: 1, y: 0 }">
       <!-- Total Students -->
       <Card>
         <CardContent class="p-6">
@@ -132,9 +143,13 @@
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <motion.div 
+      class="grid grid-cols-1 lg:grid-cols-3 gap-6"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.5, delay: 0.3 }"
+      :animate="{ opacity: 1, y: 0 }">
       <!-- Recent Activity -->
       <Card class="lg:col-span-2">
         <CardHeader>
@@ -242,10 +257,14 @@
           </div>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
 
     <!-- Recent Tests and Students -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <motion.div 
+      class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.5, delay: 0.4 }"
+      :animate="{ opacity: 1, y: 0 }">
       <!-- Recent Tests -->
       <Card>
         <CardHeader>
@@ -332,8 +351,8 @@
           </div>
         </CardContent>
       </Card>
-    </div>
-  </div>
+    </motion.div>
+  </motion.div>
 </template>
 
 <script setup>
@@ -348,7 +367,7 @@ import {
   FileEdit,
   Calendar,
 } from "lucide-vue-next";
-
+import { motion } from "motion-v"
 useHead({
   title: "Dashboard - Mockmee LMS",
 });

@@ -1,10 +1,18 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-    <div class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
+    <motion.div 
+      class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl"
+      :initial="{ opacity: 0, y: 20 }"
+      :transition="{ duration: 0.6, ease: 'easeOut' }"
+      :animate="{ opacity: 1, y: 0 }">
       <Toaster position="top-center" richColors theme="system" />
 
       <!-- Header -->
-      <div class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm">
+      <motion.div 
+        class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm"
+        :initial="{ opacity: 0, y: -10 }"
+        :transition="{ duration: 0.5, delay: 0.1 }"
+        :animate="{ opacity: 1, y: 0 }">
         <div
           class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
@@ -29,7 +37,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <!-- Loading State -->
       <div v-if="isLoading" class="flex justify-center py-12">
@@ -39,12 +47,19 @@
       </div>
 
       <!-- Reading Tests List -->
-      <div v-else class="grid grid-cols-1 gap-4">
-        <Card
-          v-for="readingTest in readingTests"
+      <motion.div 
+        v-else 
+        class="grid grid-cols-1 gap-4"
+        :initial="{ opacity: 0, y: 20 }"
+        :transition="{ duration: 0.5, delay: 0.2 }"
+        :animate="{ opacity: 1, y: 0 }">
+        <motion.div
+          v-for="(readingTest, index) in readingTests"
           :key="readingTest.id"
-          class="hover:shadow-lg transition-shadow"
-        >
+          :initial="{ opacity: 0, y: 10 }"
+          :transition="{ duration: 0.4, delay: 0.3 + index * 0.05 }"
+          :animate="{ opacity: 1, y: 0 }">
+          <Card class="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div class="flex items-center justify-between">
               <div class="flex-1">
@@ -101,6 +116,7 @@
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         <!-- Empty State -->
         <Card v-if="readingTests.length === 0" class="text-center py-12">
@@ -116,12 +132,13 @@
             </Button>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   </div>
 </template>
 
 <script setup>
+import { motion } from "motion-v";
 import {
   ArrowLeft,
   BookOpen,

@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "nuxt-aos",
+    "motion-v/nuxt"
   ],
   colorMode: {
     classSuffix: "",
