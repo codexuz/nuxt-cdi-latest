@@ -15,7 +15,7 @@
           <Plus class="h-4 w-4" />
           <span>Create Test</span>
         </Button>
-        <Button @click="navigateTo('/dashboard/students/add')" variant="outline" class="flex items-center space-x-2">
+        <Button @click="navigateTo('/dashboard/students')" variant="outline" class="flex items-center space-x-2">
           <UserPlus class="h-4 w-4" />
           <span>Add Student</span>
         </Button>
