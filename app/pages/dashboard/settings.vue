@@ -143,41 +143,7 @@
               <Button @click="changePassword" :disabled="isChangingPassword">
                 {{ isChangingPassword ? 'Changing...' : 'Change Password' }}
               </Button>
-            </div>
-            
-            <Separator />
-            
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Two-factor authentication</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Add an extra layer of security to your account
-                  </p>
-                </div>
-                <Button variant="outline">Enable 2FA</Button>
-              </div>
-              
-              <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                  <Label>Session timeout</Label>
-                  <p class="text-sm text-gray-600 dark:text-gray-400">
-                    Automatically log out after inactivity
-                  </p>
-                </div>
-                <Select v-model="settings.security.sessionTimeout">
-                  <SelectTrigger class="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="30">30 min</SelectItem>
-                    <SelectItem value="60">1 hour</SelectItem>
-                    <SelectItem value="120">2 hours</SelectItem>
-                    <SelectItem value="480">8 hours</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            </div>            
           </CardContent>
         </Card>
 

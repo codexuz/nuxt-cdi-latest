@@ -97,25 +97,39 @@
         </CardHeader>
         <CardContent>
           <div
-            class="flex items-center gap-6 text-sm text-muted-foreground mb-4"
+            class="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground mb-4"
           >
             <div class="flex items-center gap-2">
               <Headphones class="h-4 w-4" />
-              <span>{{ test.listening_count || 0 }} Listening Parts</span>
+              <span class="hidden sm:inline"
+                >{{ test.listening_count || 0 }} Listening Parts</span
+              >
+              <span class="sm:hidden"
+                >{{ test.listening_count || 0 }} Listening</span
+              >
             </div>
             <div class="flex items-center gap-2">
               <BookOpen class="h-4 w-4" />
-              <span>{{ test.reading_count || 0 }} Reading Parts</span>
+              <span class="hidden sm:inline"
+                >{{ test.reading_count || 0 }} Reading Parts</span
+              >
+              <span class="sm:hidden"
+                >{{ test.reading_count || 0 }} Reading</span
+              >
             </div>
             <div class="flex items-center gap-2">
               <FileQuestion class="h-4 w-4" />
-              <span>{{ test.total_questions || 0 }} Questions</span>
+              <span class="hidden sm:inline"
+                >{{ test.total_questions || 0 }} Questions</span
+              >
+              <span class="sm:hidden">{{ test.total_questions || 0 }} Q</span>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <Button size="sm" @click="editTest(test)">
+          <div class="flex flex-wrap items-center gap-2">
+            <Button size="sm" @click="editTest(test)" class="flex-shrink-0">
               <Edit class="mr-2 h-3 w-3" />
-              Edit Test Info
+              <span class="hidden sm:inline">Edit Test Info</span>
+              <span class="sm:hidden">Edit</span>
             </Button>
             <Button
               size="sm"
@@ -125,9 +139,11 @@
                   `/dashboard/test-builder/listening?test_id=${test.id}`
                 )
               "
+              class="flex-shrink-0"
             >
               <Headphones class="mr-2 h-3 w-3" />
-              Add Listening
+              <span class="hidden md:inline">Add Listening</span>
+              <span class="md:hidden">Listening</span>
             </Button>
             <Button
               size="sm"
@@ -135,11 +151,30 @@
               @click="
                 navigateTo(`/dashboard/test-builder/reading?test_id=${test.id}`)
               "
+              class="flex-shrink-0"
             >
               <BookOpen class="mr-2 h-3 w-3" />
-              Add Reading
+              <span class="hidden md:inline">Add Reading</span>
+              <span class="md:hidden">Reading</span>
             </Button>
-            <Button size="sm" variant="ghost" @click="deleteTest(test.id)">
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(`/dashboard/test-builder/writing?test_id=${test.id}`)
+              "
+              class="flex-shrink-0"
+            >
+              <PenTool class="mr-2 h-3 w-3" />
+              <span class="hidden md:inline">Add Writing</span>
+              <span class="md:hidden">Writing</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              @click="deleteTest(test.id)"
+              class="flex-shrink-0"
+            >
               <Trash2 class="h-3 w-3 text-destructive" />
             </Button>
           </div>
@@ -218,6 +253,7 @@ import {
   Headphones,
   BookOpen,
   FileQuestion,
+  PenTool,
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
