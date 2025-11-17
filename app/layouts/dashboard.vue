@@ -1,5 +1,34 @@
 <template>
-  <SidebarProvider @update:open="handleSidebarChange">
+  <!-- Mobile Restriction Screen -->
+  <div
+    v-if="isMobileDevice"
+    class="fixed inset-0 bg-background flex items-center justify-center p-6 z-50"
+  >
+    <div class="text-center max-w-md space-y-6">
+      <div class="flex justify-center">
+        <div class="rounded-full bg-muted p-6">
+          <Monitor class="h-16 w-16 text-muted-foreground" />
+        </div>
+      </div>
+      <div class="space-y-2">
+        <h1 class="text-2xl font-bold tracking-tight">Desktop Required</h1>
+        <p class="text-muted-foreground">
+          To use this app, please access it from your laptop or computer for the
+          best experience.
+        </p>
+      </div>
+      <div class="pt-4">
+        <div
+          class="inline-flex items-center gap-2 text-sm text-muted-foreground"
+        >
+          <GraduationCap class="h-5 w-5" />
+          <span class="font-semibold">Mockmee</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <SidebarProvider v-else @update:open="handleSidebarChange">
     <Sidebar variant="inset">
       <SidebarHeader>
         <SidebarMenu>
@@ -382,6 +411,7 @@ import {
   Sun,
   Moon,
   ChevronRight,
+  Monitor,
 } from "lucide-vue-next";
 
 import {
@@ -412,6 +442,23 @@ import {
 const { user, logout } = useAuth();
 const route = useRoute();
 const colorMode = useColorMode();
+
+// Mobile device detection
+const isMobileDevice = ref(false);
+
+// Detect mobile device
+onMounted(() => {
+  const checkMobile = () => {
+    isMobileDevice.value = window.innerWidth < 768; // Tailwind's md breakpoint
+  };
+
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+
+  onUnmounted(() => {
+    window.removeEventListener("resize", checkMobile);
+  });
+});
 
 // Collapsible menu state
 const isTestsOpen = ref(true);
