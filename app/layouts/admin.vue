@@ -41,7 +41,7 @@
               </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-semibold">Mockmee</span>
-                <span class="truncate text-xs">Owner Dashboard</span>
+                <span class="truncate text-xs">Admin Dashboard</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -55,9 +55,9 @@
             <SidebarMenuItem>
               <SidebarMenuButton
                 as-child
-                :is-active="$route.path === '/dashboard'"
+                :is-active="$route.path === '/admin/dashboard'"
               >
-                <NuxtLink to="/dashboard">
+                <NuxtLink to="/admin/dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
                 </NuxtLink>
@@ -86,9 +86,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/leads'"
+                          :is-active="$route.path === '/admin/leads'"
                         >
-                          <NuxtLink to="/dashboard/leads">
+                          <NuxtLink to="/admin/leads">
                             <UserPlus />
                             <span>Leads</span>
                           </NuxtLink>
@@ -97,11 +97,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="
-                            $route.path === '/dashboard/trial-lessons'
-                          "
+                          :is-active="$route.path === '/admin/trial-lessons'"
                         >
-                          <NuxtLink to="/dashboard/trial-lessons">
+                          <NuxtLink to="/admin/trial-lessons">
                             <ClipboardCheck />
                             <span>Lead Trial Lessons</span>
                           </NuxtLink>
@@ -135,9 +133,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/students'"
+                          :is-active="$route.path === '/admin/students'"
                         >
-                          <NuxtLink to="/dashboard/students">
+                          <NuxtLink to="/admin/students">
                             <Users />
                             <span>Students</span>
                           </NuxtLink>
@@ -146,9 +144,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/groups'"
+                          :is-active="$route.path === '/admin/groups'"
                         >
-                          <NuxtLink to="/dashboard/groups">
+                          <NuxtLink to="/admin/groups">
                             <UsersRound />
                             <span>Groups</span>
                           </NuxtLink>
@@ -157,86 +155,11 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/attendance'"
+                          :is-active="$route.path === '/admin/attendance'"
                         >
-                          <NuxtLink to="/dashboard/attendance">
+                          <NuxtLink to="/admin/attendance">
                             <CalendarCheck />
                             <span>Attendance</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <!-- Tests & Exams Section -->
-        <SidebarGroup>
-          <SidebarGroupLabel>TESTS & EXAMS</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <Collapsible v-model:open="isTestsOpen" class="group/collapsible">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger as-child>
-                    <SidebarMenuButton>
-                      <span>Mock and Practice Tests</span>
-                      <ChevronRight
-                        class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-                      />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/dashboard/test-builder'"
-                        >
-                          <NuxtLink to="/dashboard/test-builder">
-                            <FileEdit />
-                            <span>Test Builder</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="
-                            $route.path.includes('/dashboard/reading/tests')
-                          "
-                        >
-                          <NuxtLink to="/dashboard/reading/tests">
-                            <BookOpen />
-                            <span>Reading</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="
-                            $route.path.includes('/dashboard/listening/tests')
-                          "
-                        >
-                          <NuxtLink to="/dashboard/listening/tests">
-                            <Headphones />
-                            <span>Listening</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="
-                            $route.path.includes('/dashboard/writing/tests')
-                          "
-                        >
-                          <NuxtLink to="/dashboard/writing/tests">
-                            <PenTool />
-                            <span>Writing</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -253,106 +176,14 @@
           <SidebarGroupLabel>FINANCE MANAGEMENT</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <Collapsible
-                v-model:open="isFinanceOpen"
-                class="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger as-child>
-                    <SidebarMenuButton>
-                      <span>Finance</span>
-                      <ChevronRight
-                        class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-                      />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/dashboard/payments'"
-                        >
-                          <NuxtLink to="/dashboard/payments">
-                            <CreditCard />
-                            <span>Payments</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/dashboard/expenses'"
-                        >
-                          <NuxtLink to="/dashboard/expenses">
-                            <Receipt />
-                            <span>Expenses</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/dashboard/salaries'"
-                        >
-                          <NuxtLink to="/dashboard/salaries">
-                            <Wallet />
-                            <span>Salaries</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <!-- Permissions & Roles Section -->
-        <SidebarGroup>
-          <SidebarGroupLabel>ROLES & PERMISSIONS</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   as-child
-                  :is-active="$route.path === '/dashboard/permissions'"
+                  :is-active="$route.path === '/admin/payments'"
                 >
-                  <NuxtLink to="/dashboard/permissions">
-                    <Shield />
-                    <span>Add New Staff</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <!-- Analytics Section -->
-        <SidebarGroup>
-          <SidebarGroupLabel>ANALYTICS</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="$route.path === '/dashboard/analytics'"
-                >
-                  <NuxtLink to="/dashboard/analytics">
-                    <TrendingUp />
-                    <span>Performance</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="$route.path === '/dashboard/reports'"
-                >
-                  <NuxtLink to="/dashboard/reports">
-                    <PieChart />
-                    <span>Reports</span>
+                  <NuxtLink to="/admin/payments">
+                    <CreditCard />
+                    <span>Payments</span>
                   </NuxtLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -366,19 +197,16 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              :is-active="$route.path === '/dashboard/settings'"
+              :is-active="$route.path === '/admin/settings'"
             >
-              <NuxtLink to="/dashboard/settings">
+              <NuxtLink to="/admin/settings">
                 <Settings />
                 <span>Settings</span>
               </NuxtLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              as-child
-              :is-active="$route.path === '/dashboard/support'"
-            >
+            <SidebarMenuButton as-child>
               <a
                 href="https://t.me/javlon_developer"
                 target="_blank"
@@ -444,13 +272,6 @@
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  @click="navigateTo('/dashboard/subscriptions')"
-                >
-                  <Sparkles />
-                  Upgrade to Pro
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem @click="handleLogout">
                   <LogOut />
                   Log out
@@ -475,7 +296,9 @@
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem class="hidden md:block">
-                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                <BreadcrumbLink href="/admin/dashboard"
+                  >Dashboard</BreadcrumbLink
+                >
               </BreadcrumbItem>
               <BreadcrumbSeparator
                 v-if="breadcrumbs.length > 1"
@@ -544,6 +367,7 @@
   background-color: rgb(24 24 27) !important; /* zinc-900 */
   color: white !important;
 }
+
 </style>
 
 <script setup>
@@ -552,19 +376,11 @@ import {
   LayoutDashboard,
   Users,
   UsersRound,
-  FileEdit,
-  BookOpen,
-  Headphones,
-  PenTool,
-  TrendingUp,
-  PieChart,
   Settings,
   HelpCircle,
-  User,
   LogOut,
   Bell,
   ChevronsUpDown,
-  Sparkles,
   Sun,
   Moon,
   ChevronRight,
@@ -573,9 +389,6 @@ import {
   ClipboardCheck,
   CalendarCheck,
   CreditCard,
-  Receipt,
-  Wallet,
-  Shield,
 } from "lucide-vue-next";
 
 import {
@@ -588,7 +401,6 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -613,7 +425,7 @@ const isMobileDevice = ref(false);
 // Detect mobile device
 onMounted(() => {
   const checkMobile = () => {
-    isMobileDevice.value = window.innerWidth < 768; // Tailwind's md breakpoint
+    isMobileDevice.value = window.innerWidth < 768;
   };
 
   checkMobile();
@@ -625,10 +437,8 @@ onMounted(() => {
 });
 
 // Collapsible menu state
-const isTestsOpen = ref(true);
 const isCRMOpen = ref(true);
 const isLMSOpen = ref(true);
-const isFinanceOpen = ref(true);
 const sidebarOpen = ref(true);
 
 // Handle sidebar state change
@@ -653,7 +463,7 @@ const toggleTheme = () => {
 // Breadcrumbs
 const breadcrumbs = computed(() => {
   const segments = route.path.split("/").filter(Boolean);
-  const crumbs = [{ label: "Dashboard", href: "/dashboard" }];
+  const crumbs = [{ label: "Dashboard", href: "/admin/dashboard" }];
 
   let path = "";
   for (let i = 1; i < segments.length; i++) {

@@ -367,7 +367,7 @@ const fetchStudents = async () => {
     const token = authStore.token;
 
     const response = await fetch(
-      `${baseURL}/users?centerId=${activeCenter.value.id}`,
+      `${baseURL}/users/students?centerId=${activeCenter.value.id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -402,7 +402,7 @@ const createStudent = async () => {
     const authStore = useAuthStore();
     const token = authStore.token;
 
-    const response = await fetch(`${baseURL}/users`, {
+    const response = await fetch(`${baseURL}/auth/register-student`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -414,7 +414,6 @@ const createStudent = async () => {
         phone: newStudent.value.phone,
         password: newStudent.value.password,
         center_id: activeCenter.value.id,
-        roles: ["student"],
       }),
     });
 
@@ -523,6 +522,6 @@ watch(
 
 definePageMeta({
   layout: "dashboard",
-  middleware: "auth",
+  middleware: ["auth", "center"],
 });
 </script>

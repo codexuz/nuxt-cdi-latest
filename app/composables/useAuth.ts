@@ -64,7 +64,7 @@ export async function verifyOtp(otpData: { email: string; otp: string }) {
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
   const authStore = useAuthStore();
-  
+
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/verify-otp`,
     {
@@ -116,7 +116,7 @@ export async function loginUser(loginData: LoginData) {
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.baseURL as string;
   const authStore = useAuthStore();
-  
+
   const { data, error } = await useFetch<LoginResponse>(
     `${API_BASE_URL}/auth/login`,
     {
@@ -179,6 +179,17 @@ export async function logout() {
   await navigateTo("/login");
 }
 
+// Get redirect path based on user role
+export const getRoleBasedRedirect = (role?: string) => {
+  const roleMap: Record<string, string> = {
+    owner: "/dashboard",
+    admin: "/admin/dashboard",
+    teacher: "/teacher/dashboard",
+  };
+
+  return roleMap[role || "owner"] || "/dashboard";
+};
+
 export const userData = () => {
   return useState("userData", () => null);
 };
@@ -227,5 +238,6 @@ export const useAuth = () => {
     initializeAuth,
     verifyOtp,
     resendOtp,
+    getRoleBasedRedirect,
   };
 };

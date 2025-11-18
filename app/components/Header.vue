@@ -1,11 +1,11 @@
 <template>
-    <header class="sticky inset-0 z-50 h-14 gap-3 w-full bg-transparent px-4 shadow-sm backdrop-blur-md"
+    <header class="sticky inset-0 z-50 h-14 gap-3 w-full bg-transparent px-4 backdrop-blur-md"
         style="transform: all; top: 0px;">
         <div class="mx-auto flex h-full items-center justify-between w-[90%] lg:w-[70%]">
             <NuxtLink to="/" class="flex items-center justify-start gap-1 active" data-status="active"
                 aria-current="page">
-                <img src="/logo_icon_black.png" alt="Impulse Study" class="w-24 dark:hidden" />
-                <img src="/logo_icon_dark.png" alt="Impulse Study" class="w-24 dark:inline-block hidden" />
+                <img src="/logo2.png" alt="Impulse Study" class="w-28 dark:hidden" />
+                <img src="/logo2_dark.png" alt="Impulse Study" class="w-28 hidden dark:inline-block" />
             </NuxtLink>
             <div class="flex items-center justify-end sm:gap-2">
                 <!-- Theme Toggle Button -->
