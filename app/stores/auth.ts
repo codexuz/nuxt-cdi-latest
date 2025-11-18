@@ -1,6 +1,26 @@
 // stores/auth.ts
 import { defineStore } from 'pinia';
 
+interface Role {
+  id: string;
+  role_name: string;
+  description: string;
+}
+
+interface Center {
+  id: string;
+  name: string;
+  subdomain: string;
+  address: string;
+  owner_id: string;
+  phone: string;
+  email: string;
+  description?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 interface User {
   id: string;
   name?: string;
@@ -10,6 +30,8 @@ interface User {
   center_id?: string;
   first_name?: string;
   balance?: number;
+  roles?: Role[];
+  center?: Center;
 }
 
 export const useAuthStore = defineStore('auth', {

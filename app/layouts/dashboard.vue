@@ -86,9 +86,20 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/leads'"
+                          :is-active="$route.path === '/dashboard/crm'"
                         >
-                          <NuxtLink to="/dashboard/leads">
+                          <NuxtLink to="/dashboard/crm">
+                            <LayoutDashboard />
+                            <span>CRM Dashboard</span>
+                          </NuxtLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          as-child
+                          :is-active="$route.path === '/dashboard/crm/leads'"
+                        >
+                          <NuxtLink to="/dashboard/crm/leads">
                             <UserPlus />
                             <span>Leads</span>
                           </NuxtLink>
@@ -97,13 +108,11 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="
-                            $route.path === '/dashboard/trial-lessons'
-                          "
+                          :is-active="$route.path === '/dashboard/crm/contacts'"
                         >
-                          <NuxtLink to="/dashboard/trial-lessons">
-                            <ClipboardCheck />
-                            <span>Lead Trial Lessons</span>
+                          <NuxtLink to="/dashboard/crm/contacts">
+                            <Users />
+                            <span>Contacts</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -146,22 +155,33 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/groups'"
+                          :is-active="$route.path === '/dashboard/lms/courses'"
                         >
-                          <NuxtLink to="/dashboard/groups">
-                            <UsersRound />
-                            <span>Groups</span>
+                          <NuxtLink to="/dashboard/lms/courses">
+                            <BookOpen />
+                            <span>Courses</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/attendance'"
+                          :is-active="$route.path === '/dashboard/lms/assignments'"
                         >
-                          <NuxtLink to="/dashboard/attendance">
-                            <CalendarCheck />
-                            <span>Attendance</span>
+                          <NuxtLink to="/dashboard/lms/assignments">
+                            <ClipboardCheck />
+                            <span>Assignments</span>
+                          </NuxtLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          as-child
+                          :is-active="$route.path === '/dashboard/lms/progress'"
+                        >
+                          <NuxtLink to="/dashboard/lms/progress">
+                            <TrendingUp />
+                            <span>Progress</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -271,33 +291,33 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/payments'"
+                          :is-active="$route.path === '/dashboard/finance'"
                         >
-                          <NuxtLink to="/dashboard/payments">
-                            <CreditCard />
-                            <span>Payments</span>
+                          <NuxtLink to="/dashboard/finance">
+                            <LayoutDashboard />
+                            <span>Finance Dashboard</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/expenses'"
+                          :is-active="$route.path === '/dashboard/finance/invoices'"
                         >
-                          <NuxtLink to="/dashboard/expenses">
-                            <Receipt />
-                            <span>Expenses</span>
+                          <NuxtLink to="/dashboard/finance/invoices">
+                            <FileText />
+                            <span>Invoices</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/salaries'"
+                          :is-active="$route.path === '/dashboard/finance/reports'"
                         >
-                          <NuxtLink to="/dashboard/salaries">
-                            <Wallet />
-                            <span>Salaries</span>
+                          <NuxtLink to="/dashboard/finance/reports">
+                            <BarChart />
+                            <span>Reports</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -311,17 +331,17 @@
 
         <!-- Permissions & Roles Section -->
         <SidebarGroup>
-          <SidebarGroupLabel>ROLES & PERMISSIONS</SidebarGroupLabel>
+          <SidebarGroupLabel>ROLES & STAFF</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   as-child
-                  :is-active="$route.path === '/dashboard/permissions'"
+                  :is-active="$route.path === '/dashboard/add-staff'"
                 >
-                  <NuxtLink to="/dashboard/permissions">
+                  <NuxtLink to="/dashboard/add-staff">
                     <Shield />
-                    <span>Add New Staff</span>
+                    <span>Add a new admin</span>
                   </NuxtLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -340,19 +360,8 @@
                   :is-active="$route.path === '/dashboard/analytics'"
                 >
                   <NuxtLink to="/dashboard/analytics">
-                    <TrendingUp />
-                    <span>Performance</span>
-                  </NuxtLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as-child
-                  :is-active="$route.path === '/dashboard/reports'"
-                >
-                  <NuxtLink to="/dashboard/reports">
-                    <PieChart />
-                    <span>Reports</span>
+                    <BarChart />
+                    <span>Analytics Dashboard</span>
                   </NuxtLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -588,6 +597,8 @@ import {
   Wallet,
   Shield,
   Image,
+  FileText,
+  BarChart,
 } from "lucide-vue-next";
 
 import {

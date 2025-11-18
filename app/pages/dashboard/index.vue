@@ -468,6 +468,6 @@ const recentStudents = ref([
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth", "center"],
+  middleware: ["auth", "center", "role"],
 });
 </script>
