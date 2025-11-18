@@ -366,6 +366,17 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
+              :is-active="$route.path === '/dashboard/media'"
+            >
+              <NuxtLink to="/dashboard/media">
+                <Image />
+                <span>Media Library</span>
+              </NuxtLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
               :is-active="$route.path === '/dashboard/settings'"
             >
               <NuxtLink to="/dashboard/settings">
@@ -576,6 +587,7 @@ import {
   Receipt,
   Wallet,
   Shield,
+  Image,
 } from "lucide-vue-next";
 
 import {

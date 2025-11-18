@@ -197,6 +197,17 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
+              :is-active="$route.path === '/admin/media'"
+            >
+              <NuxtLink to="/admin/media">
+                <Image />
+                <span>Media Library</span>
+              </NuxtLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
               :is-active="$route.path === '/admin/settings'"
             >
               <NuxtLink to="/admin/settings">
@@ -367,7 +378,6 @@
   background-color: rgb(24 24 27) !important; /* zinc-900 */
   color: white !important;
 }
-
 </style>
 
 <script setup>
@@ -389,6 +399,7 @@ import {
   ClipboardCheck,
   CalendarCheck,
   CreditCard,
+  Image,
 } from "lucide-vue-next";
 
 import {

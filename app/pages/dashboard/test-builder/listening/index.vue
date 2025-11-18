@@ -1,18 +1,20 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-    <motion.div 
+    <motion.div
       class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl"
       :initial="{ opacity: 0, y: 20 }"
       :transition="{ duration: 0.6, ease: 'easeOut' }"
-      :animate="{ opacity: 1, y: 0 }">
+      :animate="{ opacity: 1, y: 0 }"
+    >
       <Toaster position="top-center" richColors theme="system" />
 
       <!-- Header -->
-      <motion.div 
+      <motion.div
         class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm"
         :initial="{ opacity: 0, y: -10 }"
         :transition="{ duration: 0.5, delay: 0.1 }"
-        :animate="{ opacity: 1, y: 0 }">
+        :animate="{ opacity: 1, y: 0 }"
+      >
         <div
           class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
@@ -55,40 +57,43 @@
       <motion.div
         :initial="{ opacity: 0, y: 20 }"
         :transition="{ duration: 0.5, delay: 0.2 }"
-        :animate="{ opacity: 1, y: 0 }">
-      <Card class="mb-6 sm:mb-8 shadow-sm border-2">
-        <CardHeader class="bg-muted/50">
-          <CardTitle class="text-lg flex items-center gap-2">
-            <div class="h-2 w-2 rounded-full bg-primary"></div>
-            Test Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent class="pt-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <Label for="title" class="text-sm font-medium">Test Title</Label>
-              <Input
-                id="title"
-                v-model="listeningData.title"
-                placeholder="e.g., IELTS Listening Test - Academic Module"
-                class="h-10"
-              />
+        :animate="{ opacity: 1, y: 0 }"
+      >
+        <Card class="mb-6 sm:mb-8 shadow-sm border-2">
+          <CardHeader class="bg-muted/50">
+            <CardTitle class="text-lg flex items-center gap-2">
+              <div class="h-2 w-2 rounded-full bg-primary"></div>
+              Test Configuration
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="pt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <Label for="title" class="text-sm font-medium"
+                  >Test Title</Label
+                >
+                <Input
+                  id="title"
+                  v-model="listeningData.title"
+                  placeholder="e.g., IELTS Listening Test - Academic Module"
+                  class="h-10"
+                />
+              </div>
+              <div class="space-y-2">
+                <Label for="for_cdi" class="text-sm font-medium">For CDI</Label>
+                <Select v-model="listeningData.for_cdi">
+                  <SelectTrigger id="for_cdi" class="h-10">
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div class="space-y-2">
-              <Label for="for_cdi" class="text-sm font-medium">For CDI</Label>
-              <Select v-model="listeningData.for_cdi">
-                <SelectTrigger id="for_cdi" class="h-10">
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </motion.div>
 
       <!-- Parts Section -->
@@ -96,7 +101,8 @@
         class="mb-4 sm:mb-6"
         :initial="{ opacity: 0, y: 20 }"
         :transition="{ duration: 0.5, delay: 0.3 }"
-        :animate="{ opacity: 1, y: 0 }">
+        :animate="{ opacity: 1, y: 0 }"
+      >
         <div
           class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4"
         >
@@ -201,36 +207,102 @@
                     >
                   </CardHeader>
                   <CardContent>
-                    <div
-                      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                    >
-                      <div class="space-y-2">
-                        <Label class="text-sm font-medium">Audio URL</Label>
-                        <Input
-                          type="url"
-                          v-model="part.audio.url"
-                          placeholder="https://example.com/audio.mp3"
-                          class="text-sm h-10"
-                        />
-                      </div>
-                      <div class="space-y-2">
-                        <Label class="text-sm font-medium">File Name</Label>
-                        <Input
-                          v-model="part.audio.file_name"
-                          placeholder="listening_part1.mp3"
-                          class="text-sm h-10"
-                        />
-                      </div>
-                      <div class="space-y-2">
-                        <Label class="text-sm font-medium"
-                          >Duration (seconds)</Label
+                    <div class="space-y-4">
+                      <!-- Audio Picker Button -->
+                      <div class="flex gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          @click="openMediaPicker(index)"
+                          class="flex-1"
                         >
-                        <Input
-                          type="number"
-                          v-model.number="part.audio.duration"
-                          placeholder="300"
-                          class="text-sm h-10"
-                        />
+                          <Icon
+                            name="lucide:folder-audio"
+                            class="mr-2 w-4 h-4"
+                          />
+                          Select from Media Library
+                        </Button>
+                        <Button
+                          v-if="part.audio.url"
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          @click="clearAudio(part)"
+                          class="text-red-600 hover:text-red-700"
+                        >
+                          <Icon name="lucide:x" class="w-4 h-4" />
+                        </Button>
+                      </div>
+
+                      <!-- Selected Audio Info -->
+                      <div
+                        v-if="part.audio.url"
+                        class="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800"
+                      >
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0"
+                          >
+                            <Icon
+                              name="lucide:music"
+                              class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                            />
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p
+                              class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate"
+                            >
+                              {{
+                                part.audio.filename ||
+                                part.audio.original_filename ||
+                                "Audio File"
+                              }}
+                            </p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400">
+                              Duration: {{ part.audio.duration }}s
+                            </p>
+                          </div>
+                          <audio
+                            v-if="part.audio.url"
+                            :src="part.audio.url"
+                            controls
+                            class="max-w-[200px]"
+                          />
+                        </div>
+                      </div>
+
+                      <!-- Manual Input (Optional) -->
+                      <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                      >
+                        <div class="space-y-2">
+                          <Label class="text-sm font-medium">Audio URL</Label>
+                          <Input
+                            type="url"
+                            v-model="part.audio.url"
+                            placeholder="https://example.com/audio.mp3"
+                            class="text-sm h-10"
+                          />
+                        </div>
+                        <div class="space-y-2">
+                          <Label class="text-sm font-medium">File Name</Label>
+                          <Input
+                            v-model="part.audio.filename"
+                            placeholder="listening_part1.mp3"
+                            class="text-sm h-10"
+                          />
+                        </div>
+                        <div class="space-y-2">
+                          <Label class="text-sm font-medium"
+                            >Duration (seconds)</Label
+                          >
+                          <Input
+                            type="number"
+                            v-model.number="part.audio.duration"
+                            placeholder="300"
+                            class="text-sm h-10"
+                          />
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -387,6 +459,13 @@
       </motion.div>
     </motion.div>
 
+    <!-- Media Picker Modal -->
+    <MediaPickerModal
+      v-model:open="showMediaPicker"
+      media-type="audio"
+      @selected="handleMediaSelected"
+    />
+
     <!-- Delete Part Confirmation Dialog -->
     <AlertDialog v-model:open="deleteDialogOpen">
       <AlertDialogContent>
@@ -470,6 +549,8 @@ const storageKey = `listening-draft-${testId}`;
 const deleteDialogOpen = ref(false);
 const partToDelete = ref(null);
 const isLoading = ref(false);
+const showMediaPicker = ref(false);
+const currentPartIndex = ref(null);
 
 // Load from localStorage or use defaults
 const loadFromStorage = () => {
@@ -796,6 +877,31 @@ const saveListeningTest = async () => {
     console.error("Failed to save:", error);
     toast.error(error.data?.message || "Failed to save listening test");
   }
+};
+
+// Media Picker functions
+const openMediaPicker = (partIndex) => {
+  currentPartIndex.value = partIndex;
+  showMediaPicker.value = true;
+};
+
+const handleMediaSelected = (media) => {
+  if (currentPartIndex.value !== null) {
+    const part = listeningData.value.parts[currentPartIndex.value];
+    part.audio.url = media.url;
+    part.audio.filename = media.filename;
+    part.audio.original_filename = media.original_filename;
+    part.audio.duration = media.duration || 300;
+
+    toast.success("Audio file selected successfully!");
+  }
+};
+
+const clearAudio = (part) => {
+  part.audio.url = "";
+  part.audio.filename = "";
+  part.audio.original_filename = "";
+  part.audio.duration = 300;
 };
 
 definePageMeta({

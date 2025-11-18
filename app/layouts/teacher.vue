@@ -236,6 +236,17 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
+              :is-active="$route.path === '/teacher/media'"
+            >
+              <NuxtLink to="/teacher/media">
+                <Image />
+                <span>Media Library</span>
+              </NuxtLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
               :is-active="$route.path === '/teacher/settings'"
             >
               <NuxtLink to="/teacher/settings">
@@ -406,8 +417,6 @@
   background-color: rgb(24 24 27) !important; /* zinc-900 */
   color: white !important;
 }
-
-
 </style>
 
 <script setup>
@@ -429,6 +438,7 @@ import {
   BookOpen,
   Headphones,
   PenTool,
+  Image,
 } from "lucide-vue-next";
 
 import {
