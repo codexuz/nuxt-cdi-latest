@@ -33,12 +33,12 @@
       :animate="{ opacity: 1, y: 0 }">
       <Card>
         <CardHeader>
-          <CardTitle>Admin Users</CardTitle>
-          <CardDescription>List of all administrators ({{ adminUsers.length }} total)</CardDescription>
+          <CardTitle>All Staff Members</CardTitle>
+          <CardDescription>List of all staff members ({{ adminUsers.length }} total)</CardDescription>
         </CardHeader>
         <CardContent>
           <div v-if="adminUsers.length === 0" class="text-center py-8 text-gray-500">
-            No admin users found. Add your first admin user to get started.
+            No staff members found. Add your first staff member to get started.
           </div>
           <div v-else class="space-y-3">
             <div 
@@ -316,7 +316,7 @@ const fetchAdminUsers = async () => {
     const authStore = useAuthStore();
     const token = authStore.token;
 
-    const response = await fetch(`${baseURL}/users/admins?centerId=${activeCenter.value.id}`, {
+    const response = await fetch(`${baseURL}/users/staff?centerId=${activeCenter.value.id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

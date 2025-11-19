@@ -151,7 +151,7 @@
               variant="outline"
               @click="
                 navigateTo(
-                  `/dashboard/test-builder/listening?test_id=${test.id}`
+                  `/owner/test-builder/listening?test_id=${test.id}`
                 )
               "
               class="flex-shrink-0"
@@ -164,7 +164,7 @@
               size="sm"
               variant="outline"
               @click="
-                navigateTo(`/dashboard/test-builder/reading?test_id=${test.id}`)
+                navigateTo(`/owner/test-builder/reading?test_id=${test.id}`)
               "
               class="flex-shrink-0"
             >
@@ -176,7 +176,7 @@
               size="sm"
               variant="outline"
               @click="
-                navigateTo(`/dashboard/test-builder/writing?test_id=${test.id}`)
+                navigateTo(`/owner/test-builder/writing?test_id=${test.id}`)
               "
               class="flex-shrink-0"
             >

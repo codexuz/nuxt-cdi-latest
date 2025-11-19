@@ -21,6 +21,12 @@ interface LoginData {
   password: string;
 }
 
+interface Role {
+  id: string;
+  role_name: string;
+  description: string;
+}
+
 interface User {
   id: string;
   name?: string;
@@ -30,6 +36,7 @@ interface User {
   center_id?: string;
   first_name?: string;
   balance?: number;
+  roles?: Role[];
 }
 
 // Initialize authentication state from localStorage
@@ -182,12 +189,12 @@ export async function logout() {
 // Get redirect path based on user role
 export const getRoleBasedRedirect = (role?: string) => {
   const roleMap: Record<string, string> = {
-    owner: "/dashboard",
+    owner: "/owner/dashboard",
     admin: "/admin/dashboard",
     teacher: "/teacher/dashboard",
   };
 
-  return roleMap[role || "owner"] || "/dashboard";
+  return roleMap[role || "owner"] || "/owner/dashboard";
 };
 
 export const userData = () => {

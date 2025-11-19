@@ -55,9 +55,9 @@
             <SidebarMenuItem>
               <SidebarMenuButton
                 as-child
-                :is-active="$route.path === '/dashboard'"
+                :is-active="$route.path === '/owner/dashboard'"
               >
-                <NuxtLink to="/dashboard">
+                <NuxtLink to="/owner/dashboard">
                   <LayoutDashboard />
                   <span>Dashboard</span>
                 </NuxtLink>
@@ -86,9 +86,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/crm'"
+                          :is-active="$route.path === '/owner/crm'"
                         >
-                          <NuxtLink to="/dashboard/crm">
+                          <NuxtLink to="/owner/crm">
                             <LayoutDashboard />
                             <span>CRM Dashboard</span>
                           </NuxtLink>
@@ -97,9 +97,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/crm/leads'"
+                          :is-active="$route.path === '/owner/crm/leads'"
                         >
-                          <NuxtLink to="/dashboard/crm/leads">
+                          <NuxtLink to="/owner/crm/leads">
                             <UserPlus />
                             <span>Leads</span>
                           </NuxtLink>
@@ -108,9 +108,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/crm/contacts'"
+                          :is-active="$route.path === '/owner/crm/contacts'"
                         >
-                          <NuxtLink to="/dashboard/crm/contacts">
+                          <NuxtLink to="/owner/crm/contacts">
                             <Users />
                             <span>Contacts</span>
                           </NuxtLink>
@@ -144,9 +144,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/students'"
+                          :is-active="$route.path === '/owner/students'"
                         >
-                          <NuxtLink to="/dashboard/students">
+                          <NuxtLink to="/owner/students">
                             <Users />
                             <span>Students</span>
                           </NuxtLink>
@@ -155,9 +155,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/lms/courses'"
+                          :is-active="$route.path === '/owner/lms/courses'"
                         >
-                          <NuxtLink to="/dashboard/lms/courses">
+                          <NuxtLink to="/owner/lms/courses">
                             <BookOpen />
                             <span>Courses</span>
                           </NuxtLink>
@@ -166,9 +166,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/lms/assignments'"
+                          :is-active="$route.path === '/owner/lms/assignments'"
                         >
-                          <NuxtLink to="/dashboard/lms/assignments">
+                          <NuxtLink to="/owner/lms/assignments">
                             <ClipboardCheck />
                             <span>Assignments</span>
                           </NuxtLink>
@@ -177,9 +177,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/lms/progress'"
+                          :is-active="$route.path === '/owner/lms/progress'"
                         >
-                          <NuxtLink to="/dashboard/lms/progress">
+                          <NuxtLink to="/owner/lms/progress">
                             <TrendingUp />
                             <span>Progress</span>
                           </NuxtLink>
@@ -213,9 +213,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/test-builder'"
+                          :is-active="$route.path === '/owner/test-builder'"
                         >
-                          <NuxtLink to="/dashboard/test-builder">
+                          <NuxtLink to="/owner/test-builder">
                             <FileEdit />
                             <span>Test Builder</span>
                           </NuxtLink>
@@ -225,10 +225,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/reading/tests')
+                            $route.path.includes('/owner/reading/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/reading/tests">
+                          <NuxtLink to="/owner/reading/tests">
                             <BookOpen />
                             <span>Reading</span>
                           </NuxtLink>
@@ -238,10 +238,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/listening/tests')
+                            $route.path.includes('/owner/listening/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/listening/tests">
+                          <NuxtLink to="/owner/listening/tests">
                             <Headphones />
                             <span>Listening</span>
                           </NuxtLink>
@@ -251,10 +251,10 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path.includes('/dashboard/writing/tests')
+                            $route.path.includes('/owner/writing/tests')
                           "
                         >
-                          <NuxtLink to="/dashboard/writing/tests">
+                          <NuxtLink to="/owner/writing/tests">
                             <PenTool />
                             <span>Writing</span>
                           </NuxtLink>
@@ -291,9 +291,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/finance'"
+                          :is-active="$route.path === '/owner/finance'"
                         >
-                          <NuxtLink to="/dashboard/finance">
+                          <NuxtLink to="/owner/finance">
                             <LayoutDashboard />
                             <span>Finance Dashboard</span>
                           </NuxtLink>
@@ -302,9 +302,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/finance/invoices'"
+                          :is-active="$route.path === '/owner/finance/invoices'"
                         >
-                          <NuxtLink to="/dashboard/finance/invoices">
+                          <NuxtLink to="/owner/finance/invoices">
                             <FileText />
                             <span>Invoices</span>
                           </NuxtLink>
@@ -313,9 +313,9 @@
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
-                          :is-active="$route.path === '/dashboard/finance/reports'"
+                          :is-active="$route.path === '/owner/finance/reports'"
                         >
-                          <NuxtLink to="/dashboard/finance/reports">
+                          <NuxtLink to="/owner/finance/reports">
                             <BarChart />
                             <span>Reports</span>
                           </NuxtLink>
@@ -331,17 +331,17 @@
 
         <!-- Permissions & Roles Section -->
         <SidebarGroup>
-          <SidebarGroupLabel>ROLES & STAFF</SidebarGroupLabel>
+          <SidebarGroupLabel>STAFF MANAGEMENT</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   as-child
-                  :is-active="$route.path === '/dashboard/add-staff'"
+                  :is-active="$route.path === '/owner/add-staff'"
                 >
-                  <NuxtLink to="/dashboard/add-staff">
+                  <NuxtLink to="/owner/add-staff">
                     <Shield />
-                    <span>Add a new admin</span>
+                    <span>Add new Staff</span>
                   </NuxtLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -357,9 +357,9 @@
               <SidebarMenuItem>
                 <SidebarMenuButton
                   as-child
-                  :is-active="$route.path === '/dashboard/analytics'"
+                  :is-active="$route.path === '/owner/analytics'"
                 >
-                  <NuxtLink to="/dashboard/analytics">
+                  <NuxtLink to="/owner/analytics">
                     <BarChart />
                     <span>Analytics Dashboard</span>
                   </NuxtLink>
@@ -375,9 +375,9 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              :is-active="$route.path === '/dashboard/media'"
+              :is-active="$route.path === '/owner/media'"
             >
-              <NuxtLink to="/dashboard/media">
+              <NuxtLink to="/owner/media">
                 <Image />
                 <span>Media Library</span>
               </NuxtLink>
@@ -386,9 +386,9 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              :is-active="$route.path === '/dashboard/settings'"
+              :is-active="$route.path === '/owner/settings'"
             >
-              <NuxtLink to="/dashboard/settings">
+              <NuxtLink to="/owner/settings">
                 <Settings />
                 <span>Settings</span>
               </NuxtLink>
@@ -397,7 +397,7 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              :is-active="$route.path === '/dashboard/support'"
+              :is-active="$route.path === '/owner/support'"
             >
               <a
                 href="https://t.me/javlon_developer"
@@ -464,9 +464,7 @@
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  @click="navigateTo('/dashboard/subscriptions')"
-                >
+                <DropdownMenuItem @click="navigateTo('/owner/subscriptions')">
                   <Sparkles />
                   Upgrade to Pro
                 </DropdownMenuItem>
@@ -495,7 +493,9 @@
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem class="hidden md:block">
-                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                <BreadcrumbLink href="/owner/dashboard"
+                  >Dashboard</BreadcrumbLink
+                >
               </BreadcrumbItem>
               <BreadcrumbSeparator
                 v-if="breadcrumbs.length > 1"
@@ -676,7 +676,7 @@ const toggleTheme = () => {
 // Breadcrumbs
 const breadcrumbs = computed(() => {
   const segments = route.path.split("/").filter(Boolean);
-  const crumbs = [{ label: "Dashboard", href: "/dashboard" }];
+  const crumbs = [{ label: "Dashboard", href: "/owner/dashboard" }];
 
   let path = "";
   for (let i = 1; i < segments.length; i++) {

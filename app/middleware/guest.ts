@@ -6,17 +6,19 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (process.server) {
     return;
   }
-  
+
   // Check for authentication token from store
   const authStore = useAuthStore();
-  
+
   // Initialize auth from localStorage if not already done
   if (!authStore.token) {
     authStore.initializeAuth();
   }
-  
-  // If token exists, redirect to dashboard (user is already authenticated)
-  if (authStore.token) {
-    return navigateTo('/dashboard');
+
+  // If token exists, redirect based on user role
+  if (authStore.token && authStore.user) {
+    const { getRoleBasedRedirect } = useAuth();
+    const role = authStore.user.roles?.[0]?.role_name;
+    return navigateTo(getRoleBasedRedirect(role));
   }
 });
