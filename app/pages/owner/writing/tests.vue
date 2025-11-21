@@ -108,7 +108,7 @@
                   size="sm"
                   @click="
                     navigateTo(
-                      `/dashboard/test-builder/writing?test_id=${writingTest.test_id}`
+                      `/owner/test-builder/writing?test_id=${writingTest.test_id}`
                     )
                   "
                 >

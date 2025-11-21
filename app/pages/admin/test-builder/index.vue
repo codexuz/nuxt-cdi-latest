@@ -1,19 +1,17 @@
 <template>
-  <motion.div
+  <motion.div 
     class="container mx-auto px-4 py-8"
     :initial="{ opacity: 0, y: 20 }"
     :transition="{ duration: 0.6, ease: 'easeOut' }"
-    :animate="{ opacity: 1, y: 0 }"
-  >
+    :animate="{ opacity: 1, y: 0 }">
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Header -->
-    <motion.div
+    <motion.div 
       class="flex items-center justify-between mb-8"
       :initial="{ opacity: 0, y: -10 }"
       :transition="{ duration: 0.5, delay: 0.1 }"
-      :animate="{ opacity: 1, y: 0 }"
-    >
+      :animate="{ opacity: 1, y: 0 }">
       <div>
         <h1 class="text-3xl font-bold">IELTS Test Builder</h1>
         <p class="text-muted-foreground">Create and manage IELTS tests</p>
@@ -59,10 +57,8 @@
                 <SelectValue placeholder="Select test type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ielts_practice">IELTS Practice</SelectItem>
-                <SelectItem value="ielts_mock">IELTS Mock</SelectItem>
-                <SelectItem value="cefr_practice">CEFR Practice</SelectItem>
-                <SelectItem value="cefr_mock">CEFR Mock</SelectItem>
+                <SelectItem value="practice">Practice</SelectItem>
+                <SelectItem value="mock">Mock</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -91,115 +87,113 @@
       class="grid grid-cols-1 gap-4"
       :initial="{ opacity: 0, y: 20 }"
       :transition="{ duration: 0.5, delay: 0.2 }"
-      :animate="{ opacity: 1, y: 0 }"
-    >
+      :animate="{ opacity: 1, y: 0 }">
       <motion.div
         v-for="(test, index) in tests"
         :key="test.id"
         :initial="{ opacity: 0, y: 10 }"
         :transition="{ duration: 0.4, delay: 0.3 + index * 0.05 }"
-        :animate="{ opacity: 1, y: 0 }"
-      >
+        :animate="{ opacity: 1, y: 0 }">
         <Card class="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <div class="flex items-center justify-between">
-              <div class="flex-1">
-                <CardTitle>{{ test.title }}</CardTitle>
-                <CardDescription class="mt-2">{{
-                  test.description
-                }}</CardDescription>
-              </div>
-              <Badge
-                :variant="
-                  test.test_type?.includes('mock') ? 'default' : 'secondary'
-                "
-              >
-                {{ formatTestType(test.test_type) }}
-              </Badge>
+        <CardHeader>
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <CardTitle>{{ test.title }}</CardTitle>
+              <CardDescription class="mt-2">{{
+                test.description
+              }}</CardDescription>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div
-              class="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground mb-4"
+            <Badge
+              :variant="test.test_type === 'mock' ? 'default' : 'secondary'"
             >
-              <div class="flex items-center gap-2">
-                <Headphones class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.listening_count || 0 }} Listening Parts</span
-                >
-                <span class="sm:hidden"
-                  >{{ test.listening_count || 0 }} Listening</span
-                >
-              </div>
-              <div class="flex items-center gap-2">
-                <BookOpen class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.reading_count || 0 }} Reading Parts</span
-                >
-                <span class="sm:hidden"
-                  >{{ test.reading_count || 0 }} Reading</span
-                >
-              </div>
-              <div class="flex items-center gap-2">
-                <FileQuestion class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.total_questions || 0 }} Questions</span
-                >
-                <span class="sm:hidden">{{ test.total_questions || 0 }} Q</span>
-              </div>
+              {{ test.test_type === "practice" ? "Practice" : "Mock" }}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div
+            class="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground mb-4"
+          >
+            <div class="flex items-center gap-2">
+              <Headphones class="h-4 w-4" />
+              <span class="hidden sm:inline"
+                >{{ test.listening_count || 0 }} Listening Parts</span
+              >
+              <span class="sm:hidden"
+                >{{ test.listening_count || 0 }} Listening</span
+              >
             </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <Button size="sm" @click="editTest(test)" class="flex-shrink-0">
-                <Edit class="mr-2 h-3 w-3" />
-                <span class="hidden sm:inline">Edit Test Info</span>
-                <span class="sm:hidden">Edit</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                @click="
-                  navigateTo(`/owner/test-builder/listening?test_id=${test.id}`)
-                "
-                class="flex-shrink-0"
+            <div class="flex items-center gap-2">
+              <BookOpen class="h-4 w-4" />
+              <span class="hidden sm:inline"
+                >{{ test.reading_count || 0 }} Reading Parts</span
               >
-                <Headphones class="mr-2 h-3 w-3" />
-                <span class="hidden md:inline">Add Listening</span>
-                <span class="md:hidden">Listening</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                @click="
-                  navigateTo(`/owner/test-builder/reading?test_id=${test.id}`)
-                "
-                class="flex-shrink-0"
+              <span class="sm:hidden"
+                >{{ test.reading_count || 0 }} Reading</span
               >
-                <BookOpen class="mr-2 h-3 w-3" />
-                <span class="hidden md:inline">Add Reading</span>
-                <span class="md:hidden">Reading</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                @click="
-                  navigateTo(`/owner/test-builder/writing?test_id=${test.id}`)
-                "
-                class="flex-shrink-0"
-              >
-                <PenTool class="mr-2 h-3 w-3" />
-                <span class="hidden md:inline">Add Writing</span>
-                <span class="md:hidden">Writing</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                @click="deleteTest(test.id)"
-                class="flex-shrink-0"
-              >
-                <Trash2 class="h-3 w-3 text-destructive" />
-              </Button>
             </div>
-          </CardContent>
+            <div class="flex items-center gap-2">
+              <FileQuestion class="h-4 w-4" />
+              <span class="hidden sm:inline"
+                >{{ test.total_questions || 0 }} Questions</span
+              >
+              <span class="sm:hidden">{{ test.total_questions || 0 }} Q</span>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <Button size="sm" @click="editTest(test)" class="flex-shrink-0">
+              <Edit class="mr-2 h-3 w-3" />
+              <span class="hidden sm:inline">Edit Test Info</span>
+              <span class="sm:hidden">Edit</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(
+                  `/owner/test-builder/listening?test_id=${test.id}`
+                )
+              "
+              class="flex-shrink-0"
+            >
+              <Headphones class="mr-2 h-3 w-3" />
+              <span class="hidden md:inline">Add Listening</span>
+              <span class="md:hidden">Listening</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(`/owner/test-builder/reading?test_id=${test.id}`)
+              "
+              class="flex-shrink-0"
+            >
+              <BookOpen class="mr-2 h-3 w-3" />
+              <span class="hidden md:inline">Add Reading</span>
+              <span class="md:hidden">Reading</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              @click="
+                navigateTo(`/owner/test-builder/writing?test_id=${test.id}`)
+              "
+              class="flex-shrink-0"
+            >
+              <PenTool class="mr-2 h-3 w-3" />
+              <span class="hidden md:inline">Add Writing</span>
+              <span class="md:hidden">Writing</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              @click="deleteTest(test.id)"
+              class="flex-shrink-0"
+            >
+              <Trash2 class="h-3 w-3 text-destructive" />
+            </Button>
+          </div>
+        </CardContent>
         </Card>
       </motion.div>
 
@@ -250,10 +244,8 @@
                 <SelectValue placeholder="Select test type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ielts_practice">IELTS Practice</SelectItem>
-                <SelectItem value="ielts_mock">IELTS Mock</SelectItem>
-                <SelectItem value="cefr_practice">CEFR Practice</SelectItem>
-                <SelectItem value="cefr_mock">CEFR Mock</SelectItem>
+                <SelectItem value="practice">Practice</SelectItem>
+                <SelectItem value="mock">Mock</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -284,7 +276,7 @@ import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
 useHead({
-  title: "IELTS Test Builder - Mockmee LMS",
+  title: "IELTS Test Builder - Testify",
 });
 
 const showCreateDialog = ref(false);
@@ -293,29 +285,18 @@ const showEditDialog = ref(false);
 const newTest = ref({
   title: "",
   description: "",
-  test_type: "ielts_practice",
+  test_type: "practice",
 });
 
 const editingTest = ref({
   id: "",
   title: "",
   description: "",
-  test_type: "ielts_practice",
+  test_type: "practice",
 });
 
 const tests = ref([]);
 const isLoading = ref(false);
-
-// Format test type for display
-const formatTestType = (testType) => {
-  const typeMap = {
-    ielts_practice: "IELTS Practice",
-    ielts_mock: "IELTS Mock",
-    cefr_practice: "CEFR Practice",
-    cefr_mock: "CEFR Mock",
-  };
-  return typeMap[testType] || testType;
-};
 
 // Fetch tests from API
 const fetchTests = async () => {
@@ -409,7 +390,7 @@ const createTest = async () => {
     newTest.value = {
       title: "",
       description: "",
-      test_type: "ielts_practice",
+      test_type: "practice",
     };
   } catch (error) {
     console.error("Failed to create test:", error);
@@ -422,7 +403,7 @@ const editTest = (test) => {
     id: test.id,
     title: test.title,
     description: test.description,
-    test_type: test.test_type || "ielts_practice",
+    test_type: test.test_type || "practice",
   };
   showEditDialog.value = true;
 };

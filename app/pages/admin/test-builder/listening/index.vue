@@ -871,7 +871,7 @@ const saveListeningTest = async () => {
 
     // Navigate back after save
     setTimeout(() => {
-      navigateTo("/owner/test-builder");
+      navigateTo("/dashboard/test-builder");
     }, 1000);
   } catch (error) {
     console.error("Failed to save:", error);

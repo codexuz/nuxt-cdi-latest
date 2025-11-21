@@ -96,7 +96,7 @@
                   size="sm"
                   @click="
                     navigateTo(
-                      `/dashboard/test-builder/reading?test_id=${readingTest.test_id}`
+                      `/owner/test-builder/reading?test_id=${readingTest.test_id}`
                     )
                   "
                 >

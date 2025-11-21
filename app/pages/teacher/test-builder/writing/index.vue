@@ -358,7 +358,7 @@ const createWritingTest = async () => {
 
     // Navigate back to test builder after success
     setTimeout(() => {
-      navigateTo("/owner/test-builder");
+      navigateTo("/dashboard/test-builder");
     }, 1500);
   } catch (error) {
     console.error("Failed to create writing test:", error);

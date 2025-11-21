@@ -66,7 +66,7 @@
           </SidebarMenu>
         </SidebarGroup>
 
-        <!-- CRM Section -->
+        <!-- CRM Section 
         <SidebarGroup>
           <SidebarGroupLabel>CUSTOMER MANAGEMENT</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -123,8 +123,9 @@
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        -->
 
-        <!-- LMS Section -->
+        <!-- LMS Section 
         <SidebarGroup>
           <SidebarGroupLabel>LEARNING MANAGEMENT SYSTEM</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -192,6 +193,7 @@
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        -->
 
         <!-- Tests & Exams Section -->
         <SidebarGroup>
@@ -268,7 +270,7 @@
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <!-- Finance Section -->
+        <!-- Finance Section 
         <SidebarGroup>
           <SidebarGroupLabel>FINANCE MANAGEMENT</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -328,7 +330,7 @@
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
+         -->
         <!-- Permissions & Roles Section -->
         <SidebarGroup>
           <SidebarGroupLabel>STAFF MANAGEMENT</SidebarGroupLabel>
@@ -349,7 +351,7 @@
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <!-- Analytics Section -->
+        <!-- Analytics Section 
         <SidebarGroup>
           <SidebarGroupLabel>ANALYTICS</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -368,8 +370,8 @@
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        -->
       </SidebarContent>
-
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>

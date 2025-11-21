@@ -103,7 +103,7 @@
                   size="sm"
                   @click="
                     navigateTo(
-                      `/dashboard/test-builder/listening?test_id=${listeningTest.test_id}`
+                      `/owner/test-builder/listening?test_id=${listeningTest.test_id}`
                     )
                   "
                 >
