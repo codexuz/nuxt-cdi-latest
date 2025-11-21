@@ -303,7 +303,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useCenters } from "~/composables/useCenters";
 
 useHead({
-  title: "Settings - Testify",
+  title: "Settings - Mockmee LMS",
 });
 
 const config = useRuntimeConfig();

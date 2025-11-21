@@ -510,6 +510,11 @@ onMounted(() => {
   loadMedia();
 });
 
+
+useHead({
+  title: "Media Library- Mockmee LMS",
+});
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth", "center"],

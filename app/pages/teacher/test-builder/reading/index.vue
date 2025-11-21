@@ -800,7 +800,7 @@ const saveReadingTest = async () => {
 };
 
 definePageMeta({
-  layout: "dashboard",
+  layout: "teacher",
   middleware: "auth",
 });
 </script>

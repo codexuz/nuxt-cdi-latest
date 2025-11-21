@@ -901,7 +901,7 @@ const clearAudio = (part) => {
 };
 
 definePageMeta({
-  layout: "dashboard",
+  layout: "teacher",
   middleware: "auth",
 });
 </script>

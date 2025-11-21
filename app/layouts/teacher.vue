@@ -111,7 +111,7 @@
                 <SidebarMenuItem>
                   <CollapsibleTrigger as-child>
                     <SidebarMenuButton>
-                      <span>Test Builder</span>
+                      <span>IELTS Mock and Practice</span>
                       <ChevronRight
                         class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
                       />
@@ -140,7 +140,7 @@
                           "
                         >
                           <NuxtLink to="/teacher/assign-tests">
-                            <BookOpen />
+                            <Link />
                             <span>Assign Tests</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
@@ -347,7 +347,7 @@ import {
   Moon,
   ChevronRight,
   Monitor,
-  CalendarCheck,
+  Link,
   BookOpen,
   Headphones,
   PenTool,

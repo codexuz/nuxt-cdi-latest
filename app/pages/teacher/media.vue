@@ -381,6 +381,10 @@ definePageMeta({
   layout: "teacher",
 });
 
+useHead({
+  title: "Media Library - Mockmee LMS",
+});
+
 const { user } = useAuth();
 const { getAllMedia, deleteMedia, formatFileSize, getFileTypeCategory } =
   useMedia();
