@@ -35,11 +35,6 @@
         />
       </div>
 
-      <div class="space-y-2">
-        <Label>Options Pool Title</Label>
-        <Input v-model="localData.optionsTitle" placeholder="e.g., Available Options" />
-      </div>
-
       <!-- Options -->
       <div class="space-y-2">
         <div class="flex justify-between items-center">

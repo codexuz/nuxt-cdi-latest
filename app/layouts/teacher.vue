@@ -150,60 +150,6 @@
                 </SidebarMenuItem>
               </Collapsible>
 
-              <Collapsible
-                v-model:open="isTestListOpen"
-                class="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger as-child>
-                    <SidebarMenuButton>
-                      <span>My Tests</span>
-                      <ChevronRight
-                        class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-                      />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/teacher/reading/tests'"
-                        >
-                          <NuxtLink to="/teacher/reading/tests">
-                            <BookOpen />
-                            <span>Reading Tests</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="
-                            $route.path === '/teacher/listening/tests'
-                          "
-                        >
-                          <NuxtLink to="/teacher/listening/tests">
-                            <Headphones />
-                            <span>Listening Tests</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/teacher/writing/tests'"
-                        >
-                          <NuxtLink to="/teacher/writing/tests">
-                            <PenTool />
-                            <span>Writing Tests</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -219,17 +165,6 @@
               <NuxtLink to="/teacher/media">
                 <Image />
                 <span>Media Library</span>
-              </NuxtLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              as-child
-              :is-active="$route.path === '/teacher/settings'"
-            >
-              <NuxtLink to="/teacher/settings">
-                <Settings />
-                <span>Settings</span>
               </NuxtLink>
             </SidebarMenuButton>
           </SidebarMenuItem>

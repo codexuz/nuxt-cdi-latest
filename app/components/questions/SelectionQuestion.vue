@@ -23,7 +23,7 @@
 
       <div class="space-y-2">
         <Label>Title</Label>
-        <Input v-model="localData.title" placeholder="e.g., List of Headings" />
+        <Input v-model="localData.title" placeholder="e.g. Questions 1-6" />
       </div>
 
       <div class="space-y-2">

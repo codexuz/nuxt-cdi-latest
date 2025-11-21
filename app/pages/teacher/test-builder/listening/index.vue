@@ -594,16 +594,14 @@ const fetchListeningTest = async () => {
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
-    // Get active center
-    const { activeCenter } = useCenters();
-
-    if (!activeCenter.value?.id) {
-      toast.error("No active center found");
+    // Get center from user
+    if (!authStore.user?.center_id) {
+      toast.error("No center found for user");
       return;
     }
 
     const response = await $fetch(
-      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}/listening`,
+      `${baseURL}/ielts/centers/${authStore.user.center_id}/tests/${testId}/listening`,
       {
         method: "GET",
         headers: {
@@ -835,11 +833,9 @@ const saveListeningTest = async () => {
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
-    // Get active center
-    const { activeCenter } = useCenters();
-
-    if (!activeCenter.value?.id) {
-      toast.error("No active center found");
+    // Get center from user
+    if (!authStore.user?.center_id) {
+      toast.error("No center found for user");
       return;
     }
 
@@ -849,7 +845,7 @@ const saveListeningTest = async () => {
     };
 
     const response = await $fetch(
-      `${baseURL}/ielts/centers/${activeCenter.value.id}/listening`,
+      `${baseURL}/ielts/centers/${authStore.user.center_id}/listening`,
       {
         method: "POST",
         headers: {
