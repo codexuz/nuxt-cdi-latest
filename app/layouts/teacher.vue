@@ -94,28 +94,6 @@
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/teacher/groups'"
-                        >
-                          <NuxtLink to="/teacher/groups">
-                            <UsersRound />
-                            <span>Groups</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/teacher/attendance'"
-                        >
-                          <NuxtLink to="/teacher/attendance">
-                            <CalendarCheck />
-                            <span>Attendance</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>
@@ -145,12 +123,12 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path === '/teacher/test-builder/reading'
+                            $route.path === '/teacher/test-builder'
                           "
                         >
-                          <NuxtLink to="/teacher/test-builder/reading">
+                          <NuxtLink to="/teacher/test-builder">
                             <BookOpen />
-                            <span>Reading</span>
+                            <span>Test builder</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -158,12 +136,12 @@
                         <SidebarMenuSubButton
                           as-child
                           :is-active="
-                            $route.path === '/teacher/test-builder/listening'
+                            $route.path === '/teacher/assign-tests'
                           "
                         >
-                          <NuxtLink to="/teacher/test-builder/listening">
-                            <Headphones />
-                            <span>Listening</span>
+                          <NuxtLink to="/teacher/assign-tests">
+                            <BookOpen />
+                            <span>Assign Tests</span>
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

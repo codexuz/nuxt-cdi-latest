@@ -1,18 +1,20 @@
 <template>
   <div class="min-h-screen bg-gradient-to-b from-muted/30 to-background">
-    <motion.div 
+    <motion.div
       class="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl"
       :initial="{ opacity: 0, y: 20 }"
       :transition="{ duration: 0.6, ease: 'easeOut' }"
-      :animate="{ opacity: 1, y: 0 }">
+      :animate="{ opacity: 1, y: 0 }"
+    >
       <Toaster position="top-center" richColors theme="system" />
 
       <!-- Header -->
-      <motion.div 
+      <motion.div
         class="bg-card border rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 shadow-sm"
         :initial="{ opacity: 0, y: -10 }"
         :transition="{ duration: 0.5, delay: 0.1 }"
-        :animate="{ opacity: 1, y: 0 }">
+        :animate="{ opacity: 1, y: 0 }"
+      >
         <div
           class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
@@ -63,139 +65,140 @@
       <motion.div
         :initial="{ opacity: 0, y: 20 }"
         :transition="{ duration: 0.5, delay: 0.2 }"
-        :animate="{ opacity: 1, y: 0 }">
-      <Card class="mb-6 sm:mb-8 shadow-sm border-2">
-        <CardHeader class="bg-muted/50">
-          <CardTitle class="text-lg flex items-center gap-2">
-            <div class="h-2 w-2 rounded-full bg-primary"></div>
-            Test Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent class="pt-6">
-          <!-- Loading State -->
-          <div v-if="isFetching" class="flex justify-center py-12">
-            <div
-              class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
-            ></div>
-          </div>
-
-          <div v-else class="space-y-6">
-            <!-- Basic Info -->
-            <div class="space-y-4">
-              <h3 class="font-semibold text-lg">Basic Information</h3>
-              <div class="space-y-2">
-                <Label for="title">Test Title</Label>
-                <Input
-                  id="title"
-                  v-model="newWritingTest.title"
-                  placeholder="e.g., IELTS Writing Test - Academic Module"
-                />
-              </div>
-              <div class="space-y-2">
-                <Label for="description">Description</Label>
-                <Textarea
-                  id="description"
-                  v-model="newWritingTest.description"
-                  placeholder="A comprehensive writing test with Task 1 and Task 2..."
-                  rows="3"
-                />
-              </div>
+        :animate="{ opacity: 1, y: 0 }"
+      >
+        <Card class="mb-6 sm:mb-8 shadow-sm border-2">
+          <CardHeader class="bg-muted/50">
+            <CardTitle class="text-lg flex items-center gap-2">
+              <div class="h-2 w-2 rounded-full bg-primary"></div>
+              Test Configuration
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="pt-6">
+            <!-- Loading State -->
+            <div v-if="isFetching" class="flex justify-center py-12">
+              <div
+                class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"
+              ></div>
             </div>
 
-            <!-- Task 1 -->
-            <div class="space-y-4 border-t pt-6">
-              <h3 class="font-semibold text-lg">Task 1</h3>
-              <div class="space-y-2">
-                <Label for="task1_type">Task Type</Label>
-                <Select v-model="newWritingTest.tasks[0].task_type">
-                  <SelectTrigger id="task1_type">
-                    <SelectValue placeholder="Select task type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="academic_task_1"
-                      >Academic Task 1</SelectItem
-                    >
-                    <SelectItem value="general_task_1"
-                      >General Task 1</SelectItem
-                    >
-                  </SelectContent>
-                </Select>
-              </div>
-              <div class="space-y-2">
-                <Label for="task1_prompt">Prompt</Label>
-                <Textarea
-                  id="task1_prompt"
-                  v-model="newWritingTest.tasks[0].prompt"
-                  placeholder="The chart shows the percentage of households..."
-                  rows="4"
-                />
-              </div>
-              <div class="space-y-2">
-                <Label for="task1_visual">Visual URL (Optional)</Label>
-                <Input
-                  id="task1_visual"
-                  v-model="newWritingTest.tasks[0].visual_url"
-                  placeholder="https://example.com/images/chart.png"
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-4">
+            <div v-else class="space-y-6">
+              <!-- Basic Info -->
+              <div class="space-y-4">
+                <h3 class="font-semibold text-lg">Basic Information</h3>
                 <div class="space-y-2">
-                  <Label for="task1_min_words">Minimum Words</Label>
+                  <Label for="title">Test Title</Label>
                   <Input
-                    id="task1_min_words"
-                    v-model.number="newWritingTest.tasks[0].min_words"
-                    type="number"
-                    placeholder="150"
+                    id="title"
+                    v-model="newWritingTest.title"
+                    placeholder="e.g., IELTS Writing Test - Academic Module"
                   />
                 </div>
                 <div class="space-y-2">
-                  <Label for="task1_time">Time (minutes)</Label>
-                  <Input
-                    id="task1_time"
-                    v-model.number="newWritingTest.tasks[0].time_minutes"
-                    type="number"
-                    placeholder="20"
+                  <Label for="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    v-model="newWritingTest.description"
+                    placeholder="A comprehensive writing test with Task 1 and Task 2..."
+                    rows="3"
                   />
                 </div>
               </div>
-            </div>
 
-            <!-- Task 2 -->
-            <div class="space-y-4 border-t pt-6">
-              <h3 class="font-semibold text-lg">Task 2</h3>
-              <div class="space-y-2">
-                <Label for="task2_prompt">Prompt</Label>
-                <Textarea
-                  id="task2_prompt"
-                  v-model="newWritingTest.tasks[1].prompt"
-                  placeholder="Some people believe that technology has made our lives more complicated..."
-                  rows="4"
-                />
-              </div>
-              <div class="grid grid-cols-2 gap-4">
+              <!-- Task 1 -->
+              <div class="space-y-4 border-t pt-6">
+                <h3 class="font-semibold text-lg">Task 1</h3>
                 <div class="space-y-2">
-                  <Label for="task2_min_words">Minimum Words</Label>
-                  <Input
-                    id="task2_min_words"
-                    v-model.number="newWritingTest.tasks[1].min_words"
-                    type="number"
-                    placeholder="250"
+                  <Label for="task1_type">Task Type</Label>
+                  <Select v-model="newWritingTest.tasks[0].task_type">
+                    <SelectTrigger id="task1_type">
+                      <SelectValue placeholder="Select task type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="academic_task_1"
+                        >Academic Task 1</SelectItem
+                      >
+                      <SelectItem value="general_task_1"
+                        >General Task 1</SelectItem
+                      >
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div class="space-y-2">
+                  <Label for="task1_prompt">Prompt</Label>
+                  <Textarea
+                    id="task1_prompt"
+                    v-model="newWritingTest.tasks[0].prompt"
+                    placeholder="The chart shows the percentage of households..."
+                    rows="4"
                   />
                 </div>
                 <div class="space-y-2">
-                  <Label for="task2_time">Time (minutes)</Label>
+                  <Label for="task1_visual">Visual URL (Optional)</Label>
                   <Input
-                    id="task2_time"
-                    v-model.number="newWritingTest.tasks[1].time_minutes"
-                    type="number"
-                    placeholder="40"
+                    id="task1_visual"
+                    v-model="newWritingTest.tasks[0].visual_url"
+                    placeholder="https://example.com/images/chart.png"
                   />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <Label for="task1_min_words">Minimum Words</Label>
+                    <Input
+                      id="task1_min_words"
+                      v-model.number="newWritingTest.tasks[0].min_words"
+                      type="number"
+                      placeholder="150"
+                    />
+                  </div>
+                  <div class="space-y-2">
+                    <Label for="task1_time">Time (minutes)</Label>
+                    <Input
+                      id="task1_time"
+                      v-model.number="newWritingTest.tasks[0].time_minutes"
+                      type="number"
+                      placeholder="20"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task 2 -->
+              <div class="space-y-4 border-t pt-6">
+                <h3 class="font-semibold text-lg">Task 2</h3>
+                <div class="space-y-2">
+                  <Label for="task2_prompt">Prompt</Label>
+                  <Textarea
+                    id="task2_prompt"
+                    v-model="newWritingTest.tasks[1].prompt"
+                    placeholder="Some people believe that technology has made our lives more complicated..."
+                    rows="4"
+                  />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <Label for="task2_min_words">Minimum Words</Label>
+                    <Input
+                      id="task2_min_words"
+                      v-model.number="newWritingTest.tasks[1].min_words"
+                      type="number"
+                      placeholder="250"
+                    />
+                  </div>
+                  <div class="space-y-2">
+                    <Label for="task2_time">Time (minutes)</Label>
+                    <Input
+                      id="task2_time"
+                      v-model.number="newWritingTest.tasks[1].time_minutes"
+                      type="number"
+                      placeholder="40"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </motion.div>
     </motion.div>
   </div>
@@ -250,16 +253,14 @@ const fetchWritingTest = async () => {
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
-    // Get active center
-    const { activeCenter } = useCenters();
-
-    if (!activeCenter.value?.id) {
-      toast.error("No active center found");
+    // Get center from user
+    if (!authStore.user?.center_id) {
+      toast.error("No center found for user");
       return;
     }
 
     const response = await $fetch(
-      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId.value}/writing`,
+      `${baseURL}/ielts/centers/${authStore.user.center_id}/tests/${testId.value}/writing`,
       {
         method: "GET",
         headers: {
@@ -317,11 +318,9 @@ const createWritingTest = async () => {
     const config = useRuntimeConfig();
     const baseURL = config.public.baseURL;
 
-    // Get active center
-    const { activeCenter } = useCenters();
-
-    if (!activeCenter.value?.id) {
-      toast.error("No active center found");
+    // Get center from user
+    if (!authStore.user?.center_id) {
+      toast.error("No center found for user");
       return;
     }
 
@@ -341,7 +340,7 @@ const createWritingTest = async () => {
     };
 
     const response = await $fetch(
-      `${baseURL}/ielts/centers/${activeCenter.value.id}/writing`,
+      `${baseURL}/ielts/centers/${authStore.user.center_id}/writing`,
       {
         method: "POST",
         headers: {
@@ -358,7 +357,7 @@ const createWritingTest = async () => {
 
     // Navigate back to test builder after success
     setTimeout(() => {
-      navigateTo("/dashboard/test-builder");
+      navigateTo("/teacher/test-builder");
     }, 1500);
   } catch (error) {
     console.error("Failed to create writing test:", error);

@@ -94,7 +94,7 @@
       :animate="{ opacity: 1, y: 0 }"
     >
       <motion.div
-        v-for="(test, index) in tests"
+        v-for="(test, index) in paginatedTests"
         :key="test.id"
         :initial="{ opacity: 0, y: 10 }"
         :transition="{ duration: 0.4, delay: 0.3 + index * 0.05 }"
@@ -105,9 +105,6 @@
             <div class="flex items-center justify-between">
               <div class="flex-1">
                 <CardTitle>{{ test.title }}</CardTitle>
-                <CardDescription class="mt-2">{{
-                  test.description
-                }}</CardDescription>
               </div>
               <Badge
                 :variant="
@@ -122,31 +119,6 @@
             <div
               class="flex flex-wrap items-center gap-3 sm:gap-6 text-sm text-muted-foreground mb-4"
             >
-              <div class="flex items-center gap-2">
-                <Headphones class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.listening_count || 0 }} Listening Parts</span
-                >
-                <span class="sm:hidden"
-                  >{{ test.listening_count || 0 }} Listening</span
-                >
-              </div>
-              <div class="flex items-center gap-2">
-                <BookOpen class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.reading_count || 0 }} Reading Parts</span
-                >
-                <span class="sm:hidden"
-                  >{{ test.reading_count || 0 }} Reading</span
-                >
-              </div>
-              <div class="flex items-center gap-2">
-                <FileQuestion class="h-4 w-4" />
-                <span class="hidden sm:inline"
-                  >{{ test.total_questions || 0 }} Questions</span
-                >
-                <span class="sm:hidden">{{ test.total_questions || 0 }} Q</span>
-              </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
               <Button size="sm" @click="editTest(test)" class="flex-shrink-0">
@@ -219,6 +191,34 @@
       </Card>
     </motion.div>
 
+      <Pagination
+        v-slot="{ page }"
+        :total="totalTests"
+        :sibling-count="1"
+        :default-page="currentPage"
+        :items-per-page="itemsPerPage"
+        show-edges
+        @update:page="handlePageChange"
+        class="mt-8 justify-center"
+      >
+        <PaginationContent v-slot="{ items }">
+          <PaginationFirst />
+          <PaginationPrevious />
+          <template v-for="(item, index) in items" :key="index">
+            <PaginationItem
+              v-if="item.type === 'page'"
+              :value="item.value"
+              :is-active="item.value === page"
+            >
+              {{ item.value }}
+            </PaginationItem>
+            <PaginationEllipsis v-else :index="index" />
+          </template>
+          <PaginationNext />
+          <PaginationLast />
+        </PaginationContent>
+      </Pagination>
+
     <!-- Edit Test Dialog -->
     <Dialog v-model:open="showEditDialog">
       <DialogContent class="max-w-2xl">
@@ -282,6 +282,16 @@ import {
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 useHead({
   title: "IELTS Test Builder - Mockmee LMS",
@@ -305,6 +315,28 @@ const editingTest = ref({
 
 const tests = ref([]);
 const isLoading = ref(false);
+
+// Pagination state
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const totalTests = computed(() => tests.value.length);
+const totalPages = computed(() =>
+  Math.ceil(totalTests.value / itemsPerPage.value)
+);
+
+// Computed property for paginated tests
+const paginatedTests = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return tests.value.slice(start, end);
+});
+
+// Handle page change
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  // Scroll to top of tests list
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 // Format test type for display
 const formatTestType = (testType) => {

@@ -125,7 +125,8 @@
         </SidebarGroup>
         -->
 
-        <!-- LMS Section 
+        <!-- LMS Section --->
+
         <SidebarGroup>
           <SidebarGroupLabel>LEARNING MANAGEMENT SYSTEM</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -153,39 +154,6 @@
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/owner/lms/courses'"
-                        >
-                          <NuxtLink to="/owner/lms/courses">
-                            <BookOpen />
-                            <span>Courses</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/owner/lms/assignments'"
-                        >
-                          <NuxtLink to="/owner/lms/assignments">
-                            <ClipboardCheck />
-                            <span>Assignments</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton
-                          as-child
-                          :is-active="$route.path === '/owner/lms/progress'"
-                        >
-                          <NuxtLink to="/owner/lms/progress">
-                            <TrendingUp />
-                            <span>Progress</span>
-                          </NuxtLink>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>
@@ -193,7 +161,6 @@
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        -->
 
         <!-- Tests & Exams Section -->
         <SidebarGroup>
@@ -223,6 +190,7 @@
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      <!-------
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
@@ -262,6 +230,7 @@
                           </NuxtLink>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      ---->
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>

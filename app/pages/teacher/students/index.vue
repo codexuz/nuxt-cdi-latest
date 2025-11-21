@@ -38,7 +38,6 @@
           </SelectContent>
         </Select>
        ---->
-
         <Button @click="openAddStudentModal" class="whitespace-nowrap">
           <Plus class="h-4 w-4 mr-2" />
           Add student
@@ -410,9 +409,6 @@ const isDeleting = ref(false);
 const config = useRuntimeConfig();
 const baseURL = config.public.baseURL;
 
-// Get active center from composable
-const { activeCenter } = useCenters();
-
 // New student form data
 const newStudent = ref({
   name: "",
@@ -431,15 +427,19 @@ const editingStudent = ref({
 
 // Fetch students from API
 const fetchStudents = async () => {
-  if (!activeCenter.value?.id) return;
+  const authStore = useAuthStore();
+
+  if (!authStore.user?.center_id) {
+    toast.error("No center found for user");
+    return;
+  }
 
   isLoading.value = true;
   try {
-    const authStore = useAuthStore();
     const token = authStore.token;
 
     const response = await fetch(
-      `${baseURL}/users/students?centerId=${activeCenter.value.id}`,
+      `${baseURL}/users/students?centerId=${authStore.user.center_id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -464,14 +464,15 @@ const fetchStudents = async () => {
 
 // Create new student
 const createStudent = async () => {
-  if (!activeCenter.value?.id) {
-    toast.error("No center selected");
+  const authStore = useAuthStore();
+
+  if (!authStore.user?.center_id) {
+    toast.error("No center found for user");
     return;
   }
 
   isCreating.value = true;
   try {
-    const authStore = useAuthStore();
     const token = authStore.token;
 
     const response = await fetch(`${baseURL}/auth/register-student`, {
@@ -485,7 +486,7 @@ const createStudent = async () => {
         email: newStudent.value.email,
         phone: newStudent.value.phone,
         password: newStudent.value.password,
-        center_id: activeCenter.value.id,
+        center_id: authStore.user.center_id,
       }),
     });
 
@@ -674,18 +675,8 @@ onMounted(() => {
   fetchStudents();
 });
 
-// Watch for center changes
-watch(
-  () => activeCenter.value?.id,
-  () => {
-    if (activeCenter.value?.id) {
-      fetchStudents();
-    }
-  }
-);
-
 definePageMeta({
-  layout: "dashboard",
-  middleware: ["auth", "center"],
+  layout: "teacher",
+  middleware: ["auth"],
 });
 </script>

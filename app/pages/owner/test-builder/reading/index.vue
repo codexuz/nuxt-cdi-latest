@@ -660,6 +660,6 @@ const saveReadingTest = async () => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: "auth",
+  middleware: ["auth", "center"],
 });
 </script>
