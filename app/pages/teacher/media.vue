@@ -482,8 +482,17 @@ const handleDelete = async () => {
     );
     showDeleteDialog.value = false;
     selectedMedia.value = null;
-  } catch (error) {
+    toast.success("Media deleted successfully");
+  } catch (error: any) {
     console.error("Failed to delete media:", error);
+    showDeleteDialog.value = false;
+
+    // Check for 403 error
+    if (error?.statusCode === 403 || error?.response?.status === 403) {
+      toast.error("You don't have authority to delete media");
+    } else {
+      toast.error("Failed to delete media. Please try again.");
+    }
   }
 };
 
