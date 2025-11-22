@@ -38,7 +38,8 @@
             <Label>Instructions</Label>
             <QuillEditor
              :toolbar="['bold', 'italic']"
-              v-model="localData.condition"
+              v-model:content="localData.condition"
+              content-type="html"
               placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
             />
           </div>
