@@ -28,11 +28,11 @@
 
       <div class="space-y-2">
         <Label>Instructions</Label>
-        <Textarea
-          v-model="localData.condition"
-          placeholder="e.g., Choose TWO letters, A–E.\nWhich TWO things does Arthur say people should focus on?"
-          rows="3"
-        />
+       <QuillEditor
+             :toolbar="['bold', 'italic']"
+              v-model="localData.condition"
+              placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
+            />
       </div>
 
       <div class="space-y-2">

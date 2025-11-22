@@ -36,21 +36,18 @@
 
           <div class="space-y-2">
             <Label>Instructions</Label>
-            <Textarea
+            <QuillEditor
+             :toolbar="['bold', 'italic']"
               v-model="localData.condition"
               placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
-              rows="3"
             />
           </div>
 
           <div class="space-y-2">
             <Label> Question Content (Use @@ for blank spaces) </Label>
-            <QuillEditor
-              style="min-height: 300px"
+            <CKEditorComponent
+              v-model="localData.content"
               placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
-              contentType="html"
-              theme="snow"
-              v-model:content="localData.content"
             />
             <p class="text-xs text-muted-foreground">
               Tip: Use @@ where students should fill in answers. Each @@ becomes
@@ -106,6 +103,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Trash2, Eye, EyeOff, ChevronRight } from "lucide-vue-next";
+import CKEditorComponent from "@/components/CKEditorComponent.vue";
+import { QuillEditor } from "@vueup/vue-quill";
 
 const showPreview = ref(false);
 const isOpen = ref(true);

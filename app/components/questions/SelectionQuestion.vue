@@ -28,11 +28,11 @@
 
       <div class="space-y-2">
         <Label>Instructions</Label>
-        <Textarea
-          v-model="localData.condition"
-          placeholder="e.g., Choose the correct heading for each paragraph"
-          rows="3"
-        />
+        <QuillEditor
+             :toolbar="['bold', 'italic']"
+              v-model="localData.condition"
+              placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
+            />
       </div>
 
       <div class="flex items-center space-x-2">
@@ -84,9 +84,10 @@
         <Label>
           Question Content (Use @@ for dropdown selectors)
         </Label>
-        <QuillEditor style="min-height: 300px;"           
-         placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
-         contentType="html"  theme="snow" v-model:content="localData.content" />
+         <CKEditorComponent
+              v-model="localData.content"
+              placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
+            />
         <p class="text-xs text-muted-foreground">
           Tip: Use @@ where students should select from dropdown. Each @@ becomes a select field.
         </p>
