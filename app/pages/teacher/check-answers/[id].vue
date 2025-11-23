@@ -187,7 +187,7 @@
           <!-- Task 1 -->
           <div v-if="writingAnswers[0]" class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold">Task 1</h3>
+              <h3 class="text-lg font-semibold">Task 2</h3>
               <Badge variant="outline">
                 Word Count: {{ writingAnswers[0].word_count || 0 }}
               </Badge>
@@ -198,7 +198,7 @@
               </p>
             </div>
             <div class="space-y-2">
-              <Label for="task1Score">Task 1 Score</Label>
+              <Label for="task1Score">Task 2 Score</Label>
               <Input
                 id="task1Score"
                 v-model.number="writingScores.task1Score"
@@ -216,7 +216,7 @@
           <!-- Task 2 -->
           <div v-if="writingAnswers[1]" class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold">Task 2</h3>
+              <h3 class="text-lg font-semibold">Task 1</h3>
               <Badge variant="outline">
                 Word Count: {{ writingAnswers[1].word_count || 0 }}
               </Badge>
@@ -227,7 +227,7 @@
               </p>
             </div>
             <div class="space-y-2">
-              <Label for="task2Score">Task 2 Score</Label>
+              <Label for="task2Score">Task 1 Score</Label>
               <Input
                 id="task2Score"
                 v-model.number="writingScores.task2Score"
