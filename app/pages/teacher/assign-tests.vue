@@ -135,8 +135,20 @@
                   <Button
                     variant="ghost"
                     size="icon"
+                    @click="
+                      $router.push(`/teacher/check-answers/${assignment.id}`)
+                    "
+                    class="h-8 w-8"
+                    title="Check Answers"
+                  >
+                    <Eye class="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     @click="editAssignment(assignment)"
                     class="h-8 w-8"
+                    title="Edit Assignment"
                   >
                     <Edit class="h-4 w-4" />
                   </Button>
@@ -145,6 +157,7 @@
                     size="icon"
                     @click="deleteAssignment(assignment.id)"
                     class="h-8 w-8"
+                    title="Delete Assignment"
                   >
                     <Trash2 class="h-4 w-4 text-destructive" />
                   </Button>
@@ -366,7 +379,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { Plus, Trash2, FileQuestion, Edit, Copy } from "lucide-vue-next";
+import { Plus, Trash2, FileQuestion, Edit, Copy, Eye } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 import {
