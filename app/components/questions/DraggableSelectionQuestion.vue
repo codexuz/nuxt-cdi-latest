@@ -28,11 +28,12 @@
 
       <div class="space-y-2">
         <Label>Instructions</Label>
-        <Textarea
-          v-model="localData.condition"
-          placeholder="e.g., Complete the flow-chart below. Choose answers from the box and drag to the correct letter."
-          rows="3"
-        />
+        <QuillEditor
+             :toolbar="['bold', 'italic']"
+              v-model:content="localData.condition"
+              content-type="html"
+              placeholder="e.g., Complete the form below. Write NO MORE THAN TWO WORDS for each answer."
+            />
       </div>
 
       <!-- Options -->
@@ -65,9 +66,10 @@
         <Label>
           Question Content (use @@ for drop zones)
         </Label>
-        <QuillEditor style="min-height: 300px;"           
-         placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
-         contentType="html"  theme="snow" v-model:content="localData.content" />
+          <CKEditorComponent
+              v-model="localData.content"
+              placeholder="e.g., <p>Tour: Vietnam</p><p>Cost: £ @@</p>"
+            />
         <p class="text-xs text-muted-foreground">
           Tip: Use @@ where students should drag and drop answers. Each @@ becomes a drop zone.
         </p>

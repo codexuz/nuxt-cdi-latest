@@ -349,7 +349,7 @@ import {
   Monitor,
   Link,
   BookOpen,
-  Headphones,
+  Check,
   PenTool,
   Image,
 } from "lucide-vue-next";

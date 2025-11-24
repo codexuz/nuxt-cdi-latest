@@ -377,6 +377,7 @@ import type { MediaItem } from "~/composables/useMedia";
 import { useMedia } from "~/composables/useMedia";
 
 const { user } = useAuth();
+const { activeCenter } = useCenters();
 const { getAllMedia, deleteMedia, formatFileSize, getFileTypeCategory } =
   useMedia();
 
@@ -422,7 +423,14 @@ const filteredMedia = computed(() => {
 const loadMedia = async () => {
   try {
     isLoading.value = true;
-    const response = await getAllMedia();
+    const params: any = {};
+
+    // Add center_id from activeCenter
+    if (activeCenter.value?.id) {
+      params.center_id = activeCenter.value.id;
+    }
+
+    const response = await getAllMedia(params);
     mediaList.value = response.data || [];
   } catch (error) {
     console.error("Failed to load media:", error);
@@ -509,7 +517,6 @@ const formatDate = (dateString: string): string => {
 onMounted(() => {
   loadMedia();
 });
-
 
 useHead({
   title: "Media Library- Mockmee LMS",

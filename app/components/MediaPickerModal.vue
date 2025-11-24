@@ -175,6 +175,7 @@ const emit = defineEmits<{
 }>();
 
 const { user } = useAuth();
+const { activeCenter } = useCenters();
 const { getAllMedia, formatFileSize, getFileTypeCategory } = useMedia();
 
 const isOpen = computed({
@@ -223,10 +224,20 @@ const filteredMedia = computed(() => {
 const loadMedia = async () => {
   try {
     isLoading.value = true;
-  
 
+    const params: any = {};
 
-    const response = await getAllMedia();
+    // Add center_id if available
+    if (activeCenter.value?.id) {
+      params.center_id = activeCenter.value.id;
+    }
+
+    // Add media_type if specified
+    if (props.mediaType) {
+      params.media_type = props.mediaType;
+    }
+
+    const response = await getAllMedia(params);
     mediaList.value = response.data || [];
   } catch (error) {
     console.error("Failed to load media:", error);
