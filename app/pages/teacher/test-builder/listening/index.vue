@@ -91,6 +91,42 @@
                   </SelectContent>
                 </Select>
               </div>
+              <div class="space-y-2 md:col-span-2">
+                <Label for="full_audio_url" class="text-sm font-medium"
+                  >Full Audio URL (Optional)</Label
+                >
+                <div class="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    @click="openFullAudioPicker"
+                    class="flex-none"
+                  >
+                    <ListMusic class="mr-2 w-4 h-4" />
+                    Select Audio
+                  </Button>
+                  <Input
+                    id="full_audio_url"
+                    v-model="listeningData.full_audio_url"
+                    type="url"
+                    placeholder="https://example.com/audio/ielts-listening-full.mp3"
+                    class="h-10 flex-1"
+                  />
+                  <Button
+                    v-if="listeningData.full_audio_url"
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    @click="listeningData.full_audio_url = ''"
+                    class="text-red-600 hover:text-red-700 flex-none"
+                  >
+                    <Icon name="lucide:x" class="w-4 h-4" />
+                  </Button>
+                </div>
+                <p class="text-xs text-muted-foreground">
+                  Complete audio file URL for the entire listening test
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -504,7 +540,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { ArrowLeft, Plus, Trash2, Save } from "lucide-vue-next";
+import { ArrowLeft, Plus, Trash2, Save, ListMusic } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
@@ -578,6 +614,7 @@ const loadFromStorage = () => {
       "A comprehensive listening test with 4 parts covering everyday conversations and academic lectures.",
     for_cdi: "true",
     test_id: testId,
+    full_audio_url: "",
     parts: [],
   };
 };
@@ -623,6 +660,7 @@ const fetchListeningTest = async () => {
         ...response,
         for_cdi: String(response.for_cdi || false),
         test_id: testId,
+        full_audio_url: response.full_audio_url || "",
       };
 
       console.log("Listening test loaded:", response);
@@ -881,8 +919,18 @@ const openMediaPicker = (partIndex) => {
   showMediaPicker.value = true;
 };
 
+const openFullAudioPicker = () => {
+  currentPartIndex.value = -1; // Use -1 to indicate full audio selection
+  showMediaPicker.value = true;
+};
+
 const handleMediaSelected = (media) => {
-  if (currentPartIndex.value !== null) {
+  if (currentPartIndex.value === -1) {
+    // Full audio selection
+    listeningData.value.full_audio_url = media.url;
+    toast.success("Full audio file selected successfully!");
+  } else if (currentPartIndex.value !== null) {
+    // Part audio selection
     const part = listeningData.value.parts[currentPartIndex.value];
     part.audio.url = media.url;
     part.audio.filename = media.filename;

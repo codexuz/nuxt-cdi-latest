@@ -92,6 +92,39 @@
                 </Select>
               </div>
             </div>
+            <div class="space-y-2 mt-4">
+              <Label for="full_audio" class="text-sm font-medium"
+                >Full Audio URL (Optional)</Label
+              >
+              <div class="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  @click="openFullAudioPicker"
+                  class="shrink-0"
+                >
+                  <ListMusic class="mr-2 h-4 w-4" />
+                  Select Audio
+                </Button>
+                <Input
+                  id="full_audio"
+                  v-model="listeningData.full_audio_url"
+                  placeholder="Full audio URL for the entire test"
+                  class="h-9"
+                />
+                <Button
+                  v-if="listeningData.full_audio_url"
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  @click="listeningData.full_audio_url = ''"
+                  class="shrink-0"
+                >
+                  <X class="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </motion.div>
@@ -504,7 +537,7 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { ArrowLeft, Plus, Trash2, Save } from "lucide-vue-next";
+import { ArrowLeft, Plus, Trash2, Save, ListMusic, X } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
@@ -578,6 +611,7 @@ const loadFromStorage = () => {
       "A comprehensive listening test with 4 parts covering everyday conversations and academic lectures.",
     for_cdi: "true",
     test_id: testId,
+    full_audio_url: "",
     parts: [],
   };
 };
@@ -885,8 +919,18 @@ const openMediaPicker = (partIndex) => {
   showMediaPicker.value = true;
 };
 
+const openFullAudioPicker = () => {
+  currentPartIndex.value = -1; // Use -1 to indicate full audio selection
+  showMediaPicker.value = true;
+};
+
 const handleMediaSelected = (media) => {
-  if (currentPartIndex.value !== null) {
+  if (currentPartIndex.value === -1) {
+    // Full audio selection
+    listeningData.value.full_audio_url = media.url;
+    toast.success("Full audio file selected successfully!");
+  } else if (currentPartIndex.value !== null) {
+    // Part audio selection
     const part = listeningData.value.parts[currentPartIndex.value];
     part.audio.url = media.url;
     part.audio.filename = media.filename;
