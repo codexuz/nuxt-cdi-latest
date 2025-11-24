@@ -217,7 +217,17 @@ export const useMedia = () => {
   // Delete media
   const deleteMedia = async (id: string): Promise<void> => {
     try {
-      await $fetch(`${API_BASE_URL}/media/${id}`, {
+      // Check user role - owners get hard delete, teachers get soft delete
+      const userRole =
+        authStore.user?.roles?.[0]?.role_name || authStore.user?.role || "";
+      const isOwner = userRole === "owner";
+
+      // Use /hard endpoint for owners, regular endpoint for others
+      const endpoint = isOwner
+        ? `${API_BASE_URL}/media/${id}/hard`
+        : `${API_BASE_URL}/media/${id}`;
+
+      await $fetch(endpoint, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
