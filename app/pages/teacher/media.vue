@@ -431,7 +431,14 @@ const filteredMedia = computed(() => {
 const loadMedia = async () => {
   try {
     isLoading.value = true;
-    const response = await getAllMedia();
+    const params: any = {};
+
+    // Add center_id from user
+    if (user.value?.center_id) {
+      params.center_id = user.value.center_id;
+    }
+
+    const response = await getAllMedia(params);
     mediaList.value = response.data || [];
   } catch (error) {
     console.error("Failed to load media:", error);

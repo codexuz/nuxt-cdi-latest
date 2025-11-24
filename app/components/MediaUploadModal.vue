@@ -244,7 +244,7 @@ const handleDrop = (event: DragEvent) => {
 const addFiles = (files: File[]) => {
   files.forEach((file) => {
     // Check file size (10MB limit)
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 100 * 1024 * 1024) {
       toast.error(`${file.name} is too large. Max size is 10MB.`);
       return;
     }
