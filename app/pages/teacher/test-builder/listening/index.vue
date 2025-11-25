@@ -729,6 +729,16 @@ const confirmDeletePart = () => {
   }
 };
 
+const getPartStartingNumber = (partType) => {
+  const partMap = {
+    PART_1: 1,
+    PART_2: 11,
+    PART_3: 21,
+    PART_4: 31,
+  };
+  return partMap[partType] || 1;
+};
+
 const getAnswersAsText = (part) => {
   const keys = Object.keys(part.answers).sort(
     (a, b) => parseInt(a) - parseInt(b)
@@ -741,9 +751,12 @@ const setAnswersFromText = (part, value) => {
     .split(",")
     .map((a) => a.trim())
     .filter((a) => a);
+
+  const startingNumber = getPartStartingNumber(part.part);
+
   part.answers = reactive({});
   answers.forEach((answer, index) => {
-    part.answers[String(index + 1)] = answer;
+    part.answers[String(startingNumber + index)] = answer;
   });
   Object.assign(part.answers, {});
 };
