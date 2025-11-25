@@ -533,7 +533,7 @@ const deleteTest = async (testId) => {
     }
 
     await $fetch(
-      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}/hard`,
+      `${baseURL}/ielts/centers/${activeCenter.value.id}/tests/${testId}`,
       {
         method: "DELETE",
         headers: {
