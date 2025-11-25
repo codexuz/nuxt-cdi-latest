@@ -3,15 +3,24 @@
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <Button variant="ghost" @click="$router.back()" class="mb-4">
-          <ArrowLeft class="mr-2 h-4 w-4" />
-          Back
-        </Button>
+    <div class="w-full mb-8">
+        <div class="flex items-center w-full justify-between gap-2 mb-4">
+          <Button variant="ghost" @click="$router.back()">
+            <ArrowLeft class="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <Button
+            @click="notifyStudent"
+            :disabled="isNotifying"
+            class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+          >
+            <Bell class="mr-2 h-4 w-4" />
+            <span v-if="isNotifying">Sending...</span>
+            <span v-else>Notify Student</span>
+          </Button>
+        </div>
         <h1 class="text-3xl font-bold">Check Answers</h1>
         <p class="text-muted-foreground">Review student test submission</p>
-      </div>
     </div>
 
     <!-- Loading State -->
@@ -287,7 +296,7 @@
 </template>
 
 <script setup>
-import { ArrowLeft, CheckCircle } from "lucide-vue-next";
+import { ArrowLeft, CheckCircle, Bell } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
@@ -307,6 +316,7 @@ const assignment = ref(null);
 const isLoading = ref(true);
 const isAutoGrading = ref(false);
 const isSubmittingWriting = ref(false);
+const isNotifying = ref(false);
 
 const writingScores = ref({
   task1Score: null,
@@ -423,6 +433,38 @@ const autoGrade = async () => {
     toast.error(error.data?.message || "Failed to auto grade");
   } finally {
     isAutoGrading.value = false;
+  }
+};
+
+// Notify student
+const notifyStudent = async () => {
+  try {
+    isNotifying.value = true;
+    const authStore = useAuthStore();
+    const config = useRuntimeConfig();
+    const baseURL = config.public.baseURL;
+
+    if (!authStore.user?.center_id || !assignment.value?.candidate_id) {
+      toast.error("Missing required information");
+      return;
+    }
+
+    await $fetch(
+      `${baseURL}/student-tests/centers/${authStore.user.center_id}/send-results/${assignment.value.candidate_id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+
+    toast.success("Student notified successfully!");
+  } catch (error) {
+    console.error("Failed to notify student:", error);
+    toast.error(error.data?.message || "Failed to notify student");
+  } finally {
+    isNotifying.value = false;
   }
 };
 
