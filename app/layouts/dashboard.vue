@@ -143,6 +143,17 @@
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
+                         <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          as-child
+                          :is-active="$route.path === '/owner/group'"
+                        >
+                          <NuxtLink to="/owner/group">
+                            <Users />
+                            <span>Groups</span>
+                          </NuxtLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child

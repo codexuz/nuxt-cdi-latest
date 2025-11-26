@@ -22,7 +22,8 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "nuxt-aos",
-    "motion-v/nuxt"
+    "motion-v/nuxt",
+    "dragon-editor"
   ],
   colorMode: {
     classSuffix: "",

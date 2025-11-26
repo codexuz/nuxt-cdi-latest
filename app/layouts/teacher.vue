@@ -83,6 +83,28 @@
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
+                       <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          as-child
+                          :is-active="$route.path === '/teacher/course'"
+                        >
+                          <NuxtLink to="/teacher/course">
+                            <GraduationCap />
+                            <span>Courses</span>
+                          </NuxtLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                       <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          as-child
+                          :is-active="$route.path === '/teacher/group'"
+                        >
+                          <NuxtLink to="/teacher/group">
+                            <Folder />
+                            <span>Groups</span>
+                          </NuxtLink>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           as-child
@@ -335,6 +357,7 @@
 <script setup>
 import {
   GraduationCap,
+  Folder,
   LayoutDashboard,
   Users,
   UsersRound,
