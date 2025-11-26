@@ -40,6 +40,28 @@
           </div>
           <div class="flex gap-2 w-full sm:w-auto">
             <Button
+              @click="showVideo = !showVideo"
+              variant="outline"
+              size="icon"
+              class="shrink-0"
+              :title="showVideo ? 'Hide Video' : 'Show Video'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              </svg>
+            </Button>
+            <Button
               @click="saveReadingTest"
               :disabled="!isValid"
               class="flex-1 sm:flex-none"
@@ -404,12 +426,22 @@
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+
+    <!-- Draggable Video Player -->
+    <DraggableVideoPlayer
+      v-if="showVideo"
+      :video-url="videoUrl"
+      :initial-x="windowWidth - 340"
+      :initial-y="windowHeight - 200"
+      @close="showVideo = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { motion } from "motion-v";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-vue-next";
+import DraggableVideoPlayer from "@/components/DraggableVideoPlayer.vue";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 
@@ -454,6 +486,25 @@ const storageKey = `reading-draft-${testId}`;
 const deleteDialogOpen = ref(false);
 const partToDelete = ref(null);
 const isLoading = ref(false);
+
+// Video player state
+const showVideo = ref(true);
+const videoUrl = ref(
+  "https://18406281-4440-4933-b3cd-7a96648fd82c.srvstatic.uz/mockmee_reading_instruction.mp4"
+);
+const windowWidth = ref(0);
+const windowHeight = ref(0);
+
+// Get window dimensions for bottom-right positioning
+if (process.client) {
+  windowWidth.value = window.innerWidth;
+  windowHeight.value = window.innerHeight;
+
+  window.addEventListener("resize", () => {
+    windowWidth.value = window.innerWidth;
+    windowHeight.value = window.innerHeight;
+  });
+}
 
 // Load from localStorage or use defaults
 const loadFromStorage = () => {
