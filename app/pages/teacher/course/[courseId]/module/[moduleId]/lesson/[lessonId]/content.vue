@@ -198,12 +198,22 @@ const fetchLesson = async () => {
       headers: getAuthHeaders(),
     });
     lesson.value = response;
-    contentHtml.value =
-      response?.content?.html || response?.content?.text || "";
-    // Ensure content.resources exists
-    if (!lesson.value.content.resources) {
-      lesson.value.content.resources = [];
+
+    // Handle content that might be null or missing
+    if (!lesson.value.content) {
+      lesson.value.content = {
+        html: "",
+        resources: [],
+      };
+    } else {
+      // Ensure content.resources exists
+      if (!lesson.value.content.resources) {
+        lesson.value.content.resources = [];
+      }
     }
+
+    contentHtml.value =
+      lesson.value.content?.html || lesson.value.content?.text || "";
   } catch (error: any) {
     console.error("Failed to fetch lesson:", error);
     toast.error("Failed to load lesson");
