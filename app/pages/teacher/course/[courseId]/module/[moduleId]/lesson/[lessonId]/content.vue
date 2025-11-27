@@ -2,9 +2,25 @@
   <div class="flex h-screen bg-gray-50 overflow-hidden">
     <Toaster position="top-center" richColors theme="system" />
 
+    
+
     <!-- Central Content Area -->
     <div class="flex-1 overflow-y-auto">
-      <div class="max-w-4xl mx-auto p-8">
+           <!-- Back Button -->
+    <div class="z-10">
+      <Button
+        @click="$router.back()"
+        class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg"
+      >
+        <ArrowLeft class="h-5 w-5 mr-2" />
+        Back
+      </Button>
+    </div>
+      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'settings'">
+        <SettingsTab v-model:lesson="lesson" @save="saveContent" />
+      </div>
+
+      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'content'">
         <!-- Content Blocks List -->
         <ContentBlockList
           :content-blocks="contentBlocks"
@@ -16,65 +32,39 @@
         <!-- Add Block Buttons -->
         <AddBlockButtons @add-block="addBlock" />
       </div>
+
+      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'quiz'">
+        <QuizTab v-model:questions="quizQuestions" />
+      </div>
+
+      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'vocabulary'">
+        <VocabularyTab v-model:words="vocabularyWords" />
+      </div>
     </div>
 
     <!-- Right Sidebar with Shadcn UI Tabs -->
-    <div class="w-96 bg-white border-l border-gray-200 shadow-xl">
-      <Tabs :model-value="activeTab" @update:model-value="(val) => activeTab = val" orientation="vertical" class="flex h-full">
-        <TabsList class="w-16 border-r border-gray-200 flex flex-col py-4 bg-white rounded-none h-full justify-start gap-1">
-          <TabsTrigger
-            v-for="tab in tabs"
-            :key="tab.id"
-            :value="tab.id"
-            class="flex flex-col items-center justify-center gap-2 px-2 py-4 text-xs font-medium transition-all relative group data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 rounded-lg w-full"
-            :title="tab.label"
-          >
-            <component :is="tab.icon" class="h-5 w-5" />
-            <span class="text-[10px] leading-tight text-center">{{ tab.label }}</span>
-            <div
-              class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r opacity-0 group-data-[state=active]:opacity-100 transition-opacity"
-            ></div>
-          </TabsTrigger>
-        </TabsList>
-
-        <!-- Settings Tab Content -->
-        <TabsContent value="settings" class="flex-1 overflow-y-auto p-6 mt-0">
-          <SettingsTab
-            :lesson="lesson"
-            :is-saving="isSaving"
-            @update:lesson="lesson = $event"
-            @save="saveContent"
-          />
-        </TabsContent>
-
-        <!-- Content Tab Content -->
-        <TabsContent value="content" class="flex-1 overflow-y-auto p-6 mt-0">
-          <ContentTab
-            :content-blocks="contentBlocks"
-            @remove-block="removeBlock"
-          />
-        </TabsContent>
-
-        <!-- Quiz Tab Content -->
-        <TabsContent value="quiz" class="flex-1 overflow-y-auto p-6 mt-0">
-          <QuizTab
-            :quiz-questions="quizQuestions"
-            @update:quiz-questions="quizQuestions = $event"
-            @add-question="addQuestion"
-            @remove-question="removeQuestion"
-          />
-        </TabsContent>
-
-        <!-- Vocabulary Tab Content -->
-        <TabsContent value="vocabulary" class="flex-1 overflow-y-auto p-6 mt-0">
-          <VocabularyTab
-            :vocabulary-words="vocabularyWords"
-            @update:vocabulary-words="vocabularyWords = $event"
-            @add-word="addWord"
-            @remove-word="removeWord"
-          />
-        </TabsContent>
-      </Tabs>
+    <div class="w-80 border-l bg-white shadow-lg overflow-y-auto">
+      <div class="p-4 space-y-2">
+        <button
+          v-for="tab in tabs"
+          :key="tab.id"
+          @click="activeTab = tab.id"
+          :class="[
+            'w-full flex items-start gap-3 px-4 py-3 rounded-lg text-left transition-colors',
+            activeTab === tab.id
+              ? 'bg-primary/10 text-primary'
+              : 'hover:bg-gray-100 text-gray-700',
+          ]"
+        >
+          <component :is="tab.icon" class="h-5 w-5 mt-0.5 flex-shrink-0" />
+          <div>
+            <div class="font-medium">{{ tab.label }}</div>
+            <div class="text-xs text-muted-foreground mt-0.5">
+              {{ getTabDescription(tab.id) }}
+            </div>
+          </div>
+        </button>
+      </div>
     </div>
 
     <!-- Media Picker Modal -->
@@ -84,7 +74,6 @@
     />
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
@@ -101,6 +90,7 @@ import {
   X,
   Save,
   Plus,
+  ArrowLeft,
 } from "lucide-vue-next";
 import MediaPickerModal from "@/components/MediaPickerModal.vue";
 import { toast, Toaster } from "vue-sonner";
@@ -112,7 +102,6 @@ import SettingsTab from "@/components/lesson/SettingsTab.vue";
 import ContentTab from "@/components/lesson/ContentTab.vue";
 import QuizTab from "@/components/lesson/QuizTab.vue";
 import VocabularyTab from "@/components/lesson/VocabularyTab.vue";
-
 
 const route = useRoute();
 const router = useRouter();
@@ -165,6 +154,22 @@ const getAuthHeaders = () => ({
   "Content-Type": "application/json",
 });
 
+// Get tab description
+const getTabDescription = (tabId: string) => {
+  switch (tabId) {
+    case "settings":
+      return "Design and parameters";
+    case "content":
+      return "Content Builder";
+    case "quiz":
+      return 'In "Exam" mode';
+    case "vocabulary":
+      return "Terms and definitions";
+    default:
+      return "";
+  }
+};
+
 // Get icon for block type
 const getBlockIcon = (type: string) => {
   switch (type) {
@@ -213,7 +218,8 @@ const handleMediaSelect = (media: any) => {
         name: media.name || media.filename,
         url: media.url,
         type: media.type,
-        size: media.size || Math.floor(Math.random() * (5000000 - 100000) + 100000), // Random size if not provided
+        size:
+          media.size || Math.floor(Math.random() * (5000000 - 100000) + 100000), // Random size if not provided
       });
     }
   }
