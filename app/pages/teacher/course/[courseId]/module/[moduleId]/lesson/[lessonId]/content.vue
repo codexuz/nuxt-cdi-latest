@@ -34,91 +34,25 @@
     </motion.div>
 
     <!-- Content Editor -->
-    <motion.div
-      class="container mx-auto px-4 py-6 max-w-6xl"
-      :initial="{ opacity: 0, y: 20 }"
-      :animate="{ opacity: 1, y: 0 }"
-      :transition="{ duration: 0.5, delay: 0.2 }"
-    >
-      <Card>
-        <CardHeader>
-          <CardTitle>Lesson Content</CardTitle>
-          <CardDescription>
-            Edit the content for this lesson using the rich text editor
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div class="space-y-4">
-            <div class="space-y-2">
-              <Label>Title</Label>
-              <Input v-model="lesson.title" placeholder="Lesson title" />
-            </div>
-
-            <div class="space-y-2">
-              <Label>Video URL (Optional)</Label>
-              <Input v-model="lesson.video_url" placeholder="Enter video URL" />
-            </div>
-
-            <div class="space-y-2">
-              <Label>Content</Label>
-              <div class="border rounded-md min-h-[400px]">
-                <QuillEditor
-                  v-model:content="contentHtml"
-                  contentType="html"
-                  toolbar="full"
-                  theme="snow"
-                />
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <Label>Resources (Optional)</Label>
-              <p class="text-sm text-muted-foreground mb-2">
-                Attach files, PDFs, or other resources for this lesson
-              </p>
-              <div class="space-y-2">
-                <div
-                  v-if="
-                    lesson.content.resources &&
-                    lesson.content.resources.length > 0
-                  "
-                  class="space-y-2"
-                >
-                  <div
-                    v-for="(resource, index) in lesson.content.resources"
-                    :key="index"
-                    class="flex items-center justify-between p-3 bg-muted rounded-lg"
-                  >
-                    <div class="flex items-center gap-2">
-                      <Paperclip class="h-4 w-4 text-muted-foreground" />
-                      <span class="text-sm font-medium">{{
-                        resource.name || resource.url
-                      }}</span>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      class="h-8 w-8"
-                      @click="removeResource(index)"
-                    >
-                      <X class="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  class="w-full"
-                  @click="showMediaPicker = true"
-                >
-                  <Paperclip class="h-4 w-4 mr-2" />
-                  Attach Resource
-                </Button>
-              </div>
-            </div>
-          </div>
+    <div class="w-[80%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3">
+      <Card class="m-4 h-[400px] flex items-center justify-center col-span-2">
+        <CardContent class="mx-auto text-center space-y-1">
+           <CircleFadingPlus
+            class="h-[90px] w-[90px] mx-auto text-blue-500 cursor-pointer mb-2"
+          />
+          <h2 class="text-xl font-semibold">Fill in the content</h2>
+          <p class="text-slate-600">It's empty here for now, add the first block below</p>
         </CardContent>
       </Card>
-    </motion.div>
+      <Card class="m-4 w-[60%] h-auto">
+        <CardHeader>
+          <CardTitle>Preview</CardTitle>
+          <CardDescription>
+            Preview the lesson content as it will appear to students.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    </div>
 
     <!-- Media Picker Modal -->
     <MediaPickerModal
@@ -131,7 +65,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { motion } from "motion-v";
-import { ArrowLeft, Save, Paperclip, X } from "lucide-vue-next";
+import { ArrowLeft, Save, CircleFadingPlus, X } from "lucide-vue-next";
 import MediaPickerModal from "@/components/MediaPickerModal.vue";
 import { toast, Toaster } from "vue-sonner";
 import {
