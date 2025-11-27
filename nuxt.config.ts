@@ -23,7 +23,6 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "nuxt-aos",
     "motion-v/nuxt",
-    "dragon-editor"
   ],
   colorMode: {
     classSuffix: "",
