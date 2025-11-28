@@ -1,7 +1,9 @@
 <template>
   <div class="space-y-4">
     <div>
-      <Label class="text-sm font-medium text-gray-700 mb-2 block">Block title</Label>
+      <Label class="text-sm font-medium text-gray-700 mb-2 block"
+        >Block title</Label
+      >
       <Input
         :model-value="block.title"
         @update:model-value="updateTitle"
@@ -10,11 +12,13 @@
       />
     </div>
     <div>
-      <Label class="text-sm font-medium text-gray-700 mb-2 block">Block content</Label>
+      <Label class="text-sm font-medium text-gray-700 mb-2 block"
+        >Block content</Label
+      >
       <div class="border border-gray-200 rounded-lg overflow-hidden">
         <QuillEditor
-          :model-value="block.content"
-          @update:model-value="updateContent"
+          v-model:content="localContent"
+          @update:content="updateContent"
           contentType="html"
           theme="snow"
           :toolbar="toolbarOptions"
@@ -27,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import { Input } from "@/components/ui/input";
@@ -43,29 +48,42 @@ interface EditorBlockProps {
 
 const props = defineProps<EditorBlockProps>();
 const emit = defineEmits<{
-  'update:block': [block: any];
+  "update:block": [block: any];
 }>();
 
+const localContent = ref(props.block.content);
+
+// Watch for changes in props.block.content to sync localContent
+watch(
+  () => props.block.content,
+  (newContent) => {
+    localContent.value = newContent;
+  },
+  { immediate: true }
+);
+
 const toolbarOptions = [
-  ['bold', 'italic', 'underline', 'strike'],
-  ['blockquote', 'code-block'],
-  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-  [{ 'script': 'sub'}, { 'script': 'super' }],
-  [{ 'indent': '-1'}, { 'indent': '+1' }],
-  [{ 'size': ['small', false, 'large', 'huge'] }],
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  [{ 'color': [] }, { 'background': [] }],
-  [{ 'align': [] }],
-  ['link', 'image', 'video'],
-  ['clean']
+  ["bold", "italic", "underline", "strike"],
+  ["blockquote", "code-block"],
+  [{ list: "ordered" }, { list: "bullet" }],
+  [{ script: "sub" }, { script: "super" }],
+  [{ indent: "-1" }, { indent: "+1" }],
+  [{ size: ["small", false, "large", "huge"] }],
+  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+  [{ color: [] }, { background: [] }],
+  [{ align: [] }],
+  ["link", "image", "video"],
+  ["clean"],
 ];
 
 const updateTitle = (value: string) => {
-  emit('update:block', { ...props.block, title: value });
+  emit("update:block", { ...props.block, title: value });
 };
 
-const updateContent = (value: string) => {
-  emit('update:block', { ...props.block, content: value });
+const updateContent = (content: string) => {
+  console.log("EditorBlock updateContent called with:", content);
+  localContent.value = content;
+  emit("update:block", { ...props.block, content: content });
 };
 </script>
 

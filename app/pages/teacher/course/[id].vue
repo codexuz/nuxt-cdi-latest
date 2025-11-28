@@ -97,10 +97,6 @@
                       Manage modules, lessons, and course structure
                     </CardDescription>
                   </div>
-                  <Button @click="openAddModuleDialog">
-                    <Plus class="h-4 w-4 mr-2" />
-                    Add Module
-                  </Button>
                 </div>
               </CardHeader>
               <CardContent class="p-0">
@@ -122,45 +118,64 @@
                 </div>
 
                 <!-- Modules List -->
-                <Accordion
-                  v-else
-                  ref="modulesContainer"
-                  type="multiple"
-                  class="w-full"
-                  :default-value="expandedModules"
-                >
-                  <AccordionItem
+                <div v-else ref="modulesContainer" class="space-y-4 p-6">
+                  <div
                     v-for="(module, moduleIndex) in modules"
                     :key="module.id"
                     :data-id="module.id"
-                    :value="module.id"
-                    class="border-b last:border-b-0"
+                    class="bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow"
                   >
-                    <AccordionTrigger
-                      class="hover:no-underline hover:bg-muted/50 px-6 py-4"
+                    <!-- Module Header -->
+                    <div
+                      class="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                      :class="{
+                        'border-b border-gray-100': expandedModules.includes(
+                          module.id
+                        ),
+                      }"
+                      @click="toggleModule(module.id)"
                     >
-                      <div
-                        class="flex items-center justify-between w-full pr-4"
-                      >
+                      <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                          <div class="flex items-center gap-2">
-                            <GripVertical
-                              class="h-4 w-4 text-muted-foreground cursor-grab module-drag-handle"
-                            />
-                            <span
-                              class="text-sm font-medium text-muted-foreground"
-                            >
-                              Module {{ moduleIndex + 1 }}
-                            </span>
+                          <div
+                            class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center"
+                          >
+                            <BookOpen class="h-5 w-5 text-blue-600" />
                           </div>
-                          <span class="font-semibold text-left">{{
-                            module.title
-                          }}</span>
+                          <div>
+                            <h3 class="font-semibold text-gray-900">
+                              {{ module.title }}
+                            </h3>
+                            <p class="text-sm text-gray-500">
+                              Modified today
+                              {{
+                                new Date().toLocaleTimeString("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              }}
+                            </p>
+                          </div>
                         </div>
                         <div class="flex items-center gap-2">
-                          <Badge variant="outline" class="mr-2">
+                          <Badge variant="outline" class="text-xs">
                             {{ module.lessons?.length || 0 }} lessons
                           </Badge>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            class="h-8 w-8"
+                            @click.stop
+                          >
+                            <ChevronDown
+                              class="h-4 w-4 transition-transform duration-200"
+                              :class="{
+                                'rotate-180': !expandedModules.includes(
+                                  module.id
+                                ),
+                              }"
+                            />
+                          </Button>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild @click.stop>
                               <Button
@@ -172,14 +187,12 @@
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                @click.stop="editModule(module)"
-                              >
+                              <DropdownMenuItem @click="editModule(module)">
                                 <Pencil class="h-4 w-4 mr-2" />
                                 Edit Module
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                @click.stop="confirmDeleteModule(module)"
+                                @click="confirmDeleteModule(module)"
                               >
                                 <Trash2 class="h-4 w-4 mr-2 text-destructive" />
                                 Delete Module
@@ -188,68 +201,90 @@
                           </DropdownMenu>
                         </div>
                       </div>
-                    </AccordionTrigger>
-                    <AccordionContent class="pb-0">
-                      <div class="bg-muted/30 px-6 py-4 border-t">
-                        <!-- Lessons List -->
+                    </div>
+
+                    <!-- Lessons List -->
+                    <div
+                      v-show="expandedModules.includes(module.id)"
+                      class="p-4"
+                    >
+                      <div
+                        v-if="module.lessons && module.lessons.length > 0"
+                        :ref="el => lessonsContainers[module.id] = el as HTMLElement"
+                        class="space-y-2 mb-3"
+                      >
                         <div
-                          v-if="module.lessons && module.lessons.length > 0"
-                          :ref="el => lessonsContainers[module.id] = el as HTMLElement"
-                          class="space-y-2"
+                          v-for="(lesson, lessonIndex) in module.lessons"
+                          :key="lesson.id"
+                          :data-id="lesson.id"
+                          class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer"
+                          @click="viewLessonContent(module, lesson)"
                         >
-                          <div
-                            v-for="(lesson, lessonIndex) in module.lessons"
-                            :key="lesson.id"
-                            :data-id="lesson.id"
-                            class="flex items-center justify-between bg-white rounded-lg p-3 hover:shadow-sm transition-shadow group"
-                          >
-                            <div class="flex items-center gap-3 flex-1">
-                              <GripVertical
-                                class="h-4 w-4 text-muted-foreground cursor-grab lesson-drag-handle"
-                              />
-                              <div class="flex items-center gap-2">
-                                <FileText class="h-4 w-4 text-blue-600" />
-                                <span class="font-medium">{{
-                                  lesson.title
-                                }}</span>
-                              </div>
-                            </div>
-                            <div
-                              class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          <div class="flex items-center gap-3 flex-1">
+                            <span class="text-sm font-medium text-gray-400"
+                              ># {{ lessonIndex + 1 }}</span
                             >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                class="h-8 w-8 hover:text-blue-500"
-                                @click="viewLessonContent(module, lesson)"
-                              >
-                                <Eye class="h-3 w-3" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                class="h-8 w-8"
-                                @click="confirmDeleteLesson(module, lesson)"
-                              >
-                                <Trash2 class="h-3 w-3 text-destructive" />
-                              </Button>
+                            <div class="flex items-center gap-2">
+                              <FileText class="h-4 w-4 text-gray-400" />
+                              <span class="font-medium text-gray-700">{{
+                                lesson.title
+                              }}</span>
                             </div>
+                            <span class="text-xs text-gray-400">
+                              Modified today
+                              {{
+                                new Date().toLocaleTimeString("en-US", {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                })
+                              }}
+                            </span>
+                          </div>
+                          <div
+                            class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              class="h-8 w-8"
+                              @click.stop="viewLessonContent(module, lesson)"
+                            >
+                              <Eye class="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              class="h-8 w-8"
+                              @click.stop="confirmDeleteLesson(module, lesson)"
+                            >
+                              <Trash2 class="h-4 w-4 text-red-500" />
+                            </Button>
                           </div>
                         </div>
-
-                        <!-- Add Lesson Button -->
-                        <Button
-                          variant="outline"
-                          class="w-full mt-3"
-                          @click="openAddLessonDialog(module)"
-                        >
-                          <Plus class="h-4 w-4 mr-2" />
-                          Add Lesson
-                        </Button>
                       </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+
+                      <!-- Add Lesson Button -->
+                      <Button
+                        variant="ghost"
+                        class="w-full border-dashed border-2 border-gray-200 text-blue-600 hover:border-blue-300 hover:bg-blue-50"
+                        @click="openAddLessonDialog(module)"
+                      >
+                        <Plus class="h-4 w-4 mr-2" />
+                        Add lesson
+                      </Button>
+                    </div>
+                  </div>
+
+                  <!-- Add Module Button -->
+                  <Button
+                    variant="outline"
+                    class="w-full border-dashed border-2 border-blue-300 text-blue-600 hover:bg-blue-50 py-8"
+                    @click="openAddModuleDialog"
+                  >
+                    <Plus class="h-4 w-4 mr-2" />
+                    Add module
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -406,6 +441,7 @@ import {
   Trash2,
   MoreVertical,
   Pencil,
+  ChevronDown,
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import {
@@ -520,6 +556,20 @@ const deleteMessage = computed(() => {
   }
   return `This will permanently delete the lesson "${deleteTarget.value?.title}".`;
 });
+
+// Toggle module collapse/expand
+const toggleModule = (moduleId: string) => {
+  const index = expandedModules.value.indexOf(moduleId);
+  if (index > -1) {
+    expandedModules.value.splice(index, 1);
+  } else {
+    expandedModules.value.push(moduleId);
+    // Reinitialize sortable for newly opened module
+    setTimeout(() => {
+      initLessonsSortable(moduleId);
+    }, 100);
+  }
+};
 
 // Fetch course details
 const fetchCourse = async () => {

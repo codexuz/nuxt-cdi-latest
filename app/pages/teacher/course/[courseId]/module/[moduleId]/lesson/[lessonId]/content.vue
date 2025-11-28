@@ -1,67 +1,70 @@
 <template>
-  <div class="flex h-screen bg-gray-50 overflow-hidden">
+  <div class="flex flex-col h-screen bg-gray-50 overflow-hidden">
     <Toaster position="top-center" richColors theme="system" />
 
-    <!-- Central Content Area -->
-    <div class="flex-1 overflow-y-auto">
-      <!-- Back Button -->
-      <div class="z-10">
-        <Button
-          @click="$router.back()"
-          class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg"
-        >
-          <ArrowLeft class="h-5 w-5 mr-2" />
-          Back
-        </Button>
-      </div>
-      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'settings'">
-        <SettingsTab v-model:lesson="lesson" @save="saveContent" />
-      </div>
-
-      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'content'">
-        <!-- Content Blocks List -->
-        <ContentBlockList
-          :content-blocks="contentBlocks"
-          @update:content-blocks="contentBlocks = $event"
-          @remove-block="removeBlock"
-          @open-media-picker="openMediaPickerForBlock"
-        />
-
-        <!-- Add Block Buttons -->
-        <AddBlockButtons @add-block="addBlock" />
-      </div>
-
-      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'quiz'">
-        <QuizTab v-model:questions="quizQuestions" />
-      </div>
-
-      <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'vocabulary'">
-        <VocabularyTab v-model:words="vocabularyWords" />
-      </div>
+    <!-- Back Button -->
+    <div class="p-4  border-b bg-white shadow-sm">
+      <Button @click="$router.back()" variant="ghost">
+        <ArrowLeft class="h-5 w-5 mr-2" />
+        Back
+      </Button>
     </div>
 
-    <!-- Right Sidebar with Shadcn UI Tabs -->
-    <div class="w-80 border-l bg-white shadow-lg overflow-y-auto">
-      <div class="p-4 space-y-2">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          @click="activeTab = tab.id"
-          :class="[
-            'w-full flex items-start gap-3 px-4 py-3 rounded-lg text-left transition-colors',
-            activeTab === tab.id
-              ? 'bg-primary/10 text-primary'
-              : 'hover:bg-gray-100 text-gray-700',
-          ]"
-        >
-          <component :is="tab.icon" class="h-5 w-5 mt-0.5 flex-shrink-0" />
-          <div>
-            <div class="font-medium">{{ tab.label }}</div>
-            <div class="text-xs text-muted-foreground mt-0.5">
-              {{ getTabDescription(tab.id) }}
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Central Content Area -->
+      <div class="flex-1 overflow-y-auto">
+        <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'settings'">
+          <SettingsTab v-model:lesson="lesson" />
+        </div>
+
+        <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'content'">
+          <!-- Content Blocks List -->
+          <ContentBlockList
+            :content-blocks="contentBlocks"
+            @update:content-blocks="contentBlocks = $event"
+            @remove-block="removeBlock"
+            @open-media-picker="openMediaPickerForBlock"
+          />
+
+          <!-- Add Block Buttons -->
+          <AddBlockButtons @add-block="addBlock" />
+        </div>
+
+        <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'quiz'">
+          <QuizTab v-model:questions="quizQuestions" />
+        </div>
+
+        <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'vocabulary'">
+          <VocabularyTab v-model:words="vocabularyWords" />
+        </div>
+      </div>
+
+      <!-- Right Sidebar with Shadcn UI Tabs -->
+      <div
+        class="w-80 h-[400px] m-3 rounded-xl bg-white shadow-lg overflow-y-auto"
+      >
+        <div class="p-4 space-y-2">
+          <Button class="w-full mb-3" @click="saveContent">Save Lesson</Button>
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            :class="[
+              'w-full flex items-start gap-3 px-4 py-3 rounded-lg text-left transition-colors',
+              activeTab === tab.id
+                ? 'bg-primary/10 text-primary'
+                : 'hover:bg-gray-100 text-gray-700',
+            ]"
+          >
+            <component :is="tab.icon" class="h-5 w-5 mt-0.5 flex-shrink-0" />
+            <div>
+              <div class="font-medium">{{ tab.label }}</div>
+              <div class="text-xs text-muted-foreground mt-0.5">
+                {{ getTabDescription(tab.id) }}
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -129,7 +132,6 @@ const lesson = ref<any>({
   published: false,
   content: {
     html: "",
-    resources: [],
   },
   video_url: "",
 });
@@ -189,8 +191,9 @@ const addBlock = (type: string) => {
   const block = {
     id: Date.now(),
     type,
-    title: "",
-    content: "",
+    title: type === "Editor" ? "New Text Block" : "",
+    content:
+      type === "Editor" ? "<p>Start writing your content here...</p>" : "",
     url: "",
     files: [],
   };
@@ -309,6 +312,8 @@ const saveContent = async () => {
   try {
     isSaving.value = true;
 
+    console.log("Content blocks before save:", contentBlocks.value);
+
     const payload = {
       title: lesson.value.title,
       description: lesson.value.description,
@@ -322,6 +327,8 @@ const saveContent = async () => {
       vocabulary: vocabularyWords.value,
       video_url: lesson.value.video_url || "",
     };
+
+    console.log("Payload being sent:", payload);
 
     const centerId = authStore.user?.center_id;
     await $fetch(

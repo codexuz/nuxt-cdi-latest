@@ -276,38 +276,6 @@
         <div class="flex items-center gap-2 px-4">
           <SidebarTrigger class="-ml-1" />
           <Separator orientation="vertical" class="mr-2 h-4" />
-
-          <!-- Breadcrumbs -->
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem class="hidden md:block">
-                <BreadcrumbLink href="/teacher/dashboard"
-                  >Dashboard</BreadcrumbLink
-                >
-              </BreadcrumbItem>
-              <BreadcrumbSeparator
-                v-if="breadcrumbs.length > 1"
-                class="hidden md:block"
-              />
-              <BreadcrumbItem
-                v-for="(crumb, index) in breadcrumbs.slice(1)"
-                :key="index"
-              >
-                <BreadcrumbLink
-                  v-if="index < breadcrumbs.length - 2"
-                  :href="crumb.href"
-                  class="hidden md:block"
-                >
-                  {{ crumb.label }}
-                </BreadcrumbLink>
-                <BreadcrumbPage v-else>{{ crumb.label }}</BreadcrumbPage>
-                <BreadcrumbSeparator
-                  v-if="index < breadcrumbs.length - 2"
-                  class="hidden md:block"
-                />
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
         </div>
 
         <div class="ml-auto flex items-center gap-2 px-4">

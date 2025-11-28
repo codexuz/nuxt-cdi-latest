@@ -14,7 +14,9 @@
         </div>
       </div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Fill in the content</h2>
-      <p class="text-gray-500 mb-8">It's empty here for now, add the first block below</p>
+      <p class="text-gray-500 mb-8">
+        It's empty here for now, add the first block below
+      </p>
     </motion.div>
 
     <!-- Content Blocks -->
@@ -29,14 +31,21 @@
       >
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-3">
-            <component :is="getBlockIcon(block.type)" class="h-5 w-5 text-blue-500" />
+            <component
+              :is="getBlockIcon(block.type)"
+              class="h-5 w-5 text-blue-500"
+            />
             <span class="font-semibold text-gray-900">{{ block.type }}</span>
           </div>
-          <Button variant="ghost" size="icon" @click="$emit('remove-block', index)">
+          <Button
+            variant="ghost"
+            size="icon"
+            @click="$emit('remove-block', index)"
+          >
             <X class="h-4 w-4" />
           </Button>
         </div>
-        
+
         <!-- Editor Block -->
         <EditorBlock
           v-if="block.type === 'Editor'"
@@ -85,9 +94,9 @@ interface ContentBlockListProps {
 
 const props = defineProps<ContentBlockListProps>();
 const emit = defineEmits<{
-  'update:content-blocks': [blocks: any[]];
-  'remove-block': [index: number];
-  'open-media-picker': [index: number];
+  "update:content-blocks": [blocks: any[]];
+  "remove-block": [index: number];
+  "open-media-picker": [index: number];
 }>();
 
 const getBlockIcon = (type: string) => {
@@ -106,8 +115,9 @@ const getBlockIcon = (type: string) => {
 };
 
 const updateBlock = (index: number, updatedBlock: any) => {
+  console.log("ContentBlockList updateBlock called:", { index, updatedBlock });
   const blocks = [...props.contentBlocks];
   blocks[index] = updatedBlock;
-  emit('update:content-blocks', blocks);
+  emit("update:content-blocks", blocks);
 };
 </script>
