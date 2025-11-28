@@ -100,22 +100,22 @@
               <th
                 class="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Contact
+                Phone
               </th>
               <th
                 class="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Age
+                Email
               </th>
               <th
                 class="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Group
+                Email Status
               </th>
               <th
                 class="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Notes
+                Status
               </th>
               <th
                 class="text-left py-3 px-4 text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -126,12 +126,12 @@
           </thead>
           <tbody>
             <tr
-              v-for="(student, index) in filteredStudents"
+              v-for="(student, index) in paginatedStudents"
               :key="student.id"
               class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
             >
               <td class="py-4 px-4 text-sm text-gray-600 dark:text-gray-400">
-                {{ index + 1 }}
+                {{ (currentPage - 1) * itemsPerPage + index + 1 }}
               </td>
               <td class="py-4 px-4">
                 <div class="flex items-center space-x-3">
@@ -149,9 +149,6 @@
                     >
                       {{ student.name }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                      {{ student.email }}
-                    </p>
                   </div>
                 </div>
               </td>
@@ -159,18 +156,23 @@
                 {{ student.phone || "-" }}
               </td>
               <td class="py-4 px-4 text-sm text-gray-700 dark:text-gray-300">
-                {{ student.age }}
+                {{ student.email || "-" }}
               </td>
               <td class="py-4 px-4">
-                <div
-                  class="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300"
+                <Badge
+                  :variant="student.email_verified ? 'default' : 'secondary'"
+                  class="text-xs"
                 >
-                  <Folder class="h-4 w-4 text-gray-400" />
-                  <span>{{ student.group }}</span>
-                </div>
+                  {{ student.email_verified ? "Verified" : "Unverified" }}
+                </Badge>
               </td>
-              <td class="py-4 px-4 text-sm text-gray-500 dark:text-gray-400">
-                {{ student.notes || "-" }}
+              <td class="py-4 px-4">
+                <Badge
+                  :variant="student.is_active ? 'default' : 'destructive'"
+                  class="text-xs"
+                >
+                  {{ student.is_active ? "Active" : "Inactive" }}
+                </Badge>
               </td>
               <td class="py-4 px-4">
                 <DropdownMenu>
@@ -201,32 +203,46 @@
       </div>
 
       <!-- Pagination -->
-      <div
-        class="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-800"
-      >
-        <div class="text-sm text-gray-600 dark:text-gray-400">
-          Showing {{ filteredStudents.length > 0 ? "1" : "0" }}–{{
-            filteredStudents.length
-          }}
-          of {{ filteredStudents.length }}
+      <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-800">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            Showing
+            {{
+              paginatedStudents.length > 0
+                ? (currentPage - 1) * itemsPerPage + 1
+                : 0
+            }}–{{ Math.min(currentPage * itemsPerPage, totalStudents) }} of
+            {{ totalStudents }} students
+          </div>
         </div>
-        <div class="flex items-center space-x-2">
-          <Button variant="outline" size="sm" disabled>
-            <ChevronLeft class="h-4 w-4 mr-1" />
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            class="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            1
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            Next
-            <ChevronRight class="h-4 w-4 ml-1" />
-          </Button>
-        </div>
+
+        <Pagination
+          v-slot="{ page }"
+          :total="totalStudents"
+          :sibling-count="1"
+          :default-page="currentPage"
+          :items-per-page="itemsPerPage"
+          show-edges
+          @update:page="handlePageChange"
+          class="justify-center"
+        >
+          <PaginationContent v-slot="{ items }">
+            <PaginationFirst />
+            <PaginationPrevious />
+            <template v-for="(item, index) in items" :key="index">
+              <PaginationItem
+                v-if="item.type === 'page'"
+                :value="item.value"
+                :is-active="item.value === page"
+              >
+                {{ item.value }}
+              </PaginationItem>
+              <PaginationEllipsis v-else :index="index" />
+            </template>
+            <PaginationNext />
+            <PaginationLast />
+          </PaginationContent>
+        </Pagination>
       </div>
     </motion.div>
 
@@ -390,6 +406,16 @@ import {
   Users,
 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 useHead({
   title: "Students - Mockmee",
@@ -404,6 +430,28 @@ const isCreating = ref(false);
 const isEditStudentModalOpen = ref(false);
 const isUpdating = ref(false);
 const isDeleting = ref(false);
+
+// Pagination state
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const totalStudents = computed(() => filteredStudents.value.length);
+const totalPages = computed(() =>
+  Math.ceil(totalStudents.value / itemsPerPage.value)
+);
+
+// Computed property for paginated students
+const paginatedStudents = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredStudents.value.slice(start, end);
+});
+
+// Handle page change
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  // Scroll to top of students list
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 // Get runtime config
 const config = useRuntimeConfig();
@@ -611,6 +659,11 @@ const filteredStudents = computed(() => {
   }
 
   return filtered;
+});
+
+// Watch for search query changes to reset pagination
+watch(searchQuery, () => {
+  currentPage.value = 1;
 });
 
 const viewStudent = (student) => {
