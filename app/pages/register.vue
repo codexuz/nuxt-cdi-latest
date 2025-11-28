@@ -171,7 +171,6 @@
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="owner">Learning Center Owner</SelectItem>
-                  <SelectItem value="teacher">Teacher</SelectItem>
                 </SelectContent>
               </Select>
             </div>
