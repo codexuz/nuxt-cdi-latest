@@ -1,8 +1,10 @@
 <template>
   <div class="space-y-4">
     <div>
-      <h3 class="text-base font-semibold text-gray-900 mb-3">Upload a video or provide a link</h3>
-      
+      <h3 class="text-base font-semibold text-gray-900 mb-3">
+        Add YouTube or Vimeo Video
+      </h3>
+
       <!-- URL Input -->
       <div class="relative mb-4">
         <div class="absolute left-3 top-1/2 -translate-y-1/2">
@@ -11,7 +13,7 @@
         <Input
           :model-value="block.url"
           @update:model-value="updateUrl"
-          placeholder="You can insert a YouTube, Vimeo or direct video link"
+          placeholder="Insert a YouTube or Vimeo video URL"
           class="w-full pl-10"
         />
         <button
@@ -23,19 +25,36 @@
         </button>
       </div>
 
-      <!-- Upload Area -->
-      <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 flex items-center justify-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer group">
-        <button
-          type="button"
-          class="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg transition-all group-hover:scale-110"
-        >
-          <Plus class="h-8 w-8" />
-        </button>
+      <!-- Video Placeholder -->
+      <div
+        v-if="!block.url"
+        class="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300"
+      >
+        <div class="text-center text-gray-400">
+          <Video class="h-16 w-16 mx-auto mb-2" />
+          <p class="text-sm">Add YouTube or Vimeo URL above</p>
+        </div>
+      </div>
+
+      <!-- Video Preview -->
+      <div
+        v-if="embedUrl"
+        class="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-300 mt-4"
+      >
+        <iframe
+          :src="embedUrl"
+          class="w-full h-full border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
       </div>
 
       <!-- Video Title -->
       <div class="mt-4">
-        <Label class="text-sm font-medium text-red-500 mb-2 block">Video Title</Label>
+        <Label class="text-sm font-medium text-red-500 mb-2 block"
+          >Video Title</Label
+        >
         <Input
           :model-value="block.title"
           @update:model-value="updateTitle"
@@ -48,7 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { Link, X, Plus } from "lucide-vue-next";
+import { computed } from "vue";
+import { Link, X, Video } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -63,18 +83,41 @@ interface VideoBlockProps {
 
 const props = defineProps<VideoBlockProps>();
 const emit = defineEmits<{
-  'update:block': [block: any];
+  "update:block": [block: any];
 }>();
 
-const updateUrl = (value: string) => {
-  emit('update:block', { ...props.block, url: value });
+// Convert YouTube/Vimeo URLs to embeddable format
+const embedUrl = computed(() => {
+  if (!props.block.url) return null;
+
+  const url = props.block.url.trim();
+
+  // YouTube URL patterns
+  const youtubeMatch = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  );
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+
+  // Vimeo URL patterns
+  const vimeoMatch = url.match(/vimeo\.com\/(?:.*\/)?([0-9]+)/);
+  if (vimeoMatch) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  }
+
+  return null;
+});
+
+const updateUrl = (value: string | number) => {
+  emit("update:block", { ...props.block, url: String(value) });
 };
 
-const updateTitle = (value: string) => {
-  emit('update:block', { ...props.block, title: value });
+const updateTitle = (value: string | number) => {
+  emit("update:block", { ...props.block, title: String(value) });
 };
 
 const clearUrl = () => {
-  emit('update:block', { ...props.block, url: '' });
+  emit("update:block", { ...props.block, url: "" });
 };
 </script>

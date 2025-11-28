@@ -6,8 +6,17 @@
       placeholder="Enter iframe URL"
       class="w-full"
     />
-    <div v-if="block.url" class="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-      <Code class="h-12 w-12 text-gray-400" />
+    <div
+      v-if="block.url"
+      class="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-300"
+    >
+      <iframe
+        :src="block.url"
+        class="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
     </div>
   </div>
 </template>
@@ -26,10 +35,30 @@ interface IframeBlockProps {
 
 const props = defineProps<IframeBlockProps>();
 const emit = defineEmits<{
-  'update:block': [block: any];
+  "update:block": [block: any];
 }>();
 
-const updateUrl = (value: string) => {
-  emit('update:block', { ...props.block, url: value });
+const updateUrl = (value: string | number) => {
+  let cleanUrl = String(value).trim();
+
+  // Check if the input contains iframe HTML
+  if (cleanUrl.includes("<iframe") && cleanUrl.includes("</iframe>")) {
+    // Extract src attribute from iframe HTML
+    const srcMatch = cleanUrl.match(/src="([^"]*)"/);
+    if (srcMatch && srcMatch[1]) {
+      cleanUrl = srcMatch[1];
+    }
+  }
+
+  // Additional cleaning for common iframe scenarios
+  if (cleanUrl.startsWith("<iframe")) {
+    const srcMatch =
+      cleanUrl.match(/src="([^"]*)"/) || cleanUrl.match(/src='([^']*)'/);
+    if (srcMatch && srcMatch[1]) {
+      cleanUrl = srcMatch[1];
+    }
+  }
+
+  emit("update:block", { ...props.block, url: cleanUrl });
 };
 </script>

@@ -58,6 +58,7 @@
           v-else-if="block.type === 'Video'"
           :block="block"
           @update:block="(updated) => updateBlock(index, updated)"
+          @open-media-picker="$emit('open-media-picker', index)"
         />
 
         <!-- Iframe Block -->

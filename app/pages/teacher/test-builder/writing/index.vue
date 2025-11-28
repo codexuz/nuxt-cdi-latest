@@ -134,12 +134,44 @@
                   />
                 </div>
                 <div class="space-y-2">
-                  <Label for="task1_visual">Visual URL (Optional)</Label>
-                  <Input
-                    id="task1_visual"
-                    v-model="newWritingTest.tasks[0].visual_url"
-                    placeholder="https://example.com/images/chart.png"
-                  />
+                  <Label for="task1_visual">Visual/Image (Optional)</Label>
+                  <div class="flex gap-2">
+                    <Input
+                      id="task1_visual"
+                      v-model="newWritingTest.tasks[0].visual_url"
+                      placeholder="https://example.com/images/chart.png or click to browse"
+                      class="flex-1"
+                      readonly
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      @click="openMediaPicker"
+                      class="shrink-0"
+                    >
+                      <FileImage class="h-4 w-4 mr-2" />
+                      Browse
+                    </Button>
+                    <Button
+                      v-if="newWritingTest.tasks[0].visual_url"
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      @click="clearVisualUrl"
+                      class="shrink-0"
+                    >
+                      <X class="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <!-- Visual Preview -->
+                  <div v-if="newWritingTest.tasks[0].visual_url" class="mt-3">
+                    <img
+                      :src="newWritingTest.tasks[0].visual_url"
+                      alt="Task 1 Visual"
+                      class="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm"
+                      style="max-height: 300px"
+                    />
+                  </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                   <div class="space-y-2">
@@ -201,14 +233,21 @@
         </Card>
       </motion.div>
     </motion.div>
+
+    <!-- Media Picker Modal -->
+    <MediaPickerModal
+      v-model:open="showMediaPicker"
+      @selected="handleMediaSelect"
+    />
   </div>
 </template>
 
 <script setup>
 import { motion } from "motion-v";
-import { Save, ArrowLeft } from "lucide-vue-next";
+import { Save, ArrowLeft, FileImage, X } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
+import MediaPickerModal from "@/components/MediaPickerModal.vue";
 
 useHead({
   title: "Writing Test Builder - Testify",
@@ -242,6 +281,23 @@ const newWritingTest = ref({
 
 const isLoading = ref(false);
 const isFetching = ref(false);
+const showMediaPicker = ref(false);
+
+// Media picker functions
+const openMediaPicker = () => {
+  showMediaPicker.value = true;
+};
+
+const handleMediaSelect = (media) => {
+  newWritingTest.value.tasks[0].visual_url = media.url;
+  showMediaPicker.value = false;
+  toast.success("Visual added to Task 1");
+};
+
+const clearVisualUrl = () => {
+  newWritingTest.value.tasks[0].visual_url = "";
+  toast.success("Visual removed");
+};
 
 // Fetch existing writing test
 const fetchWritingTest = async () => {

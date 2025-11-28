@@ -123,11 +123,11 @@
                     v-for="(module, moduleIndex) in modules"
                     :key="module.id"
                     :data-id="module.id"
-                    class="bg-white border rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                    class="bg-white border rounded-xl shadow-sm transition-shadow"
                   >
                     <!-- Module Header -->
                     <div
-                      class="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                      class="p-4 cursor-pointer transition-colors"
                       :class="{
                         'border-b border-gray-100': expandedModules.includes(
                           module.id
@@ -687,7 +687,7 @@ watch(expandedModules, (newExpanded, oldExpanded) => {
 const fetchModules = async () => {
   try {
     const centerId = authStore.user?.center_id;
-    const modulesResponse = await $fetch(
+    const modulesResponse: any[] = await $fetch(
       `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}/modules`,
       {
         headers: getAuthHeaders(),

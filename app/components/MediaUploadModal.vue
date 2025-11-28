@@ -45,7 +45,7 @@
                 Drop files here or click to browse
               </p>
               <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Support for images, videos, audio, documents (Max 10MB each)
+                Support for images, videos, audio, documents (Max 100MB each)
               </p>
             </div>
 

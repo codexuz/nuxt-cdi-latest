@@ -3,7 +3,7 @@
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Back Button -->
-    <div class="p-4  border-b bg-white shadow-sm">
+    <div class="p-4 border-b bg-white shadow-sm">
       <Button @click="$router.back()" variant="ghost">
         <ArrowLeft class="h-5 w-5 mr-2" />
         Back
@@ -31,7 +31,7 @@
         </div>
 
         <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'quiz'">
-          <QuizTab v-model:questions="quizQuestions" />
+          <QuizTab v-model:quiz-questions="quizQuestions" />
         </div>
 
         <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'vocabulary'">
@@ -41,7 +41,7 @@
 
       <!-- Right Sidebar with Shadcn UI Tabs -->
       <div
-        class="w-80 h-[400px] m-3 rounded-xl bg-white shadow-lg overflow-y-auto"
+        class="w-80 h-[380px] m-3 rounded-xl bg-white shadow-lg overflow-y-auto"
       >
         <div class="p-4 space-y-2">
           <Button class="w-full mb-3" @click="saveContent">Save Lesson</Button>
@@ -235,37 +235,9 @@ const openMediaPickerForBlock = (blockIndex: number) => {
   showMediaPicker.value = true;
 };
 
-// Add quiz question
-const addQuestion = () => {
-  quizQuestions.value.push({
-    text: "",
-    options: ["", "", "", ""],
-    correctAnswer: 0,
-  });
-  toast.success("Question added");
-};
 
-// Remove quiz question
-const removeQuestion = (index: number) => {
-  quizQuestions.value.splice(index, 1);
-  toast.success("Question removed");
-};
 
-// Add vocabulary word
-const addWord = () => {
-  vocabularyWords.value.push({
-    term: "",
-    definition: "",
-    example: "",
-  });
-  toast.success("Word added");
-};
 
-// Remove vocabulary word
-const removeWord = (index: number) => {
-  vocabularyWords.value.splice(index, 1);
-  toast.success("Word removed");
-};
 
 // Fetch lesson details
 const fetchLesson = async () => {
@@ -324,13 +296,14 @@ const saveContent = async () => {
         resources: lesson.value.content.resources || [],
       },
       quiz: quizQuestions.value,
-      vocabulary: vocabularyWords.value,
       video_url: lesson.value.video_url || "",
     };
 
     console.log("Payload being sent:", payload);
 
     const centerId = authStore.user?.center_id;
+
+    // Save lesson content
     await $fetch(
       `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}`,
       {
@@ -349,12 +322,34 @@ const saveContent = async () => {
   }
 };
 
+
+// Load vocabulary from separate endpoint
+const fetchVocabulary = async () => {
+  try {
+    const centerId = authStore.user?.center_id;
+    const response = await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}/vocabulary`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
+    vocabularyWords.value = Array.isArray(response) ? response : [];
+  } catch (error: any) {
+    // If 404, no vocabulary exists yet
+    if (error.status !== 404) {
+      console.error("Failed to fetch vocabulary:", error);
+    }
+    vocabularyWords.value = [];
+  }
+};
+
 onMounted(() => {
   fetchLesson();
+  fetchVocabulary();
 });
 
 useHead({
-  title: "Edit Lesson Content - LMS",
+  title: "Lesson Content Editor - LMS",
 });
 
 definePageMeta({
