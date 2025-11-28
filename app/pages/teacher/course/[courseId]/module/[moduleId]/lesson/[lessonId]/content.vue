@@ -2,20 +2,18 @@
   <div class="flex h-screen bg-gray-50 overflow-hidden">
     <Toaster position="top-center" richColors theme="system" />
 
-    
-
     <!-- Central Content Area -->
     <div class="flex-1 overflow-y-auto">
-           <!-- Back Button -->
-    <div class="z-10">
-      <Button
-        @click="$router.back()"
-        class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg"
-      >
-        <ArrowLeft class="h-5 w-5 mr-2" />
-        Back
-      </Button>
-    </div>
+      <!-- Back Button -->
+      <div class="z-10">
+        <Button
+          @click="$router.back()"
+          class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg"
+        >
+          <ArrowLeft class="h-5 w-5 mr-2" />
+          Back
+        </Button>
+      </div>
       <div class="max-w-4xl mx-auto p-8" v-show="activeTab === 'settings'">
         <SettingsTab v-model:lesson="lesson" @save="saveContent" />
       </div>
@@ -269,9 +267,13 @@ const removeWord = (index: number) => {
 // Fetch lesson details
 const fetchLesson = async () => {
   try {
-    const response = await $fetch(`${API_BASE_URL}/lms/lessons/${lessonId}`, {
-      headers: getAuthHeaders(),
-    });
+    const centerId = authStore.user?.center_id;
+    const response = await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
     lesson.value = response;
 
     // Handle content that might be null or missing
@@ -321,11 +323,15 @@ const saveContent = async () => {
       video_url: lesson.value.video_url || "",
     };
 
-    await $fetch(`${API_BASE_URL}/lms/lessons/${lessonId}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: payload,
-    });
+    const centerId = authStore.user?.center_id;
+    await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: payload,
+      }
+    );
 
     toast.success("Lesson saved successfully!");
   } catch (error: any) {

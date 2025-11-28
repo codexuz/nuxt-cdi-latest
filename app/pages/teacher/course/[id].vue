@@ -524,9 +524,13 @@ const deleteMessage = computed(() => {
 // Fetch course details
 const fetchCourse = async () => {
   try {
-    const response = await $fetch(`${API_BASE_URL}/lms/courses/${courseId}`, {
-      headers: getAuthHeaders(),
-    });
+    const centerId = authStore.user?.center_id;
+    const response = await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
     course.value = response;
   } catch (error: any) {
     toast.error("Failed to load course");
@@ -538,11 +542,14 @@ const updateModulesOrder = async () => {
   try {
     await Promise.all(
       modules.value.map((module, index) =>
-        $fetch(`${API_BASE_URL}/lms/modules/${module.id}`, {
-          method: "PUT",
-          headers: getAuthHeaders(),
-          body: { ...module, order: index + 1 },
-        })
+        $fetch(
+          `${API_BASE_URL}/centers/${authStore.user?.center_id}/lms/modules/${module.id}`,
+          {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: { ...module, order: index + 1 },
+          }
+        )
       )
     );
     toast.success("Module order updated");
@@ -559,11 +566,14 @@ const updateLessonsOrder = async (moduleId: string) => {
 
     await Promise.all(
       module.lessons.map((lesson: any, index: number) =>
-        $fetch(`${API_BASE_URL}/lms/lessons/${lesson.id}`, {
-          method: "PUT",
-          headers: getAuthHeaders(),
-          body: { ...lesson, order: index + 1 },
-        })
+        $fetch(
+          `${API_BASE_URL}/centers/${authStore.user?.center_id}/lms/lessons/${lesson.id}`,
+          {
+            method: "PUT",
+            headers: getAuthHeaders(),
+            body: { ...lesson, order: index + 1 },
+          }
+        )
       )
     );
     toast.success("Lesson order updated");
@@ -626,8 +636,9 @@ watch(expandedModules, (newExpanded, oldExpanded) => {
 
 const fetchModules = async () => {
   try {
+    const centerId = authStore.user?.center_id;
     const modulesResponse = await $fetch(
-      `${API_BASE_URL}/lms/courses/${courseId}/modules`,
+      `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}/modules`,
       {
         headers: getAuthHeaders(),
       }
@@ -638,7 +649,7 @@ const fetchModules = async () => {
       modulesResponse.map(async (module: any) => {
         try {
           const lessons = await $fetch(
-            `${API_BASE_URL}/lms/modules/${module.id}/lessons`,
+            `${API_BASE_URL}/centers/${authStore.user?.center_id}/lms/modules/${module.id}/lessons`,
             {
               headers: getAuthHeaders(),
             }
@@ -690,18 +701,26 @@ const saveModule = async () => {
     const payload = { ...moduleForm.value };
 
     if (editingModule.value) {
-      await $fetch(`${API_BASE_URL}/lms/modules/${editingModule.value.id}`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: payload,
-      });
+      const centerId = authStore.user?.center_id;
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/modules/${editingModule.value.id}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: payload,
+        }
+      );
       toast.success("Module updated");
     } else {
-      await $fetch(`${API_BASE_URL}/lms/courses/${courseId}/modules`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: payload,
-      });
+      const centerId = authStore.user?.center_id;
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}/modules`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: payload,
+        }
+      );
       toast.success("Module created");
     }
 
@@ -763,15 +782,20 @@ const saveLesson = async () => {
         };
 
     if (editingLesson.value) {
-      await $fetch(`${API_BASE_URL}/lms/lessons/${editingLesson.value.id}`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: payload,
-      });
+      const centerId = authStore.user?.center_id;
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/lessons/${editingLesson.value.id}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: payload,
+        }
+      );
       toast.success("Lesson updated");
     } else {
+      const centerId = authStore.user?.center_id;
       await $fetch(
-        `${API_BASE_URL}/lms/modules/${currentModule.value.id}/lessons`,
+        `${API_BASE_URL}/centers/${centerId}/lms/modules/${currentModule.value.id}/lessons`,
         {
           method: "POST",
           headers: getAuthHeaders(),
@@ -798,16 +822,24 @@ const confirmDeleteLesson = (module: any, lesson: any) => {
 const confirmDelete = async () => {
   try {
     if (deleteType.value === "module") {
-      await $fetch(`${API_BASE_URL}/lms/modules/${deleteTarget.value.id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      });
+      const centerId = authStore.user?.center_id;
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/modules/${deleteTarget.value.id}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
       toast.success("Module deleted");
     } else {
-      await $fetch(`${API_BASE_URL}/lms/lessons/${deleteTarget.value.id}`, {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      });
+      const centerId = authStore.user?.center_id;
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/lessons/${deleteTarget.value.id}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
       toast.success("Lesson deleted");
     }
 
@@ -820,14 +852,18 @@ const confirmDelete = async () => {
 
 const publishCourse = async () => {
   try {
-    await $fetch(`${API_BASE_URL}/lms/courses/${courseId}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: {
-        ...course.value,
-        status: "published",
-      },
-    });
+    const centerId = authStore.user?.center_id;
+    await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: {
+          ...course.value,
+          status: "published",
+        },
+      }
+    );
     toast.success("Course published successfully");
     await fetchCourse();
   } catch (error: any) {
@@ -837,14 +873,18 @@ const publishCourse = async () => {
 
 const unpublishCourse = async () => {
   try {
-    await $fetch(`${API_BASE_URL}/lms/courses/${courseId}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: {
-        ...course.value,
-        status: "draft",
-      },
-    });
+    const centerId = authStore.user?.center_id;
+    await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseId}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: {
+          ...course.value,
+          status: "draft",
+        },
+      }
+    );
     toast.success("Course unpublished");
     await fetchCourse();
   } catch (error: any) {

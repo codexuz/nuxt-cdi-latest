@@ -337,7 +337,12 @@ const getAuthHeaders = () => ({
 const fetchCourses = async () => {
   try {
     isLoading.value = true;
-    const response = await $fetch<Course[]>(`${API_BASE_URL}/lms/courses`, {
+    const centerId = authStore.user?.center_id;
+    if (!centerId) {
+      toast.error("No center ID found");
+      return;
+    }
+    const response = await $fetch<Course[]>(`${API_BASE_URL}/centers/${centerId}/lms/courses`, {
       method: "GET",
       headers: getAuthHeaders(),
     });
@@ -394,15 +399,17 @@ const saveCourse = async () => {
 
     if (isEditing.value && editingCourseId.value) {
       // Update existing course
-      await $fetch(`${API_BASE_URL}/lms/courses/${editingCourseId.value}`, {
-        method: "PATCH",
+      const centerId = authStore.user?.center_id;
+      await $fetch(`${API_BASE_URL}/centers/${centerId}/lms/courses/${editingCourseId.value}`, {
+        method: "PUT",
         headers: getAuthHeaders(),
         body: payload,
       });
       toast.success("Course updated successfully");
     } else {
       // Create new course
-      await $fetch(`${API_BASE_URL}/lms/courses`, {
+      const centerId = authStore.user?.center_id;
+      await $fetch(`${API_BASE_URL}/centers/${centerId}/lms/courses`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: payload,
@@ -431,7 +438,8 @@ const deleteCourse = async () => {
   if (!courseToDelete.value) return;
 
   try {
-    await $fetch(`${API_BASE_URL}/lms/courses/${courseToDelete.value.id}`, {
+    const centerId = authStore.user?.center_id;
+    await $fetch(`${API_BASE_URL}/centers/${centerId}/lms/courses/${courseToDelete.value.id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
