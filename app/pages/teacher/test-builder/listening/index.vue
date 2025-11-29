@@ -404,16 +404,6 @@
                             @click="
                               addQuestionByType(
                                 part.question.content,
-                                'draggable-selection'
-                              )
-                            "
-                          >
-                            <span class="font-medium">Draggable Selection</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            @click="
-                              addQuestionByType(
-                                part.question.content,
                                 'selection'
                               )
                             "
