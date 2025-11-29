@@ -1,7 +1,8 @@
 <template>
   <div class="space-y-4">
     <div>
-      <Label class="text-sm font-medium text-gray-700 mb-2 block"
+      <Label
+        class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block"
         >Block title</Label
       >
       <Input
@@ -12,10 +13,13 @@
       />
     </div>
     <div>
-      <Label class="text-sm font-medium text-gray-700 mb-2 block"
+      <Label
+        class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block"
         >Block content</Label
       >
-      <div class="border border-gray-200 rounded-lg overflow-hidden">
+      <div
+        class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+      >
         <QuillEditor
           v-model:content="localContent"
           @update:content="updateContent"
@@ -106,12 +110,41 @@ const updateContent = (content: string) => {
   border-bottom: 1px solid #e5e7eb;
 }
 
+:deep(.dark .quill-editor-custom .ql-toolbar) {
+  background-color: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
 :deep(.quill-editor-custom .ql-container) {
   border: none;
+}
+
+:deep(.dark .quill-editor-custom .ql-container) {
+  background-color: #111827;
+}
+
+:deep(.dark .quill-editor-custom .ql-editor) {
+  color: #e5e7eb;
 }
 
 :deep(.quill-editor-custom .ql-editor.ql-blank::before) {
   color: #9ca3af;
   font-style: normal;
+}
+
+:deep(.dark .quill-editor-custom .ql-editor.ql-blank::before) {
+  color: #6b7280;
+}
+
+:deep(.dark .quill-editor-custom .ql-stroke) {
+  stroke: #9ca3af;
+}
+
+:deep(.dark .quill-editor-custom .ql-fill) {
+  fill: #9ca3af;
+}
+
+:deep(.dark .quill-editor-custom .ql-picker-label) {
+  color: #9ca3af;
 }
 </style>

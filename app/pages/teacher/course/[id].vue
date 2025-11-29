@@ -1,13 +1,13 @@
 <template>
   <motion.div
-    class="min-h-screen bg-gray-50"
+    class="min-h-screen bg-gray-50 dark:bg-gray-950"
     :initial="{ opacity: 0, y: 20 }"
     :animate="{ opacity: 1, y: 0 }"
     :transition="{ duration: 0.4 }"
   >
     <!-- Header -->
     <motion.div
-      class="bg-white border-b sticky top-0 z-10"
+      class="bg-white dark:bg-gray-900 border-b dark:border-gray-800 sticky top-0 z-10"
       :initial="{ opacity: 0, y: -10 }"
       :animate="{ opacity: 1, y: 0 }"
       :transition="{ duration: 0.5, delay: 0.1 }"
@@ -19,8 +19,10 @@
               <ArrowLeft class="h-5 w-5" />
             </Button>
             <div>
-              <h1 class="text-2xl font-bold">{{ course?.title }}</h1>
-              <p class="text-sm text-muted-foreground">
+              <h1 class="text-2xl font-bold dark:text-gray-100">
+                {{ course?.title }}
+              </h1>
+              <p class="text-sm text-muted-foreground dark:text-gray-400">
                 {{ totalModules }} modules • {{ totalLessons }} lessons
               </p>
             </div>
@@ -103,12 +105,16 @@
                 <!-- Empty State -->
                 <div v-if="modules.length === 0" class="py-16 text-center">
                   <div
-                    class="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4"
+                    class="mx-auto w-16 h-16 rounded-full bg-muted dark:bg-gray-800 flex items-center justify-center mb-4"
                   >
-                    <Layers class="h-8 w-8 text-muted-foreground" />
+                    <Layers
+                      class="h-8 w-8 text-muted-foreground dark:text-gray-400"
+                    />
                   </div>
-                  <h3 class="text-lg font-semibold mb-2">No modules yet</h3>
-                  <p class="text-muted-foreground mb-4">
+                  <h3 class="text-lg font-semibold mb-2 dark:text-gray-100">
+                    No modules yet
+                  </h3>
+                  <p class="text-muted-foreground dark:text-gray-400 mb-4">
                     Start building your course by adding modules
                   </p>
                   <Button @click="openAddModuleDialog">
@@ -123,30 +129,33 @@
                     v-for="(module, moduleIndex) in modules"
                     :key="module.id"
                     :data-id="module.id"
-                    class="bg-white border rounded-xl shadow-sm transition-shadow"
+                    class="bg-white dark:bg-gray-900 border dark:border-gray-800 rounded-xl shadow-sm transition-shadow"
                   >
                     <!-- Module Header -->
                     <div
                       class="p-4 cursor-pointer transition-colors"
                       :class="{
-                        'border-b border-gray-100': expandedModules.includes(
-                          module.id
-                        ),
+                        'border-b border-gray-100 dark:border-gray-800':
+                          expandedModules.includes(module.id),
                       }"
                       @click="toggleModule(module.id)"
                     >
                       <div class="flex items-center justify-between">
                         <div class="flex items-center gap-3">
                           <div
-                            class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center"
+                            class="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"
                           >
-                            <BookOpen class="h-5 w-5 text-blue-600" />
+                            <BookOpen
+                              class="h-5 w-5 text-blue-600 dark:text-blue-400"
+                            />
                           </div>
                           <div>
-                            <h3 class="font-semibold text-gray-900">
+                            <h3
+                              class="font-semibold text-gray-900 dark:text-gray-100"
+                            >
                               {{ module.title }}
                             </h3>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
                               Modified today
                               {{
                                 new Date().toLocaleTimeString("en-US", {
@@ -217,20 +226,26 @@
                           v-for="(lesson, lessonIndex) in module.lessons"
                           :key="lesson.id"
                           :data-id="lesson.id"
-                          class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer"
+                          class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group cursor-pointer"
                           @click="viewLessonContent(module, lesson)"
                         >
                           <div class="flex items-center gap-3 flex-1">
-                            <span class="text-sm font-medium text-gray-400"
+                            <span
+                              class="text-sm font-medium text-gray-400 dark:text-gray-500"
                               ># {{ lessonIndex + 1 }}</span
                             >
                             <div class="flex items-center gap-2">
-                              <FileText class="h-4 w-4 text-gray-400" />
-                              <span class="font-medium text-gray-700">{{
-                                lesson.title
-                              }}</span>
+                              <FileText
+                                class="h-4 w-4 text-gray-400 dark:text-gray-500"
+                              />
+                              <span
+                                class="font-medium text-gray-700 dark:text-gray-300"
+                                >{{ lesson.title }}</span
+                              >
                             </div>
-                            <span class="text-xs text-gray-400">
+                            <span
+                              class="text-xs text-gray-400 dark:text-gray-500"
+                            >
                               Modified today
                               {{
                                 new Date().toLocaleTimeString("en-US", {
@@ -266,7 +281,7 @@
                       <!-- Add Lesson Button -->
                       <Button
                         variant="ghost"
-                        class="w-full border-dashed border-2 border-gray-200 text-blue-600 hover:border-blue-300 hover:bg-blue-50"
+                        class="w-full border-dashed border-2 border-gray-200 dark:border-gray-700 text-blue-600 dark:text-blue-400 hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
                         @click="openAddLessonDialog(module)"
                       >
                         <Plus class="h-4 w-4 mr-2" />
@@ -278,7 +293,7 @@
                   <!-- Add Module Button -->
                   <Button
                     variant="outline"
-                    class="w-full border-dashed border-2 border-blue-300 text-blue-600 hover:bg-blue-50 py-8"
+                    class="w-full border-dashed border-2 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 py-8"
                     @click="openAddModuleDialog"
                   >
                     <Plus class="h-4 w-4 mr-2" />

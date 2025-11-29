@@ -2,23 +2,29 @@
   <div class="space-y-8">
     <!-- Quiz Header -->
     <div
-      class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-100"
+      class="bg-white dark:bg-gray-900 rounded-xl p-4 sm:p-6 border border-purple-100 dark:border-purple-900/50"
     >
-      <div class="flex items-center justify-between mb-6">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6"
+      >
         <div class="flex items-center gap-3">
           <div
-            class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center"
+            class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0"
           >
             <template v-if="isLoading">
               <div
-                class="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"
+                class="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-2 border-white border-t-transparent"
               ></div>
             </template>
-            <Brain v-else class="h-6 w-6 text-white" />
+            <Brain v-else class="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
           <div>
-            <h3 class="text-xl font-bold text-gray-900">Quiz Builder</h3>
-            <p class="text-sm text-gray-600">
+            <h3
+              class="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100"
+            >
+              Quiz Builder
+            </h3>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               <template v-if="isLoading">Loading quiz...</template>
               <template v-else>
                 {{ quizData.questions.length }} question{{
@@ -32,17 +38,19 @@
         <Button
           @click="saveQuiz"
           :disabled="isSaving || isLoading"
-          class="gap-2"
+          class="gap-2 w-full sm:w-auto"
         >
           <template v-if="isSaving">
             <div
               class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"
             ></div>
-            Saving...
+            <span class="hidden sm:inline">Saving...</span>
+            <span class="sm:hidden">Save...</span>
           </template>
           <template v-else>
             <Save class="h-4 w-4" />
-            Save Quiz
+            <span class="hidden sm:inline">Save Quiz</span>
+            <span class="sm:hidden">Save</span>
           </template>
         </Button>
       </div>
@@ -51,7 +59,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="space-y-2">
           <Label
-            class="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2"
           >
             <FileText class="h-4 w-4" />
             Quiz Title
@@ -65,7 +73,7 @@
 
         <div class="space-y-2">
           <Label
-            class="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2"
           >
             <Clock class="h-4 w-4" />
             Time Limit (minutes)
@@ -81,7 +89,7 @@
 
         <div class="md:col-span-2 space-y-2">
           <Label
-            class="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2"
           >
             <AlignLeft class="h-4 w-4" />
             Description
@@ -99,12 +107,14 @@
     <!-- Empty State -->
     <div v-if="quizData.questions.length === 0" class="text-center py-12">
       <div
-        class="mx-auto w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center mb-4"
+        class="mx-auto w-16 h-16 bg-purple-50 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4"
       >
-        <HelpCircle class="h-8 w-8 text-purple-500" />
+        <HelpCircle class="h-8 w-8 text-purple-500 dark:text-purple-400" />
       </div>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">No questions yet</h3>
-      <p class="text-gray-500 mb-6">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+        No questions yet
+      </h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-6">
         Start building your quiz by adding questions
       </p>
     </div>
@@ -114,37 +124,39 @@
       <motion.div
         v-for="(question, index) in quizData.questions"
         :key="index"
-        class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
         :initial="{ opacity: 0, y: 20 }"
         :animate="{ opacity: 1, y: 0 }"
         :transition="{ duration: 0.3, delay: index * 0.05 }"
       >
         <!-- Question Header -->
-        <div class="p-6 border-b border-gray-100">
+        <div class="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-800">
           <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3">
               <div
-                class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center text-white text-sm font-semibold"
+                class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0"
               >
                 {{ index + 1 }}
               </div>
               <div>
-                <h4 class="font-semibold text-gray-900">
+                <h4
+                  class="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100"
+                >
                   Question {{ index + 1 }}
                 </h4>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
                   {{ question.points || 1 }} point{{
                     question.points !== 1 ? "s" : ""
                   }}
                 </p>
               </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
                 @click="toggleQuestion(index)"
-                class="text-gray-400 hover:text-gray-600"
+                class="text-gray-400 hover:text-gray-600 h-8 w-8 sm:h-10 sm:w-10"
               >
                 <ChevronDown
                   v-if="!expandedQuestions.has(index)"
@@ -156,7 +168,7 @@
                 variant="ghost"
                 size="icon"
                 @click="removeQuestion(index)"
-                class="text-gray-400 hover:text-red-500"
+                class="text-gray-400 hover:text-red-500 h-8 w-8 sm:h-10 sm:w-10"
               >
                 <Trash2 class="h-4 w-4" />
               </Button>
@@ -164,25 +176,33 @@
           </div>
 
           <!-- Question Preview -->
-          <div class="bg-gray-50 rounded-lg p-4">
-            <p class="font-medium text-gray-900">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
+            <p
+              class="text-sm sm:text-base font-medium text-gray-900 dark:text-gray-100 break-words"
+            >
               {{ question.question || "Enter your question..." }}
             </p>
-            <div class="mt-2 flex items-center gap-2 text-xs">
-              <Badge variant="outline">{{
+            <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <Badge variant="outline" class="text-xs">{{
                 getQuestionTypeLabel(question.type)
               }}</Badge>
-              <span class="text-gray-500">{{ question.points || 1 }} pts</span>
+              <span class="text-gray-500 dark:text-gray-400"
+                >{{ question.points || 1 }} pts</span
+              >
             </div>
           </div>
         </div>
 
         <!-- Question Details -->
-        <div v-show="expandedQuestions.has(index)" class="p-6 space-y-6">
+        <div
+          v-show="expandedQuestions.has(index)"
+          class="p-4 sm:p-6 space-y-4 sm:space-y-6"
+        >
           <!-- Question Text & Type -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             <div class="lg:col-span-2 space-y-2">
-              <Label class="text-sm font-medium text-gray-700"
+              <Label
+                class="text-sm font-medium text-gray-700 dark:text-gray-300"
                 >Question Text</Label
               >
               <Textarea
@@ -198,7 +218,8 @@
 
             <div class="space-y-4">
               <div class="space-y-2">
-                <Label class="text-sm font-medium text-gray-700"
+                <Label
+                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
                   >Question Type</Label
                 >
                 <Select
@@ -222,7 +243,10 @@
               </div>
 
               <div class="space-y-2">
-                <Label class="text-sm font-medium text-gray-700">Points</Label>
+                <Label
+                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >Points</Label
+                >
                 <Input
                   :model-value="question.points"
                   @update:model-value="
@@ -238,21 +262,21 @@
 
           <!-- Options (for multiple choice and true/false) -->
           <div v-if="question.type === 'multiple_choice'" class="space-y-4">
-            <Label class="text-sm font-medium text-gray-700"
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300"
               >Answer Options</Label
             >
-            <div class="space-y-3">
+            <div class="space-y-2 sm:space-y-3">
               <div
                 v-for="(option, optIndex) in question.options"
                 :key="optIndex"
-                class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                class="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
               >
                 <input
                   type="radio"
                   :name="`correct-${index}`"
                   :checked="isCorrectAnswer(question, optIndex)"
                   @change="updateCorrectAnswer(index, optIndex)"
-                  class="w-4 h-4 text-purple-600"
+                  class="w-4 h-4 text-purple-600 flex-shrink-0"
                 />
                 <Input
                   :model-value="option"
@@ -260,16 +284,16 @@
                     (val) => updateOption(index, optIndex, val)
                   "
                   :placeholder="`Option ${optIndex + 1}`"
-                  class="flex-1"
+                  class="flex-1 text-sm"
                 />
                 <Button
                   v-if="question.options.length > 2"
                   variant="ghost"
                   size="icon"
                   @click="removeOption(index, optIndex)"
-                  class="text-gray-400 hover:text-red-500"
+                  class="text-gray-400 hover:text-red-500 h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
                 >
-                  <X class="h-4 w-4" />
+                  <X class="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>
 
@@ -287,7 +311,7 @@
 
           <!-- True/False Options -->
           <div v-if="question.type === 'true_false'" class="space-y-4">
-            <Label class="text-sm font-medium text-gray-700"
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300"
               >Correct Answer</Label
             >
             <div class="flex gap-4">
@@ -299,7 +323,9 @@
                   @change="updateQuestion(index, 'correct_answer', true)"
                   class="w-4 h-4 text-purple-600"
                 />
-                <span class="text-green-600 font-medium">True</span>
+                <span class="text-green-600 dark:text-green-400 font-medium"
+                  >True</span
+                >
               </label>
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
@@ -309,7 +335,9 @@
                   @change="updateQuestion(index, 'correct_answer', false)"
                   class="w-4 h-4 text-purple-600"
                 />
-                <span class="text-red-600 font-medium">False</span>
+                <span class="text-red-600 dark:text-red-400 font-medium"
+                  >False</span
+                >
               </label>
             </div>
           </div>
@@ -322,7 +350,7 @@
             "
             class="space-y-2"
           >
-            <Label class="text-sm font-medium text-gray-700"
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300"
               >Correct Answer</Label
             >
             <Input
@@ -342,7 +370,7 @@
           <!-- Explanation -->
           <div class="space-y-2">
             <Label
-              class="text-sm font-medium text-gray-700 flex items-center gap-2"
+              class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
             >
               <MessageCircle class="h-4 w-4" />
               Explanation (Optional)
@@ -403,6 +431,7 @@ import {
 } from "@/components/ui/select";
 
 interface QuizQuestion {
+  id?: string;
   question: string;
   explanation: string;
   type: "multiple_choice" | "fill_in_the_blank" | "true_false" | "typing";
@@ -413,6 +442,7 @@ interface QuizQuestion {
 }
 
 interface QuizData {
+  id?: string;
   title: string;
   description: string;
   time_limit: number;
@@ -430,6 +460,7 @@ const emit = defineEmits<{
 
 // Local quiz data
 const quizData = ref<QuizData>({
+  id: undefined,
   title: "",
   description: "",
   time_limit: 0,
@@ -486,26 +517,35 @@ const fetchQuiz = async () => {
       return;
     }
 
-    const response = await $fetch<QuizData>(
+    // First fetch the quiz to get the quiz ID
+    const quizResponse = await $fetch<QuizData>(
       `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}/quiz`,
       {
         headers: getAuthHeaders(),
       }
     );
 
-    if (response) {
+    if (quizResponse) {
       quizData.value = {
-        title: response.title || "",
-        description: response.description || "",
-        time_limit: response.time_limit || 0,
-        questions: response.questions || [],
+        id: quizResponse.id,
+        title: quizResponse.title || "",
+        description: quizResponse.description || "",
+        time_limit: quizResponse.time_limit || 0,
+        questions: [],
       };
 
-      emit("update:quiz-questions", quizData.value.questions);
+      // If quiz has an ID, fetch questions from the separate endpoint
+      if (quizResponse.id) {
+        await fetchQuestions(quizResponse.id);
+      } else if (quizResponse.questions) {
+        // Fallback to questions from quiz response if no ID
+        quizData.value.questions = quizResponse.questions;
+        emit("update:quiz-questions", quizData.value.questions);
+      }
 
-      if (response.questions && response.questions.length > 0) {
+      if (quizData.value.questions && quizData.value.questions.length > 0) {
         toast.success(
-          `Loaded quiz with ${response.questions.length} questions`
+          `Loaded quiz with ${quizData.value.questions.length} questions`
         );
       }
     }
@@ -517,6 +557,30 @@ const fetchQuiz = async () => {
     }
   } finally {
     isLoading.value = false;
+  }
+};
+
+// Fetch quiz questions from separate endpoint
+const fetchQuestions = async (quizId: string) => {
+  try {
+    const centerId = authStore.user?.center_id;
+    if (!centerId) return;
+
+    const response = await $fetch<QuizQuestion[]>(
+      `${API_BASE_URL}/centers/${centerId}/lms/quizzes/${quizId}/questions`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
+
+    if (response) {
+      quizData.value.questions = Array.isArray(response) ? response : [];
+      emit("update:quiz-questions", quizData.value.questions);
+    }
+  } catch (error: any) {
+    if (error.status !== 404) {
+      console.error("Failed to fetch quiz questions:", error);
+    }
   }
 };
 
@@ -553,7 +617,33 @@ const addQuestion = () => {
 };
 
 // Remove question
-const removeQuestion = (index: number) => {
+const removeQuestion = async (index: number) => {
+  const question = quizData.value.questions[index];
+
+  // If question has an ID, delete it from the backend
+  if (question?.id) {
+    try {
+      const centerId = authStore.user?.center_id;
+      if (!centerId) {
+        toast.error("No center ID found");
+        return;
+      }
+
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/questions/${question.id}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
+    } catch (error: any) {
+      console.error("Failed to delete question:", error);
+      toast.error("Failed to delete question");
+      return;
+    }
+  }
+
+  // Remove from local state
   quizData.value.questions.splice(index, 1);
   expandedQuestions.value.delete(index);
 
@@ -662,14 +752,15 @@ const saveQuiz = async () => {
       return;
     }
 
+    // Save quiz with metadata and questions array
     const quizPayload = {
       title: quizData.value.title || "Untitled Quiz",
       description: quizData.value.description || "",
       time_limit: quizData.value.time_limit || 0,
-      questions: quizData.value.questions,
+      questions: quizData.value.questions || [],
     };
 
-    await $fetch(
+    const quizResponse = await $fetch<QuizData>(
       `${API_BASE_URL}/centers/${centerId}/lms/lessons/${lessonId}/quiz`,
       {
         method: "POST",
@@ -677,6 +768,11 @@ const saveQuiz = async () => {
         body: quizPayload,
       }
     );
+
+    // Store the quiz ID for future updates
+    if (quizResponse?.id) {
+      quizData.value.id = quizResponse.id;
+    }
 
     toast.success("Quiz saved successfully");
   } catch (error: any) {

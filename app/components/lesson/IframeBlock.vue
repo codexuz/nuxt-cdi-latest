@@ -8,7 +8,7 @@
     />
     <div
       v-if="block.url"
-      class="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-300"
+      class="aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700"
     >
       <iframe
         :src="block.url"

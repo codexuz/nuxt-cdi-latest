@@ -3,8 +3,10 @@
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h3 class="text-lg font-semibold text-gray-900">Vocabulary Words</h3>
-        <p class="text-sm text-gray-500 mt-1">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Vocabulary Words
+        </h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
           {{ vocabularyWords.length }} words added
         </p>
       </div>
@@ -23,14 +25,14 @@
     <!-- Empty State -->
     <div v-if="vocabularyWords.length === 0" class="text-center py-12">
       <div
-        class="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4"
+        class="mx-auto w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4"
       >
-        <BookOpen class="h-8 w-8 text-blue-500" />
+        <BookOpen class="h-8 w-8 text-blue-500 dark:text-blue-400" />
       </div>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
         No vocabulary words yet
       </h3>
-      <p class="text-gray-500 mb-6">
+      <p class="text-gray-500 dark:text-gray-400 mb-6">
         Start building your vocabulary list by adding words
       </p>
     </div>
@@ -40,7 +42,7 @@
       <motion.div
         v-for="(word, index) in vocabularyWords"
         :key="word.id || index"
-        class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+        class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
         :initial="{ opacity: 0, y: 20 }"
         :animate="{ opacity: 1, y: 0 }"
         :transition="{ duration: 0.3, delay: index * 0.05 }"
@@ -57,10 +59,12 @@
               {{ index + 1 }}
             </div>
             <div>
-              <h4 class="font-semibold text-gray-900">
+              <h4 class="font-semibold text-gray-900 dark:text-gray-100">
                 {{ word.word || "New Word" }}
               </h4>
-              <p class="text-xs text-gray-500">Word #{{ index + 1 }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                Word #{{ index + 1 }}
+              </p>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -68,7 +72,7 @@
               variant="ghost"
               size="icon"
               @click.stop="toggleCard(index)"
-              class="text-gray-400 hover:text-gray-600"
+              class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <ChevronDown v-if="!expandedCards.has(index)" class="h-4 w-4" />
               <ChevronUp v-else class="h-4 w-4" />
@@ -77,7 +81,7 @@
               variant="ghost"
               size="icon"
               @click.stop="removeWord(index)"
-              class="text-gray-400 hover:text-red-500"
+              class="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"
             >
               <Trash2 class="h-4 w-4" />
             </Button>
@@ -94,7 +98,7 @@
             <!-- English Word -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <Languages class="h-4 w-4" />
                 English Word
@@ -110,7 +114,7 @@
             <!-- Uzbek Translation -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <Flag class="h-4 w-4" />
                 Uzbek Translation
@@ -126,7 +130,7 @@
             <!-- Russian Translation -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <Flag class="h-4 w-4" />
                 Russian Translation
@@ -142,7 +146,7 @@
             <!-- Example Sentence -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <MessageSquare class="h-4 w-4" />
                 Example Sentence
@@ -162,7 +166,7 @@
             <!-- Audio URL -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <Volume2 class="h-4 w-4" />
                 Audio Pronunciation
@@ -197,7 +201,7 @@
             <!-- Image URL -->
             <div class="space-y-2">
               <Label
-                class="text-sm font-medium text-gray-700 flex items-center gap-2"
+                class="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2"
               >
                 <Image class="h-4 w-4" />
                 Visual Aid
@@ -225,7 +229,7 @@
                 <img
                   :src="word.image_url"
                   :alt="word.word"
-                  class="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200"
+                  class="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
                   @error="handleImageError(index)"
                 />
               </div>
@@ -238,7 +242,7 @@
     <!-- Save Button -->
     <div
       v-if="vocabularyWords.length > 0"
-      class="flex justify-end pt-6 border-t border-gray-200"
+      class="flex justify-end pt-6 border-t border-gray-200 dark:border-gray-800"
     >
       <Button @click="saveAllWords" :disabled="isSaving" class="gap-2">
         <template v-if="isSaving">
@@ -278,12 +282,12 @@ book, kitob, книга, I love reading books"
               class="font-mono text-sm"
             />
           </div>
-          <div class="bg-blue-50 p-3 rounded-lg">
-            <p class="text-sm text-blue-700">
+          <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-lg">
+            <p class="text-sm text-blue-700 dark:text-blue-400">
               <strong>Format:</strong> English word, Uzbek translation, Russian
               translation, Example sentence
             </p>
-            <p class="text-xs text-blue-600 mt-1">
+            <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">
               Each field is separated by commas. Each word should be on a new
               line.
             </p>

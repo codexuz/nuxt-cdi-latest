@@ -1,9 +1,13 @@
 <template>
-  <div class="flex flex-col h-screen bg-gray-50 overflow-hidden">
+  <div
+    class="flex flex-col h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden"
+  >
     <Toaster position="top-center" richColors theme="system" />
 
     <!-- Back Button -->
-    <div class="p-4 border-b bg-white shadow-sm">
+    <div
+      class="p-4 border-b dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm"
+    >
       <Button @click="$router.back()" variant="ghost">
         <ArrowLeft class="h-5 w-5 mr-2" />
         Back
@@ -41,7 +45,7 @@
 
       <!-- Right Sidebar with Shadcn UI Tabs -->
       <div
-        class="w-80 h-[380px] m-3 rounded-xl bg-white shadow-lg overflow-y-auto"
+        class="w-80 h-[380px] m-3 rounded-xl bg-white dark:bg-gray-900 shadow-lg overflow-y-auto"
       >
         <div class="p-4 space-y-2">
           <Button class="w-full mb-3" @click="saveContent">Save Lesson</Button>
@@ -52,14 +56,16 @@
             :class="[
               'w-full flex items-start gap-3 px-4 py-3 rounded-lg text-left transition-colors',
               activeTab === tab.id
-                ? 'bg-primary/10 text-primary'
-                : 'hover:bg-gray-100 text-gray-700',
+                ? 'bg-primary/10 text-primary dark:text-primary'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300',
             ]"
           >
             <component :is="tab.icon" class="h-5 w-5 mt-0.5 flex-shrink-0" />
             <div>
               <div class="font-medium">{{ tab.label }}</div>
-              <div class="text-xs text-muted-foreground mt-0.5">
+              <div
+                class="text-xs text-muted-foreground dark:text-gray-400 mt-0.5"
+              >
                 {{ getTabDescription(tab.id) }}
               </div>
             </div>
@@ -235,10 +241,6 @@ const openMediaPickerForBlock = (blockIndex: number) => {
   showMediaPicker.value = true;
 };
 
-
-
-
-
 // Fetch lesson details
 const fetchLesson = async () => {
   try {
@@ -321,7 +323,6 @@ const saveContent = async () => {
     isSaving.value = false;
   }
 };
-
 
 // Load vocabulary from separate endpoint
 const fetchVocabulary = async () => {

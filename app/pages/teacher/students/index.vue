@@ -5,6 +5,8 @@
     :transition="{ duration: 0.6, ease: 'easeOut' }"
     :animate="{ opacity: 1, y: 0 }"
   >
+    <Toaster position="top-center" richColors theme="system" />
+
     <!-- Filters and Search -->
     <motion.div
       class="flex flex-col sm:flex-row gap-4 items-center justify-between"
@@ -301,6 +303,25 @@
             />
           </div>
 
+          <div class="space-y-2">
+            <Label for="group">Group (Optional)</Label>
+            <Select v-model="newStudent.group_id">
+              <SelectTrigger id="group">
+                <SelectValue placeholder="Select a group" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No Group</SelectItem>
+                <SelectItem
+                  v-for="group in groups"
+                  :key="group.id"
+                  :value="group.id"
+                >
+                  {{ group.group_name }} - {{ group.level }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <DialogFooter class="gap-2 sm:gap-0">
             <Button
               type="button"
@@ -405,7 +426,7 @@ import {
   ChevronRight,
   Users,
 } from "lucide-vue-next";
-import { toast } from "vue-sonner";
+import { toast, Toaster } from "vue-sonner";
 import {
   Pagination,
   PaginationContent,
@@ -463,7 +484,12 @@ const newStudent = ref({
   email: "",
   phone: "",
   password: "",
+  group_id: "none",
 });
+
+// Groups data
+const groups = ref([]);
+const isLoadingGroups = ref(false);
 
 // Edit student form data
 const editingStudent = ref({
@@ -472,6 +498,41 @@ const editingStudent = ref({
   email: "",
   phone: "",
 });
+
+// Fetch groups from API
+const fetchGroups = async () => {
+  const authStore = useAuthStore();
+
+  if (!authStore.user?.center_id) {
+    return;
+  }
+
+  isLoadingGroups.value = true;
+  try {
+    const token = authStore.token;
+
+    const response = await fetch(
+      `${baseURL}/groups/my-groups?centerId=${authStore.user.center_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch groups");
+    }
+
+    const data = await response.json();
+    groups.value = data || [];
+  } catch (error) {
+    console.error("Error fetching groups:", error);
+  } finally {
+    isLoadingGroups.value = false;
+  }
+};
 
 // Fetch students from API
 const fetchStudents = async () => {
@@ -543,7 +604,52 @@ const createStudent = async () => {
       throw new Error(error.message || "Failed to create student");
     }
 
-    toast.success("Student created successfully");
+    const createdStudent = await response.json();
+    console.log("Created student response:", createdStudent);
+
+    // Add student to group if selected
+    if (newStudent.value.group_id && newStudent.value.group_id !== "none") {
+      // Check if student ID exists
+      const studentId =
+        createdStudent?.id ||
+        createdStudent?.user?.id ||
+        createdStudent?.data?.id;
+
+      if (!studentId) {
+        console.error("Student ID not found in response:", createdStudent);
+        toast.warning("Student created but no ID returned to add to group");
+      } else {
+        try {
+          const groupResponse = await fetch(
+            `${baseURL}/groups/${newStudent.value.group_id}/add-students`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                student_ids: [String(studentId)],
+              }),
+            }
+          );
+
+          if (!groupResponse.ok) {
+            const groupError = await groupResponse.json();
+            console.error("Failed to add student to group:", groupError);
+            toast.warning("Student created but failed to add to group");
+          } else {
+            toast.success("Student created and added to group successfully");
+          }
+        } catch (groupError) {
+          console.error("Error adding student to group:", groupError);
+          toast.warning("Student created but failed to add to group");
+        }
+      }
+    } else {
+      toast.success("Student created successfully");
+    }
+
     closeAddStudentModal();
     await fetchStudents(); // Refresh the list
   } catch (error) {
@@ -556,6 +662,7 @@ const createStudent = async () => {
 
 // Modal controls
 const openAddStudentModal = () => {
+  fetchGroups();
   isAddStudentModalOpen.value = true;
 };
 
@@ -567,6 +674,7 @@ const closeAddStudentModal = () => {
     email: "",
     phone: "",
     password: "",
+    group_id: "none",
   };
 };
 
@@ -726,6 +834,7 @@ const deleteStudent = async (student) => {
 // Fetch students on mount
 onMounted(() => {
   fetchStudents();
+  fetchGroups();
 });
 
 definePageMeta({

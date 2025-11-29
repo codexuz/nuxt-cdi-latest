@@ -1,25 +1,43 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900">Content Blocks</h3>
-      <span class="text-sm text-gray-500">{{ contentBlocks.length }} blocks</span>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        Content Blocks
+      </h3>
+      <span class="text-sm text-gray-500 dark:text-gray-400"
+        >{{ contentBlocks.length }} blocks</span
+      >
     </div>
     <div class="space-y-2">
       <div
         v-for="(block, index) in contentBlocks"
         :key="block.id"
-        class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+        class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       >
-        <component :is="getBlockIcon(block.type)" class="h-5 w-5 text-gray-500" />
-        <span class="text-sm font-medium text-gray-700 flex-1">{{ block.type }}</span>
-        <Button variant="ghost" size="icon" @click="$emit('remove-block', index)">
+        <component
+          :is="getBlockIcon(block.type)"
+          class="h-5 w-5 text-gray-500 dark:text-gray-400"
+        />
+        <span
+          class="text-sm font-medium text-gray-700 dark:text-gray-300 flex-1"
+          >{{ block.type }}</span
+        >
+        <Button
+          variant="ghost"
+          size="icon"
+          @click="$emit('remove-block', index)"
+        >
           <X class="h-4 w-4" />
         </Button>
       </div>
     </div>
     <div v-if="contentBlocks.length === 0" class="text-center py-8">
-      <FileText class="h-12 w-12 text-gray-300 mx-auto mb-3" />
-      <p class="text-sm text-gray-500">No content blocks yet</p>
+      <FileText
+        class="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3"
+      />
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        No content blocks yet
+      </p>
     </div>
   </div>
 </template>
@@ -34,7 +52,7 @@ interface ContentTabProps {
 
 defineProps<ContentTabProps>();
 defineEmits<{
-  'remove-block': [index: number];
+  "remove-block": [index: number];
 }>();
 
 const getBlockIcon = (type: string) => {

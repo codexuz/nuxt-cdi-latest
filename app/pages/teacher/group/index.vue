@@ -67,7 +67,13 @@
               </div>
             </TableCell>
           </TableRow>
-          <TableRow v-else v-for="group in groups" :key="group.id">
+          <TableRow
+            v-else
+            v-for="group in groups"
+            :key="group.id"
+            @click="navigateToGroup(group.id)"
+            class="cursor-pointer hover:bg-muted/50"
+          >
             <TableCell class="font-medium">
               <div class="flex items-center gap-2">
                 <Folder class="h-4 w-4 text-muted-foreground" />
@@ -102,21 +108,17 @@
             <TableCell class="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" @click.stop>
                     <MoreVertical class="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem @click="openEditDialog(group)">
+                  <DropdownMenuItem @click.stop="openEditDialog(group)">
                     <Pencil class="h-4 w-4 mr-2" />
                     Edit Group
                   </DropdownMenuItem>
-                  <DropdownMenuItem @click="openManageStudentsDialog(group)">
-                    <Users class="h-4 w-4 mr-2" />
-                    Manage Students
-                  </DropdownMenuItem>
                   <DropdownMenuItem
-                    @click="confirmDelete(group)"
+                    @click.stop="confirmDelete(group)"
                     class="text-destructive"
                   >
                     <Trash2 class="h-4 w-4 mr-2" />
@@ -210,124 +212,6 @@
       </DialogContent>
     </Dialog>
 
-    <!-- Manage Students Dialog -->
-    <Dialog v-model:open="studentsDialogOpen">
-      <DialogContent class="max-w-3xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle
-            >Manage Students - {{ currentGroup?.group_name }}</DialogTitle
-          >
-          <DialogDescription>
-            {{ currentGroup?.students?.length || 0 }} /
-            {{ currentGroup?.max_students }} students enrolled
-          </DialogDescription>
-        </DialogHeader>
-
-        <div class="space-y-4">
-          <!-- Search Students -->
-          <div class="relative">
-            <Search
-              class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-            />
-            <Input
-              v-model="studentSearch"
-              placeholder="Search students..."
-              class="pl-10"
-            />
-          </div>
-
-          <!-- Available Students -->
-          <div class="space-y-2">
-            <Label>Available Students</Label>
-            <div
-              class="border rounded-lg p-4 max-h-60 overflow-y-auto space-y-2"
-            >
-              <div
-                v-for="student in filteredAvailableStudents"
-                :key="student.id"
-                class="flex items-center justify-between p-2 hover:bg-muted rounded-md"
-              >
-                <div class="flex items-center gap-3">
-                  <Avatar class="h-8 w-8">
-                    <AvatarFallback>{{
-                      getInitials(student.name)
-                    }}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p class="text-sm font-medium">{{ student.name }}</p>
-                    <p class="text-xs text-muted-foreground">
-                      {{ student.email }}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  @click="addStudentToGroup(student.id)"
-                  :disabled="isGroupFull"
-                >
-                  <Plus class="h-4 w-4" />
-                </Button>
-              </div>
-              <div
-                v-if="filteredAvailableStudents.length === 0"
-                class="text-center py-4 text-muted-foreground"
-              >
-                No available students
-              </div>
-            </div>
-          </div>
-
-          <!-- Enrolled Students -->
-          <div class="space-y-2">
-            <Label>Enrolled Students</Label>
-            <div
-              class="border rounded-lg p-4 max-h-60 overflow-y-auto space-y-2"
-            >
-              <div
-                v-for="student in currentGroup?.students"
-                :key="student.id"
-                class="flex items-center justify-between p-2 hover:bg-muted rounded-md"
-              >
-                <div class="flex items-center gap-3">
-                  <Avatar class="h-8 w-8">
-                    <AvatarFallback>{{
-                      getInitials(student.name)
-                    }}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p class="text-sm font-medium">
-                      {{ student.name }}
-                    </p>
-                    <p class="text-xs text-muted-foreground">
-                      {{ student.email }}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  @click="removeStudentFromGroup(student.id)"
-                >
-                  <X class="h-4 w-4" />
-                </Button>
-              </div>
-              <div
-                v-if="!currentGroup?.students?.length"
-                class="text-center py-4 text-muted-foreground"
-              >
-                No enrolled students
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button @click="studentsDialogOpen = false">Done</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-
     <!-- Delete Confirmation Dialog -->
     <AlertDialog v-model:open="deleteDialogOpen">
       <AlertDialogContent>
@@ -364,8 +248,6 @@ import {
   Pencil,
   Trash2,
   MoreVertical,
-  Search,
-  X,
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import { Button } from "@/components/ui/button";
@@ -373,7 +255,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -422,12 +303,10 @@ const groups = ref<any[]>([]);
 const allStudents = ref<any[]>([]);
 const isLoading = ref(false);
 const dialogOpen = ref(false);
-const studentsDialogOpen = ref(false);
 const deleteDialogOpen = ref(false);
 const isEditing = ref(false);
 const groupToDelete = ref<any>(null);
 const currentGroup = ref<any>(null);
-const studentSearch = ref("");
 
 const groupForm = ref({
   group_name: "",
@@ -440,32 +319,6 @@ const groupForm = ref({
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${authStore.token}`,
   "Content-Type": "application/json",
-});
-
-// Computed
-const filteredAvailableStudents = computed(() => {
-  if (!allStudents.value.length) return [];
-
-  const enrolledIds = currentGroup.value?.students?.map((s: any) => s.id) || [];
-  const available = allStudents.value.filter(
-    (student) => !enrolledIds.includes(student.id)
-  );
-
-  if (!studentSearch.value) return available;
-
-  return available.filter(
-    (student) =>
-      student.name?.toLowerCase().includes(studentSearch.value.toLowerCase()) ||
-      student.email?.toLowerCase().includes(studentSearch.value.toLowerCase())
-  );
-});
-
-const isGroupFull = computed(() => {
-  if (!currentGroup.value) return false;
-  return (
-    (currentGroup.value.students?.length || 0) >=
-    currentGroup.value.max_students
-  );
 });
 
 // Helper functions
@@ -577,12 +430,6 @@ const openEditDialog = (group: any) => {
   dialogOpen.value = true;
 };
 
-const openManageStudentsDialog = (group: any) => {
-  currentGroup.value = group;
-  studentSearch.value = "";
-  studentsDialogOpen.value = true;
-};
-
 // Save group
 const saveGroup = async () => {
   try {
@@ -639,56 +486,9 @@ const deleteGroup = async () => {
   }
 };
 
-// Add student to group
-const addStudentToGroup = async (studentId: string) => {
-  if (!currentGroup.value) return;
-
-  try {
-    await $fetch(
-      `${API_BASE_URL}/groups/${currentGroup.value.id}/add-students`,
-      {
-        method: "PATCH",
-        headers: getAuthHeaders(),
-        body: { student_ids: [studentId] },
-      }
-    );
-
-    toast.success("Student added to group");
-    await fetchGroups();
-    // Update currentGroup with fresh data
-    currentGroup.value = groups.value.find(
-      (g) => g.id === currentGroup.value.id
-    );
-  } catch (error: any) {
-    console.error("Failed to add student:", error);
-    toast.error(error.data?.message || "Failed to add student");
-  }
-};
-
-// Remove student from group
-const removeStudentFromGroup = async (studentId: string) => {
-  if (!currentGroup.value) return;
-
-  try {
-    await $fetch(
-      `${API_BASE_URL}/groups/${currentGroup.value.id}/remove-students`,
-      {
-        method: "PATCH",
-        headers: getAuthHeaders(),
-        body: { student_ids: [studentId] },
-      }
-    );
-
-    toast.success("Student removed from group");
-    await fetchGroups();
-    // Update currentGroup with fresh data
-    currentGroup.value = groups.value.find(
-      (g) => g.id === currentGroup.value.id
-    );
-  } catch (error: any) {
-    console.error("Failed to remove student:", error);
-    toast.error(error.data?.message || "Failed to remove student");
-  }
+// Navigate to group detail page
+const navigateToGroup = (groupId: string) => {
+  navigateTo(`/teacher/group/${groupId}`);
 };
 
 onMounted(() => {
