@@ -24,6 +24,77 @@
       </Button>
     </motion.div>
 
+    <!-- Filters Section -->
+    <motion.div
+      class="bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-800 p-4 mb-6"
+      :initial="{ opacity: 0, y: -10 }"
+      :transition="{ duration: 0.5, delay: 0.15 }"
+      :animate="{ opacity: 1, y: 0 }"
+    >
+      <div class="flex flex-col lg:flex-row gap-4">
+        <!-- Search -->
+        <div class="flex-1">
+          <div class="relative">
+            <Search
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500"
+            />
+            <Input
+              v-model="searchQuery"
+              placeholder="Search tests by title or description..."
+              class="pl-10"
+            />
+          </div>
+        </div>
+
+        <!-- Date Sort -->
+        <div class="min-w-[180px]">
+          <Select v-model="dateSort">
+            <SelectTrigger>
+              <Calendar class="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Sort by date" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <!-- Test Type Filter -->
+        <div class="min-w-[180px]">
+          <Select v-model="typeFilter">
+            <SelectTrigger>
+              <Filter class="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="ielts_practice">IELTS Practice</SelectItem>
+              <SelectItem value="ielts_mock">IELTS Mock</SelectItem>
+              <SelectItem value="cefr_practice">CEFR Practice</SelectItem>
+              <SelectItem value="cefr_mock">CEFR Mock</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <!-- Active filters display -->
+      <div
+        v-if="hasActiveFilters"
+        class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"
+      >
+        <Badge v-if="searchQuery" variant="secondary" class="gap-1">
+          Search: "{{ searchQuery }}"
+        </Badge>
+        <Badge v-if="dateSort !== 'newest'" variant="secondary" class="gap-1">
+          Sort: {{ dateSort === "oldest" ? "Oldest First" : "Newest First" }}
+        </Badge>
+        <Badge v-if="typeFilter !== 'all'" variant="secondary" class="gap-1">
+          Type: {{ formatTestType(typeFilter) }}
+        </Badge>
+      </div>
+    </motion.div>
+
     <!-- Create Test Dialog -->
     <Dialog v-model:open="showCreateDialog">
       <DialogContent class="max-w-2xl">
@@ -177,7 +248,10 @@
       </motion.div>
 
       <!-- Empty State -->
-      <Card v-if="tests.length === 0" class="text-center py-12">
+      <Card
+        v-if="tests.length === 0 && !hasActiveFilters"
+        class="text-center py-12"
+      >
         <CardContent>
           <FileQuestion class="h-16 w-16 mx-auto text-muted-foreground mb-4" />
           <h3 class="text-lg font-semibold mb-2">No tests created yet</h3>
@@ -190,9 +264,37 @@
           </Button>
         </CardContent>
       </Card>
+
+      <!-- No results found -->
+      <Card
+        v-if="tests.length > 0 && filteredTests.length === 0"
+        class="text-center py-12"
+      >
+        <CardContent>
+          <Search class="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No tests found</h3>
+          <p class="text-muted-foreground mb-4">
+            No tests match your current filters. Try adjusting your search or
+            filters.
+          </p>
+          <Button
+            variant="outline"
+            @click="
+              () => {
+                searchQuery = '';
+                dateSort = 'newest';
+                typeFilter = 'all';
+              }
+            "
+          >
+            Clear Filters
+          </Button>
+        </CardContent>
+      </Card>
     </motion.div>
 
     <Pagination
+      v-if="filteredTests.length > itemsPerPage"
       v-slot="{ page }"
       :total="totalTests"
       :sibling-count="1"
@@ -280,6 +382,9 @@ import {
   BookOpen,
   FileQuestion,
   PenTool,
+  Search,
+  Filter,
+  Calendar,
 } from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
@@ -301,6 +406,11 @@ useHead({
 const showCreateDialog = ref(false);
 const showEditDialog = ref(false);
 
+// Filter and search state
+const searchQuery = ref("");
+const dateSort = ref("newest");
+const typeFilter = ref("all");
+
 const newTest = ref({
   title: "",
   description: "",
@@ -317,10 +427,53 @@ const editingTest = ref({
 const tests = ref([]);
 const isLoading = ref(false);
 
+// Check if any filters are active
+const hasActiveFilters = computed(() => {
+  return (
+    searchQuery.value ||
+    dateSort.value !== "newest" ||
+    typeFilter.value !== "all"
+  );
+});
+
 // Pagination state
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
-const totalTests = computed(() => tests.value.length);
+// Filtered and sorted tests
+const filteredTests = computed(() => {
+  let filtered = [...tests.value];
+
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(
+      (test) =>
+        test.title?.toLowerCase().includes(query) ||
+        test.description?.toLowerCase().includes(query)
+    );
+  }
+
+  // Apply type filter
+  if (typeFilter.value !== "all") {
+    filtered = filtered.filter((test) => test.test_type === typeFilter.value);
+  }
+
+  // Apply date sorting
+  filtered.sort((a, b) => {
+    const dateA = new Date(a.created_at || a.id);
+    const dateB = new Date(b.created_at || b.id);
+
+    if (dateSort.value === "oldest") {
+      return dateA - dateB;
+    } else {
+      return dateB - dateA;
+    }
+  });
+
+  return filtered;
+});
+
+const totalTests = computed(() => filteredTests.value.length);
 const totalPages = computed(() =>
   Math.ceil(totalTests.value / itemsPerPage.value)
 );
@@ -329,7 +482,7 @@ const totalPages = computed(() =>
 const paginatedTests = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return tests.value.slice(start, end);
+  return filteredTests.value.slice(start, end);
 });
 
 // Handle page change
@@ -338,6 +491,11 @@ const handlePageChange = (page) => {
   // Scroll to top of tests list
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
+
+// Reset to first page when filters change
+watch([searchQuery, dateSort, typeFilter], () => {
+  currentPage.value = 1;
+});
 
 // Format test type for display
 const formatTestType = (testType) => {
