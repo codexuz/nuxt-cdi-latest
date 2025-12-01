@@ -13,13 +13,13 @@
       <CardContent>
         <div class="grid grid-cols-3 gap-4">
           <div class="text-center">
-            <p class="text-2xl font-bold text-green-600">
+            <p class="text-2xl font-bold text-green-600 dark:text-green-400">
               {{ readingFinal?.correct || 0 }}
             </p>
             <p class="text-sm text-muted-foreground">Correct</p>
           </div>
           <div class="text-center">
-            <p class="text-2xl font-bold text-red-600">
+            <p class="text-2xl font-bold text-red-600 dark:text-red-400">
               {{ readingFinal?.incorrect || 0 }}
             </p>
             <p class="text-sm text-muted-foreground">Incorrect</p>
@@ -50,7 +50,11 @@
               v-for="question in part.questions"
               :key="question.questionNumber"
               class="flex items-center justify-between p-3 rounded-lg"
-              :class="question.isCorrect ? 'bg-green-50' : 'bg-red-50'"
+              :class="
+                question.isCorrect
+                  ? 'bg-green-50 dark:bg-green-950/30'
+                  : 'bg-red-50 dark:bg-red-950/30'
+              "
             >
               <div class="flex items-center gap-4">
                 <span class="font-medium">Q{{ question.questionNumber }}</span>
