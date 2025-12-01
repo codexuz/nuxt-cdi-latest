@@ -34,13 +34,58 @@
     <!-- Assignments Table -->
     <motion.div
       v-else
-      class="bg-white dark:bg-gray-950 rounded-lg border"
+      class="bg-white dark:bg-zinc-900 rounded-lg border"
       :initial="{ opacity: 0, y: 20 }"
       :transition="{ duration: 0.5, delay: 0.2 }"
       :animate="{ opacity: 1, y: 0 }"
     >
+      <!-- Search and Filters -->
+      <div class="p-4 border-b space-y-4">
+        <div class="flex gap-4 flex-col md:flex-row">
+          <!-- Search by Student/Candidate ID -->
+          <div class="flex-1 relative">
+            <Search
+              class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            />
+            <Input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search by student name, email, or candidate ID..."
+              class="pl-9"
+            />
+          </div>
+
+          <!-- Test Filter -->
+          <Select v-model="selectedTestFilter">
+            <SelectTrigger class="w-full md:w-48">
+              <SelectValue placeholder="All Tests" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Tests</SelectItem>
+              <SelectItem v-for="test in tests" :key="test.id" :value="test.id">
+                {{ test.title }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          <!-- Status Filter -->
+          <Select v-model="selectedStatusFilter">
+            <SelectTrigger class="w-full md:w-48">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="expired">Expired</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <!-- Empty State -->
-      <div v-if="assignments.length === 0" class="text-center py-12">
+      <div v-if="filteredAssignments.length === 0" class="text-center py-12">
         <FileQuestion class="h-16 w-16 mx-auto text-muted-foreground mb-4" />
         <h3 class="text-lg font-semibold mb-2">No assignments yet</h3>
         <p class="text-muted-foreground mb-4">
@@ -54,6 +99,10 @@
 
       <!-- Table Content -->
       <div v-else class="overflow-x-auto">
+        <p class="text-sm text-muted-foreground px-4 py-2">
+          Showing {{ paginatedAssignments.length }} of
+          {{ filteredAssignments.length }} assignments
+        </p>
         <table class="w-full">
           <thead>
             <tr class="border-b">
@@ -67,7 +116,7 @@
               </th>
               <th class="text-left py-3 px-4 text-sm font-medium">End Time</th>
               <th class="text-left py-3 px-4 text-sm font-medium">Status</th>
-              <th class="text-left py-3 px-4 text-sm font-medium">Notes</th>
+              <th class="text-center py-3 px-4 text-sm font-medium">Scoring</th>
               <th class="text-left py-3 px-4 text-sm font-medium">Actions</th>
             </tr>
           </thead>
@@ -75,7 +124,7 @@
             <tr
               v-for="assignment in paginatedAssignments"
               :key="assignment.id"
-              class="hover:bg-gray-50 dark:hover:bg-gray-900"
+              class="hover:bg-gray-50 dark:hover:bg-zinc-950"
             >
               <td class="py-4 px-4">
                 <button
@@ -127,8 +176,19 @@
                   {{ assignment.status || "Pending" }}
                 </Badge>
               </td>
-              <td class="py-4 px-4 text-sm text-muted-foreground">
-                {{ assignment.notes || "-" }}
+              <td class="py-4 px-4">
+                <div class="flex items-center justify-center">
+                  <CheckCircle
+                    v-if="isScoringComplete(assignment)"
+                    class="h-5 w-5 text-green-600 dark:text-green-400"
+                    title="Scoring completed"
+                  />
+                  <Hourglass
+                    v-else
+                    class="h-5 w-5 text-amber-500 dark:text-amber-400"
+                    title="Waiting for scoring"
+                  />
+                </div>
               </td>
               <td class="py-4 px-4">
                 <div class="flex items-center gap-2">
@@ -172,7 +232,7 @@
     <!-- Pagination -->
     <Pagination
       v-slot="{ page }"
-      :total="totalAssignments"
+      :total="filteredTotalAssignments"
       :sibling-count="1"
       :default-page="currentPage"
       :items-per-page="itemsPerPage"
@@ -210,13 +270,19 @@
         <div class="space-y-4">
           <div class="space-y-2">
             <Label for="student">Student</Label>
+            <Input
+              id="student"
+              v-model="studentSearchQuery"
+              placeholder="Search student by name or email..."
+              class="mb-2"
+            />
             <Select v-model="newAssignment.student_id">
-              <SelectTrigger id="student">
+              <SelectTrigger>
                 <SelectValue placeholder="Select student" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem
-                  v-for="student in students"
+                  v-for="student in filteredStudents"
                   :key="student.id"
                   :value="student.id"
                 >
@@ -224,17 +290,29 @@
                 </SelectItem>
               </SelectContent>
             </Select>
+            <p
+              v-if="filteredStudents.length === 0"
+              class="text-xs text-muted-foreground mt-1"
+            >
+              No students found
+            </p>
           </div>
 
           <div class="space-y-2">
             <Label for="test">Test</Label>
+            <Input
+              id="test"
+              v-model="testSearchQuery"
+              placeholder="Search test by title..."
+              class="mb-2"
+            />
             <Select v-model="newAssignment.test_id">
-              <SelectTrigger id="test">
+              <SelectTrigger>
                 <SelectValue placeholder="Select test" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem
-                  v-for="test in tests"
+                  v-for="test in filteredTests"
                   :key="test.id"
                   :value="test.id"
                 >
@@ -242,6 +320,12 @@
                 </SelectItem>
               </SelectContent>
             </Select>
+            <p
+              v-if="filteredTests.length === 0"
+              class="text-xs text-muted-foreground mt-1"
+            >
+              No tests found
+            </p>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -379,7 +463,19 @@
 
 <script setup>
 import { motion } from "motion-v";
-import { Plus, Trash2, FileQuestion, Edit, Copy, Eye } from "lucide-vue-next";
+import {
+  Plus,
+  Trash2,
+  FileQuestion,
+  Edit,
+  Copy,
+  Eye,
+  Search,
+  X,
+  ChevronDown,
+  CheckCircle,
+  Hourglass,
+} from "lucide-vue-next";
 import { toast, Toaster } from "vue-sonner";
 import "vue-sonner/style.css";
 import {
@@ -406,6 +502,15 @@ const isLoading = ref(false);
 const isAssigning = ref(false);
 const isUpdating = ref(false);
 
+// Search and filter state
+const searchQuery = ref("");
+const selectedTestFilter = ref("");
+const selectedStatusFilter = ref("");
+
+// Modal search state
+const studentSearchQuery = ref("");
+const testSearchQuery = ref("");
+
 const editingAssignment = ref({
   id: "",
   student: null,
@@ -424,11 +529,78 @@ const totalPages = computed(() =>
   Math.ceil(totalAssignments.value / itemsPerPage.value)
 );
 
+// Filtered assignments
+const filteredAssignments = computed(() => {
+  let filtered = assignments.value;
+
+  // Filter by search query (student name, email, or candidate ID)
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter((assignment) => {
+      const candidateId = assignment.candidate_id?.toLowerCase() || "";
+      const studentName = assignment.student?.name?.toLowerCase() || "";
+      const studentEmail = assignment.student?.email?.toLowerCase() || "";
+      return (
+        candidateId.includes(query) ||
+        studentName.includes(query) ||
+        studentEmail.includes(query)
+      );
+    });
+  }
+
+  // Filter by test
+  if (selectedTestFilter.value && selectedTestFilter.value !== "all") {
+    filtered = filtered.filter(
+      (assignment) => assignment.test?.id === selectedTestFilter.value
+    );
+  }
+
+  // Filter by status
+  if (selectedStatusFilter.value && selectedStatusFilter.value !== "all") {
+    filtered = filtered.filter(
+      (assignment) =>
+        assignment.status?.toLowerCase() ===
+        selectedStatusFilter.value.toLowerCase()
+    );
+  }
+
+  return filtered;
+});
+
+const filteredTotalAssignments = computed(
+  () => filteredAssignments.value.length
+);
+
 // Computed property for paginated assignments
 const paginatedAssignments = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return assignments.value.slice(start, end);
+  return filteredAssignments.value.slice(start, end);
+});
+
+// Filtered students for modal search
+const filteredStudents = computed(() => {
+  if (!studentSearchQuery.value) {
+    return students.value;
+  }
+  const query = studentSearchQuery.value.toLowerCase();
+  return students.value.filter((student) => {
+    const name = student.name?.toLowerCase() || "";
+    const email = student.email?.toLowerCase() || "";
+    return name.includes(query) || email.includes(query);
+  });
+});
+
+// Filtered tests for modal search
+const filteredTests = computed(() => {
+  if (!testSearchQuery.value) {
+    return tests.value;
+  }
+  const query = testSearchQuery.value.toLowerCase();
+  return tests.value.filter((test) => {
+    const title = test.title?.toLowerCase() || "";
+    return title.includes(query);
+  });
 });
 
 // Handle page change
@@ -516,7 +688,26 @@ const getStatusVariant = (status) => {
   return statusMap[status?.toLowerCase()] || "secondary";
 };
 
-// Fetch assignments
+// Check if scoring is complete
+const isScoringComplete = (assignment) => {
+  const hasWritingScore =
+    assignment.writing_final &&
+    (assignment.writing_final.task1Score !== undefined ||
+      assignment.writing_final.task2Score !== undefined ||
+      assignment.writing_final.averageScore !== undefined ||
+      assignment.writing_final.feedback);
+
+  const hasSpeakingScore =
+    assignment.speaking_final &&
+    (assignment.speaking_final.overall !== undefined ||
+      assignment.speaking_final.fluencyCoherence !== undefined ||
+      assignment.speaking_final.lexicalResource !== undefined ||
+      assignment.speaking_final.grammaticalRange !== undefined ||
+      assignment.speaking_final.pronunciation !== undefined ||
+      assignment.speaking_final.feedback);
+
+  return hasWritingScore && hasSpeakingScore;
+};
 const fetchAssignments = async () => {
   try {
     isLoading.value = true;
@@ -601,6 +792,8 @@ const fetchTests = async () => {
 // Open assign dialog
 const openAssignDialog = () => {
   showAssignDialog.value = true;
+  studentSearchQuery.value = "";
+  testSearchQuery.value = "";
   if (students.value.length === 0) fetchStudents();
   if (tests.value.length === 0) fetchTests();
 };
@@ -786,6 +979,7 @@ const deleteAssignment = async (assignmentId) => {
 // Load assignments on mount
 onMounted(() => {
   fetchAssignments();
+  fetchTests();
 });
 
 definePageMeta({

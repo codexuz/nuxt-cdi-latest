@@ -342,10 +342,13 @@ const fetchCourses = async () => {
       toast.error("No center ID found");
       return;
     }
-    const response = await $fetch<Course[]>(`${API_BASE_URL}/centers/${centerId}/lms/courses`, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
+    const response = await $fetch<Course[]>(
+      `${API_BASE_URL}/centers/${centerId}/lms/my-courses`,
+      {
+        method: "GET",
+        headers: getAuthHeaders(),
+      }
+    );
     courses.value = response;
   } catch (error: any) {
     console.error("Failed to fetch courses:", error);
@@ -400,11 +403,14 @@ const saveCourse = async () => {
     if (isEditing.value && editingCourseId.value) {
       // Update existing course
       const centerId = authStore.user?.center_id;
-      await $fetch(`${API_BASE_URL}/centers/${centerId}/lms/courses/${editingCourseId.value}`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: payload,
-      });
+      await $fetch(
+        `${API_BASE_URL}/centers/${centerId}/lms/courses/${editingCourseId.value}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: payload,
+        }
+      );
       toast.success("Course updated successfully");
     } else {
       // Create new course
@@ -439,10 +445,13 @@ const deleteCourse = async () => {
 
   try {
     const centerId = authStore.user?.center_id;
-    await $fetch(`${API_BASE_URL}/centers/${centerId}/lms/courses/${courseToDelete.value.id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
+    await $fetch(
+      `${API_BASE_URL}/centers/${centerId}/lms/courses/${courseToDelete.value.id}`,
+      {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      }
+    );
     toast.success("Course deleted successfully");
     deleteDialogOpen.value = false;
     await fetchCourses();

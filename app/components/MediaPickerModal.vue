@@ -155,7 +155,7 @@
   <!-- Upload Modal -->
   <MediaUploadModal
     v-model:open="showUploadModal"
-    :center-id="user?.center_id"
+    :center-id="authStore.user?.center_id"
     @uploaded="handleUploaded"
   />
 </template>
@@ -163,6 +163,7 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 import type { MediaItem } from "~/composables/useMedia";
+import { useAuthStore } from "~/stores/auth";
 
 const props = defineProps<{
   open: boolean;
@@ -174,8 +175,7 @@ const emit = defineEmits<{
   selected: [media: MediaItem];
 }>();
 
-const { user } = useAuth();
-const { activeCenter } = useCenters();
+const authStore = useAuthStore();
 const { getAllMedia, formatFileSize, getFileTypeCategory } = useMedia();
 
 const isOpen = computed({
@@ -228,8 +228,8 @@ const loadMedia = async () => {
     const params: any = {};
 
     // Add center_id if available
-    if (activeCenter.value?.id) {
-      params.center_id = activeCenter.value.id;
+    if (authStore.user?.center_id) {
+      params.center_id = authStore.user.center_id;
     }
 
     // Add media_type if specified
